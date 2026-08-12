@@ -14,6 +14,7 @@ tags:
   - corticoïdes inhalés
   - allergie
 resume: "Inflammation chronique des bronches avec hyperréactivité et obstruction réversible : dyspnée sifflante paroxystique, traitement de fond par corticoïdes inhalés."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -135,12 +136,13 @@ Percussion : tympanisme en cas de distension. Auscultation : sibilants expiratoi
 ## Traitement
 
 **Traitement de fond (de 1re ligne)**
-- **Corticoïdes inhalés (CSI)** = base du traitement de fond (anti-inflammatoire) — *traitement de fond essentiel*
-- Association **CSI + bêta-2-mimétique de longue durée d'action (LABA)** si contrôle insuffisant
+- Tout adulte ou adolescent asthmatique doit recevoir un traitement **contenant un corticoïde inhalé (CSI)** ; le traitement par BACA seul n'est pas recommandé.
+- Stratégie préférée chez l'adulte/adolescent : **CSI-formotérol à faible dose à la demande** aux premiers paliers, puis traitement d'entretien et de secours par CSI-formotérol (MART) selon le niveau de contrôle.
+- Alternative si CSI-formotérol indisponible ou inadapté : CSI quotidien + BACA de secours, ou prise de CSI chaque fois que le BACA est utilisé selon le palier.
 - Adaptation par **paliers (GINA)** : escalade/désescalade selon le contrôle, recherche de la dose minimale efficace
 
 **Traitement de crise**
-- **Bêta-2-mimétiques de courte durée d'action (BACA = salbutamol)** inhalés à la demande, bronchodilatateur de secours
+- Bronchodilatateur de secours selon la stratégie prescrite : **CSI-formotérol** de préférence, ou BACA associé à une exposition aux CSI ; éviter le BACA seul au long cours.
 - Corticothérapie systémique de courte durée lors des exacerbations
 
 **Alternatives / 2e ligne**
@@ -159,4 +161,11 @@ Percussion : tympanisme en cas de distension. Auscultation : sibilants expiratoi
 ## Liens
 - Voir aussi : [[bpco]], [[pneumonie-aigue-communautaire]]
 - Diagnostics différentiels : BPCO (obstruction peu/non réversible, tabagisme, DEP/EFR fixés, sujet âgé), insuffisance cardiaque gauche / « asthme cardiaque » (orthopnée, crépitants des bases, OMI, cardiopathie, BNP élevé), corps étranger inhalé (début brutal, syndrome de pénétration, sibilants localisés — enfant +++), dysfonction des cordes vocales (dyspnée inspiratoire, EFR normale, fibroscopie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- [GINA — Global Strategy for Asthma Management and Prevention 2025](https://ginasthma.org/2025-gina-strategy-report/)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

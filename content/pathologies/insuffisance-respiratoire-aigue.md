@@ -4,6 +4,7 @@ title: "Insuffisance respiratoire aiguë"
 specialty: Pneumologie
 criticality: urgent
 resume: "Défaillance aiguë des échanges gazeux avec hypoxémie et/ou hypercapnie : oxygène titré, traitement de la cause et soutien ventilatoire sans délai."
+reviewed_at: 2026-08-12
 ---
 
 > [!danger] Signes d’épuisement
@@ -57,3 +58,10 @@ L’oxygène nasal ou masque suffit parfois. Le haut débit nasal peut améliore
 
 - Voir aussi : [[sdra]], [[exacerbation-asthme-bpco]], [[pneumonie-aigue-communautaire]], [[oedeme-aigu-pulmonaire]], [[embolie-pulmonaire]]
 - Sources du vault : `Pneumologie/Dyspnée.md`, `Pneumologie/Œdème pulmonaire lésionnel et syndrome de détresse respiratoire de l'adulte.md`, `Pneumologie/SDRA, DAD & co.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

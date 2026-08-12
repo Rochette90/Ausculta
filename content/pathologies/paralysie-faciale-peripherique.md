@@ -4,6 +4,7 @@ title: "Paralysie faciale périphérique"
 specialty: Neurologie
 criticality: important
 resume: "Déficit de l’ensemble d’un hémiface par atteinte du nerf facial : protéger la cornée, rechercher une cause secondaire et traiter précocement une paralysie de Bell."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Localisation
@@ -61,3 +62,10 @@ Dans une paralysie de Bell récente, les corticoïdes oraux débutés précoceme
 
 - Voir aussi : [[avc-ait]], [[meningite-encephalite]]
 - Sources du vault : `ECOS/Neuro.md`, `Neurologie/Neuropathies (2H).md`, `Nouvelles fiches/À relire/Maladie-de-Lyme.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

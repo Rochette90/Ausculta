@@ -13,6 +13,7 @@ tags:
   - hyperglycémie
   - sujet jeune
 resume: "Diabète auto-immun par destruction des cellules β des îlots de Langerhans : carence insulinique absolue du sujet jeune, révélé par un syndrome cardinal ou une acidocétose, imposant une insulinothérapie à vie."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -129,7 +130,7 @@ Prise des constantes (fréquence cardiaque, tension artérielle, fréquence resp
 **Éducation thérapeutique / suivi**
 - Auto-surveillance glycémique pluriquotidienne ou capteur de glucose en continu, tenue d'un carnet
 - Adaptation des doses, gestion des situations particulières (sport, maladie, jeûne)
-- Éducation à la reconnaissance et au traitement de l'[[hypoglycémie]] (resucrage, glucagon) et à la prévention de l'acidocétose
+- Éducation à la reconnaissance et au traitement de l'[[hypoglycemie]] (resucrage, glucagon) et à la prévention de l'acidocétose
 - Dépistage annuel des complications (fond d'œil, microalbuminurie, pieds, bilan lipidique, TA)
 
 ---
@@ -151,7 +152,7 @@ Prise des constantes (fréquence cardiaque, tension artérielle, fréquence resp
 > L'arrêt de l'insuline ou une décompensation infectieuse peut précipiter une **acidocétose diabétique**, urgence vitale associant hyperglycémie, cétose et acidose métabolique. Signes d'alarme : polypnée de Kussmaul, haleine cétonique, douleurs abdominales, déshydratation et troubles de conscience. Conduite : réhydratation IV, insulinothérapie IV continue, surveillance et correction de la **kaliémie**, recherche du facteur déclenchant (voir [[acidocetose-diabetique]]). Ne jamais suspendre l'insuline chez un patient de type 1.
 
 **Complications / pronostic**
-- Complications aiguës : acidocétose, [[hypoglycémie]] (iatrogène, parfois sévère)
+- Complications aiguës : acidocétose, [[hypoglycemie]] (iatrogène, parfois sévère)
 - Complications microangiopathiques : rétinopathie, néphropathie diabétique, neuropathie
 - Complications macroangiopathiques : coronaropathie, AVC, artériopathie (risque cardiovasculaire majoré)
 - Pronostic transformé par l'insulinothérapie et le contrôle glycémique strict (objectif HbA1c individualisé, souvent < 7 %)
@@ -160,4 +161,10 @@ Prise des constantes (fréquence cardiaque, tension artérielle, fréquence resp
 ## Liens
 - Voir aussi : [[acidocetose-diabetique]], [[hypoglycemie]], [[diabete-type-2]]
 - Diagnostics différentiels : diabète de type 2 (sujet plus âgé, surpoids, insulinorésistance, pas d'auto-anticorps, peptide C conservé), diabète pancréatique / secondaire (pancréatite chronique, hémochromatose, corticoïdes), diabète MODY (formes monogéniques familiales), diabète gestationnel
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

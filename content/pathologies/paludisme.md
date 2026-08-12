@@ -13,6 +13,7 @@ tags:
   - frottis-goutte épaisse
   - artésunate
 resume: "Parasitose à Plasmodium transmise par l'anophèle, urgence diagnostique chez tout fébrile au retour de zone d'endémie : P. falciparum peut évoluer vers un accès grave mortel."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -155,6 +156,12 @@ Auscultation cardio-pulmonaire (recherche d'un OAP/SDRA), prise des constantes (
 
 ---
 ## Liens
-- Voir aussi : [[sepsis-choc-septique]], [[hepatites-virales]]
+- Voir aussi : [[sepsis-choc-septique]], [[hepatites-virales-aigues]]
 - Diagnostics différentiels : sepsis / bactériémie d'autre origine, arboviroses (dengue, chikungunya, Zika — retour de voyage), fièvre typhoïde, hépatite virale, grippe / syndrome viral, méningite ; devant tout retour de zone tropicale fébrile, exclure en priorité le paludisme
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

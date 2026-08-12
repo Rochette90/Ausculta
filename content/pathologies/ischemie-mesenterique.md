@@ -13,6 +13,7 @@ tags:
   - embolie
   - urgence abdominale
 resume: "Urgence vasculaire abdominale : douleur brutale et intense disproportionnée à l'examen, avec ischémie du grêle ; l'angio-TDM en urgence conditionne le pronostic vital."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -161,4 +162,10 @@ Tympanisme (météorisme), abolition des bruits hydro-aériques (iléus paralyti
 ## Liens
 - Voir aussi : [[occlusion-intestinale]], [[fibrillation-auriculaire]]
 - Diagnostics différentiels : occlusion intestinale (arrêt du transit, niveaux hydro-aériques, douleur moins disproportionnée), pancréatite aiguë (lipase, contexte alcool/lithiase), infarctus du myocarde inférieur (douleur épigastrique, ECG), anévrisme / dissection aortique (douleur transfixiante, asymétrie tensionnelle), colique néphrétique (douleur lombaire irradiante, hématurie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

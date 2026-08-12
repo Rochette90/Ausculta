@@ -14,6 +14,7 @@ tags:
   - diurétiques
   - urgence
 resume: "Inondation alvéolaire aiguë d'origine cardiogénique par élévation brutale des pressions capillaires pulmonaires : détresse respiratoire aiguë avec orthopnée, crépitants bilatéraux et expectoration mousseuse — urgence vitale."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -175,4 +176,10 @@ Auscultation pulmonaire : crépitants bilatéraux ascendants, parfois sibilants 
 ## Liens
 - Voir aussi : [[insuffisance-cardiaque]], [[infarctus-myocarde-sca]]
 - Diagnostics différentiels : SDRA / œdème pulmonaire lésionnel (contexte septique/traumatique, pressions de remplissage normales, BNP peu élevé), exacerbation de BPCO ou crise d'asthme (« pseudo-asthme cardiaque » : sibilants, mais terrain et crépitants orientent), embolie pulmonaire (dyspnée brutale, mais auscultation souvent normale, D-dimères/angioscanner), pneumonie aiguë (fièvre, foyer localisé)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -4,6 +4,7 @@ title: "Tachycardies supraventriculaires"
 specialty: Cardiologie
 criticality: important
 resume: "Tachycardies naissant au-dessus du faisceau de His : palpitations à début et fin brusques, QRS généralement fins, traitement guidé par la tolérance et le mécanisme."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Repère
@@ -64,3 +65,10 @@ Pour les récidives symptomatiques, l’ablation par cathéter est un traitement
 
 - Voir aussi : [[fibrillation-auriculaire]], [[bloc-auriculo-ventriculaire]], [[hyperthyroidie]]
 - Sources du vault : `Cardiologie/Palpitations et arythmies.md`, `Cardiologie/ECG en 4 étapes.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

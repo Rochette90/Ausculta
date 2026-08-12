@@ -13,6 +13,7 @@ tags:
   - œdème lésionnel
   - réanimation
 resume: "Œdème pulmonaire lésionnel par atteinte de la membrane alvéolo-capillaire : hypoxémie réfractaire aiguë définie par les critères de Berlin, imposant une ventilation protectrice en réanimation."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -166,4 +167,10 @@ Auscultation : crépitants bilatéraux diffus, parfois sous-crépitants ; l'ausc
 ## Liens
 - Voir aussi : [[sepsis-choc-septique]], [[pancreatite-aigue]]
 - Diagnostics différentiels : œdème aigu du poumon cardiogénique (origine hydrostatique, cardiopathie, BNP élevé, réponse aux diurétiques), pneumopathie extensive isolée, hémorragie alvéolaire, pneumopathie d'hypersensibilité aiguë, surcharge volémique
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

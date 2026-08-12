@@ -4,8 +4,8 @@ title: "Appendicite aiguë"
 specialty: Gastro-entérologie
 criticality: urgent
 resume: "Inflammation aiguë de l’appendice : douleur migrant vers la fosse iliaque droite, diagnostic clinique appuyé par l’imagerie et prise en charge chirurgicale."
+reviewed_at: 2026-08-12
 ---
-
 
 > [!info] Synonymes Appendicite ; inflammation appendiculaire aiguë
 >
@@ -79,10 +79,10 @@ Inflammation aiguë de l'appendice vermiforme (appendice iléo-cæcal), le plus 
 
 **Signes radiologiques / imagerie**
 - **Échographie** (1re intention, enfant/femme jeune) : appendice **> 6 mm**, non compressible, paroi épaissie, stercolithe, infiltration de la graisse, épanchement
-	- ![[Capture d’écran 2026-06-26 à 10.45.58.png]]
-	- ![[Capture d’écran 2026-06-26 à 10.46.30.png]]
+	- !
+	- !
 - **TDM abdomino-pelvienne injectée** (référence chez l'adulte, surtout si doute ou suspicion de complication) : meilleure sensibilité, bilan des complications (abcès, perforation)
-	![[Capture d’écran 2026-06-26 à 10.48.22.png]]	
+	!	
 
 ---
 ## Examen clinique
@@ -152,6 +152,13 @@ Inflammation aiguë de l'appendice vermiforme (appendice iléo-cæcal), le plus 
 - **Diagnostics différentiels :**
     - _Gynéco (femme) :_ GEU, torsion d'annexe, kyste ovarien compliqué, salpingite
     - _Pédiatrie :_ adénolymphite mésentérique, invagination intestinale aiguë, diverticule de Meckel
-    - _Uro :_ [[Colique néphrétique]], [[Pyélonéphrite]]
-    - _Digestif :_ Iléite terminale (Crohn), [[Diverticulite]] , cholécystite, Gastro-entérite
+    - _Uro :_ colique néphrétique, [[pyelonephrite-aigue]]
+    - _Digestif :_ Iléite terminale (Crohn), [[diverticulite]] , cholécystite, Gastro-entérite
 - Source du vault : `Nouvelles fiches/À relire/Appendicite.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

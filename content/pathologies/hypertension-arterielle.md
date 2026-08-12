@@ -14,6 +14,7 @@ tags:
   - antihypertenseurs
   - retentissement
 resume: "Élévation chronique de la pression artérielle (≥ 140/90 mmHg) : facteur de risque cardiovasculaire majeur, souvent asymptomatique (« tueur silencieux »)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -143,7 +144,7 @@ Auscultation cardiaque (B4, souffle, signes d'insuffisance cardiaque) et des tra
 - **IEC** (ex. ramipril, périndopril) ou **ARA2** (ex. valsartan, candésartan) — néphroprotecteurs, indiqués si diabète / protéinurie
 - **Inhibiteurs calciques** (ex. amlodipine) — bien tolérés, utiles chez le sujet âgé et afro-caribéen
 - **Diurétiques thiazidiques** (ex. hydrochlorothiazide, indapamide) — surveillance kaliémie / natrémie
-- Objectif tensionnel : généralement < 140/90 mmHg (< 130/80 selon le risque CV et la tolérance)
+- Chez la plupart des adultes traités, viser une **PAS 120–129 mmHg si elle est bien tolérée** ; individualiser en cas de fragilité, hypotension orthostatique, âge très avancé ou mauvaise tolérance.
 
 **Alternatives / 2e ligne**
 - Bêtabloquants (si indication associée : coronaropathie, insuffisance cardiaque, post-IDM)
@@ -165,6 +166,13 @@ Auscultation cardiaque (B4, souffle, signes d'insuffisance cardiaque) et des tra
 
 ---
 ## Liens
-- Voir aussi : [[infarctus-myocarde-sca]], [[avc-ait]], [[insuffisance-renale-aigue]]
+- Voir aussi : [[infarctus-myocarde-sca]], [[avc-ait]], insuffisance rénale aiguë
 - Diagnostics différentiels : HTA blouse blanche (PA élevée au cabinet mais normale en automesure/MAPA, sans retentissement), HTA secondaire (rénovasculaire, rénoparenchymateuse, hyperaldostéronisme primaire, phéochromocytome, Cushing, coarctation — à évoquer si sujet jeune, HTA résistante ou sévère, hypokaliémie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- [ESC — Elevated Blood Pressure and Hypertension Guidelines 2024](https://www.escardio.org/guidelines/clinical-practice-guidelines/elevated-blood-pressure-and-hypertension/)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

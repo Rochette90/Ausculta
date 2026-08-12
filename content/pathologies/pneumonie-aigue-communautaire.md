@@ -14,6 +14,7 @@ tags:
   - antibiothérapie
   - CRB-65
 resume: "Infection aiguë du parenchyme pulmonaire acquise hors hôpital : fièvre, toux, foyer de crépitants et opacité radiologique ; le pneumocoque domine et le CRB-65 oriente la prise en charge."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -169,4 +170,10 @@ Matité localisée à la percussion ; à l'auscultation, foyer de **crépitants*
 ## Liens
 - Voir aussi : [[embolie-pulmonaire]], [[bpco]], [[asthme]]
 - Diagnostics différentiels : embolie pulmonaire (douleur thoracique et dyspnée brutales, contexte thrombo-embolique, D-dimères / angio-scanner, pas de franc foyer infectieux), tuberculose pulmonaire (évolution subaiguë/chronique, altération de l'état général, sueurs nocturnes, atteinte apicale, contage), OAP cardiogénique (orthopnée, crépitants bilatéraux des bases, contexte cardiaque, BNP, opacités en ailes de papillon), cancer bronchique (terrain tabagique > 50 ans, pneumopathie récidivante dans le même territoire, opacité persistante après traitement)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

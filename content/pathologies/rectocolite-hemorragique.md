@@ -14,6 +14,7 @@ tags:
   - colite aiguë grave
   - 5-ASA
 resume: "MICI de la muqueuse colique, continue et rectale ascendante : diarrhée glairo-sanglante et syndrome rectal, avec risque de colite aiguë grave."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -166,4 +167,10 @@ Auscultation (bruits hydro-aériques, silence en cas de colectasie) ; toucher re
 ## Liens
 - Voir aussi : [[maladie-de-crohn]], [[hemorragie-digestive]]
 - Diagnostics différentiels : maladie de Crohn colique (atteinte segmentaire discontinue, transmurale, granulome, atteinte du grêle et ano-périnéale), colite infectieuse (coprocultures, C. difficile, contexte aigu), colite à CMV (immunodéprimé, résistance au traitement), colite ischémique (sujet âgé, terrain vasculaire, atteinte segmentaire), cancer colorectal (rectorragies, syndrome rectal chez le sujet plus âgé)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -13,6 +13,7 @@ tags:
   - drainage péricardique
   - urgence
 resume: "Compression aiguë des cavités cardiaques par un épanchement péricardique sous tension : chute du débit cardiaque avec triade de Beck (hypotension, turgescence jugulaire, bruits du cœur assourdis) — urgence vitale imposant un drainage."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -170,4 +171,10 @@ Auscultation cardiaque : bruits du cœur **assourdis, lointains** ; recherche d'
 ## Liens
 - Voir aussi : [[pericardite-aigue]], [[dissection-aortique]]
 - Diagnostics différentiels : embolie pulmonaire massive (choc obstructif, turgescence jugulaire, mais ETT différente : dilatation VD sans épanchement compressif), pneumothorax compressif (déviation trachéale, tympanisme, abolition du murmure vésiculaire), infarctus du ventricule droit (sus-décalage inférieur/droit, choc mais péricarde libre), insuffisance cardiaque droite décompensée, choc cardiogénique d'autre origine
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

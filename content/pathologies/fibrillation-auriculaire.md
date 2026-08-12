@@ -15,6 +15,7 @@ tags:
   - palpitations
   - AVC
 resume: "Trouble du rythme supraventriculaire le plus fréquent : activité auriculaire anarchique, rythme ventriculaire irrégulier, risque thrombo-embolique majeur (AVC)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -129,7 +130,7 @@ Auscultation cardiaque (rythme irrégulier, recherche d'un souffle valvulaire mi
 2. **ECG 12 dérivations** + scope, voie veineuse, oxygénothérapie si besoin.
 3. Si **mauvaise tolérance** → cardioversion électrique en urgence (choc synchronisé).
 4. Si bonne tolérance → ralentir la cadence (« rate control ») et anticoaguler selon le risque.
-5. Calculer le **CHA2DS2-VASc** (risque embolique) et le **HAS-BLED** (risque hémorragique).
+5. Calculer le **CHA₂DS₂-VA** selon l'ESC 2024 (ou l'outil validé localement) et évaluer les facteurs hémorragiques modifiables ; un score de saignement élevé ne justifie pas à lui seul de refuser l'anticoagulation.
 
 **Règles hygiéno-diététiques (RHD)**
 - Réduction / arrêt de l'alcool et des excitants, sevrage tabagique
@@ -144,7 +145,7 @@ Auscultation cardiaque (rythme irrégulier, recherche d'un souffle valvulaire mi
 
 **Traitement de 1re ligne**
 - **Contrôle de la fréquence (« rate control »)** : bêtabloquants (bisoprolol, métoprolol) ou inhibiteurs calciques bradycardisants (diltiazem, vérapamil) ; **digoxine** en 2e intention ou si insuffisance cardiaque / hypotension
-- **Anticoagulation** selon le **CHA2DS2-VASc** : indiquée si ≥ 1 (homme) / ≥ 2 (femme) → **AOD** (apixaban, rivaroxaban, dabigatran, edoxaban) en 1re intention, ou **AVK** (warfarine, INR cible 2–3) si FA valvulaire (valve mécanique, RM serré)
+- **Anticoagulation** selon le risque thromboembolique : avec le CHA₂DS₂-VA, elle est à considérer dès 1 point et recommandée dès ≥ 2. Les **AOD** sont préférés aux AVK, sauf valve mécanique ou sténose mitrale modérée à sévère.
 
 **Alternatives / 2e ligne**
 - **Contrôle du rythme (« rhythm control »)** : cardioversion **électrique** (choc synchronisé) ou **médicamenteuse** (amiodarone, flécaïnide si cœur sain) ; antiarythmiques au long cours (amiodarone, sotalol, flécaïnide) pour le maintien du rythme sinusal
@@ -166,4 +167,11 @@ Auscultation cardiaque (rythme irrégulier, recherche d'un souffle valvulaire mi
 ## Liens
 - Voir aussi : [[avc-ait]], [[insuffisance-cardiaque]], [[infarctus-myocarde-sca]]
 - Diagnostics différentiels : flutter auriculaire (rythme souvent régulier, ondes F « en dents de scie » à 300/min, conduction 2:1), tachycardie supraventriculaire / jonctionnelle (tachycardie régulière à QRS fins, début et fin brusques), extrasystoles ventriculaires (ESV) (QRS larges prématurés sur fond de rythme sinusal régulier), tachycardie sinusale (onde P présente, rythme régulier accéléré)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- [ESC — Essential messages on atrial fibrillation 2024](https://www.escardio.org/static-file/Escardio/Guidelines/Products/Essential%20Messages/2024%20EM/Essential%20Messages_2024_AFib.pdf)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

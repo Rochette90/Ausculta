@@ -15,6 +15,7 @@ tags:
   - scanner
   - chirurgie
 resume: "Arrêt du transit intestinal par obstacle mécanique ou paralysie : tétrade douleur–vomissements–arrêt des matières et gaz–météorisme, urgence diagnostique et souvent chirurgicale."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -169,4 +170,10 @@ Tympanisme diffus à la percussion ; auscultation des bruits hydro-aériques (au
 ## Liens
 - Voir aussi : [[pancreatite-aigue]], [[appendicite-aigue]]
 - Diagnostics différentiels : pancréatite aiguë (douleur épigastrique transfixiante, lipasémie élevée), péritonite (contracture généralisée, pneumopéritoine), colique néphrétique (douleur lombaire irradiant aux OGE, agitation, hématurie), ischémie mésentérique (douleur intense contrastant avec un abdomen souple, terrain vasculaire, lactates élevés)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

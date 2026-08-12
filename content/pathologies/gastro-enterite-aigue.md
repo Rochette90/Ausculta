@@ -13,6 +13,7 @@ tags:
   - virale
   - bactérienne
 resume: "Inflammation aiguë du tube digestif, le plus souvent virale : diarrhée ± vomissements spontanément résolutifs, dont la principale gravité est la déshydratation (nourrisson, sujet âgé)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -159,4 +160,10 @@ Auscultation abdominale (bruits hydro-aériques augmentés) ; prise des constant
 ## Liens
 - Voir aussi : [[diverticulite]], [[appendicite-aigue]]
 - Diagnostics différentiels : appendicite aiguë (douleur de la fosse iliaque droite, défense), diverticulite (douleur de la fosse iliaque gauche fébrile), colite inflammatoire (MICI — diarrhée chronique/sanglante), occlusion intestinale, causes non digestives (infection ORL/urinaire chez l'enfant), colite ischémique, cause médicamenteuse/toxique
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

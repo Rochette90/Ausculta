@@ -15,6 +15,7 @@ tags:
   - anticoagulation
   - TVP
 resume: "Obstruction aiguë du lit artériel pulmonaire par un thrombus (le plus souvent d'origine veineuse profonde) : urgence dont la gravité dépend du retentissement hémodynamique."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -170,4 +171,10 @@ Auscultation cardiaque (tachycardie, éclat de B2 pulmonaire) et pulmonaire (sou
 ## Liens
 - Voir aussi : [[pneumonie-aigue-communautaire]], [[infarctus-myocarde-sca]]
 - Diagnostics différentiels : infarctus du myocarde / SCA (douleur constrictive rétrosternale, sus-décalage ST, troponine, terrain coronarien), péricardite (douleur positionnelle calmée par l'antéflexion, sus-décalage ST diffus concave, frottement péricardique), pneumonie (fièvre, foyer auscultatoire et radiologique, syndrome infectieux), pneumothorax (douleur brutale, tympanisme, abolition du murmure vésiculaire, hyperclarté radiologique), dissection aortique (douleur transfixiante migratrice, asymétrie tensionnelle, élargissement médiastinal)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

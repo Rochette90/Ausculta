@@ -13,6 +13,7 @@ tags:
   - antibiothérapie
   - porte d'entrée
 resume: "Dermohypodermite bactérienne aiguë non nécrosante (streptocoque A +++) : placard inflammatoire bien limité du membre inférieur avec fièvre brutale et frissons."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -160,4 +161,10 @@ Prise des constantes (température, fréquence cardiaque, tension artérielle) �
 ## Liens
 - Voir aussi : [[thrombose-veineuse-profonde]], [[sepsis-choc-septique]]
 - Diagnostics différentiels : thrombose veineuse profonde (douleur du mollet, peu ou pas de fièvre, écho-doppler), fasciite nécrosante (douleur disproportionnée, nécrose, bulles, crépitation, sepsis — urgence chirurgicale), eczéma / dermite de contact (prurit prédominant, pas de fièvre, contexte de contact, limites moins nettes), lymphœdème (œdème chronique non inflammatoire, indolore, sans fièvre)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -14,6 +14,7 @@ tags:
   - time is brain
   - territoire vasculaire
 resume: "Déficit neurologique focal d'apparition brutale (ischémie 85 %, hémorragie 15 %) : urgence absolue, time is brain."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -164,4 +165,10 @@ Auscultation cardiaque (arythmie / FA) et des axes carotidiens (souffle = sténo
 ## Liens
 - Voir aussi : [[cephalees-primaires-secondaires]], [[epilepsie-syncope-pnes]]
 - Diagnostics différentiels : migraine avec aura (installation progressive > 5–20 min, récupération complète, ATCD migraineux), crise épileptique focale / paralysie de Todd (symptômes positifs, phase post-ictale, EEG), hypoglycémie sévère (glycémie capillaire < 3 mmol/L, récupération au resucrage), trouble fonctionnel / conversion (examen incohérent — signe de Hoover, imagerie normale)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

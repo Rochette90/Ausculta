@@ -14,6 +14,7 @@ tags:
   - Basedow
   - antithyroïdiens
 resume: "Excès d'hormones thyroïdiennes responsable d'un syndrome de thyrotoxicose : TSH effondrée, tachycardie, amaigrissement avec appétit conservé."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -160,4 +161,10 @@ Auscultation thyroïdienne (souffle systolique sur goitre vasculaire basedowien)
 ## Liens
 - Voir aussi : [[hypothyroidie]], [[fibrillation-auriculaire]]
 - Diagnostics différentiels : trouble anxieux / attaque de panique (TSH normale, pas de goitre ni de signes périphériques), phéochromocytome (HTA paroxystique, métanéphrines élevées, TSH normale), autres causes d'amaigrissement (néoplasie, diabète déséquilibré, malabsorption, dépression)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -14,6 +14,7 @@ tags:
   - ponction lombaire
   - anévrisme
 resume: "Céphalée brutale « en coup de tonnerre » par irruption de sang dans les espaces sous-arachnoïdiens (rupture d'anévrisme +++) : urgence neurochirurgicale."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,4 +163,10 @@ Recherche des signes méningés (Kernig, Brudzinski), évaluation du Glasgow, ex
 ## Liens
 - Voir aussi : [[cephalees-primaires-secondaires]], [[avc-ait]], [[meningite-encephalite]]
 - Diagnostics différentiels : migraine (installation progressive, ATCD migraineux, récupération complète), céphalée de tension (non brutale, pas de syndrome méningé), méningite (fièvre franche, syndrome méningé infectieux, LCR purulent), AVC (déficit focal au premier plan, hyperdensité parenchymateuse ou hypodensité)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

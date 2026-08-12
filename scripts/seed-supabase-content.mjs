@@ -12,15 +12,23 @@ const readJson = async (relativePath) => JSON.parse(await readFile(path.resolve(
 const { data: specialties, error: specialtiesError } = await supabase.from("specialties").select("id, name");
 if (specialtiesError) throw specialtiesError;
 const specialtyIds = new Map(specialties.map((item) => [item.name, item.id]));
+const { data: existingPathologies, error: existingPathologiesError } = await supabase
+  .from("pathologies")
+  .select("slug, content");
+if (existingPathologiesError) throw existingPathologiesError;
+const existingContentBySlug = new Map(existingPathologies.map((item) => [item.slug, item.content]));
 
 const pathologyCatalog = await readJson("content/pathologies/index.json");
 for (const item of pathologyCatalog) {
   const specialtyId = specialtyIds.get(item.specialty);
   if (!specialtyId) throw new Error(`Unknown specialty: ${item.specialty}`);
-  let content = null;
+  let editorialContent = null;
   if (item.status === "ready") {
-    try { content = await readFile(path.resolve("content/pathologies", `${item.slug}.md`), "utf8"); } catch { content = null; }
+    try { editorialContent = await readFile(path.resolve("content/pathologies", `${item.slug}.md`), "utf8"); } catch { editorialContent = null; }
   }
+  // Une réinitialisation du catalogue ne doit jamais écraser une correction
+  // réalisée ensuite par un administrateur dans l'éditeur en production.
+  const content = existingContentBySlug.get(item.slug) ?? editorialContent;
   const { error } = await supabase.from("pathologies").upsert({
     specialty_id: specialtyId,
     slug: item.slug,

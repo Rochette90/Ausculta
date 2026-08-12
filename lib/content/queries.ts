@@ -1,5 +1,7 @@
 import "server-only";
 
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { cache } from "react";
 import type { Pathology, Specialty } from "../../types/medtrain";
 import { createClient } from "../supabase/server";
@@ -19,6 +21,15 @@ export type PathologyDetails = Pathology & {
   criticality: "standard" | "important" | "urgent";
   specialty: Pick<Specialty, "name" | "slug" | "icon" | "color"> | null;
 };
+
+async function readEditorialContent(slug: string) {
+  if (!/^[a-z0-9-]+$/.test(slug)) return null;
+  try {
+    return await readFile(path.join(process.cwd(), "content", "pathologies", `${slug}.md`), "utf8");
+  } catch {
+    return null;
+  }
+}
 
 export const getSpecialtyCatalog = cache(async (): Promise<SpecialtyCatalogItem[]> => {
   const supabase = await createClient();
@@ -47,19 +58,21 @@ export const getSpecialtyCatalog = cache(async (): Promise<SpecialtyCatalogItem[
 
 export const getPathologyBySlug = cache(async (slug: string): Promise<PathologyDetails | null> => {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const [{ data, error }, editorialContent] = await Promise.all([supabase
     .from("pathologies")
     .select(`
       id, specialty_id, title, slug, definition, pathophysiology, symptoms,
       risk_factors, complementary_exams, differential_diagnosis, treatments,
       complications, monitoring, difficulty, is_published, created_at, updated_at,
-      summary, content, criticality,
+      summary, content, criticality, review_status, reviewed_by, reviewer_name, reviewed_at,
       specialty:specialties(name, slug, icon, color)
     `)
     .eq("slug", slug)
     .eq("is_published", true)
-    .maybeSingle();
+    .maybeSingle(), readEditorialContent(slug)]);
 
   if (error || !data) return null;
-  return data as unknown as PathologyDetails;
+  // Les modifications admin vivent dans Supabase et doivent être immédiatement
+  // visibles. Le fichier embarqué reste un repli pour une base non initialisée.
+  return { ...(data as unknown as PathologyDetails), content: data.content ?? editorialContent };
 });

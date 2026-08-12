@@ -4,8 +4,8 @@ title: "Fibrose pulmonaire et pneumopathies restrictives"
 specialty: Pneumologie
 criticality: important
 resume: "Atteinte interstitielle fibrosante responsable d’une dyspnée progressive, de crépitants velcro et d’un trouble ventilatoire restrictif avec DLCO abaissée."
+reviewed_at: 2026-08-12
 ---
-
 
 > [!info] Synonymes
 > Syndrome restrictif, pneumopathies interstitielles diffuses (PID), fibroses pulmonaires, maladies pulmonaires restrictives
@@ -22,8 +22,8 @@ resume: "Atteinte interstitielle fibrosante responsable d’une dyspnée progres
 ## Épidémiologie
 | Paramètre | Valeur |
 |---|---|
-| Prévalence / Incidence | Très variable selon l'étiologie ; PID = groupe hétérogène *(chiffres à vérifier)* |
-| Sex-ratio (H/F) | Variable selon la cause (ex. FPI plutôt masculine) *(à vérifier)* |
+| Prévalence / Incidence | Variable selon l'étiologie ; les PID constituent un groupe hétérogène et globalement rare |
+| Sex-ratio (H/F) | Variable selon la cause ; la FPI prédomine chez l'homme |
 | Âge de survenue | Selon l'étiologie ; FPI surtout après 60 ans |
 | Facteurs de risque | Tabac, expositions professionnelles/environnementales, connectivites, certains médicaments, radiothérapie, RGO |
 
@@ -95,7 +95,7 @@ Recherche d'hippocratisme digital, de cyanose, de signes cutanés de connectivit
 ---
 ## Prise en charge
 > [!warning] Critères d'hospitalisation
-> Exacerbation aiguë (notamment de FPI), insuffisance respiratoire aiguë, hypoxémie sévère, bilan invasif — *critères à confirmer sur référentiel*.
+> Une aggravation respiratoire aiguë, une hypoxémie nouvelle ou sévère, des signes de détresse ou une suspicion d'exacerbation de FPI imposent une évaluation hospitalière et l'exclusion d'une infection, d'une embolie pulmonaire, d'un pneumothorax et d'une cause cardiaque.
 
 **Mesures urgentes**
 - Oxygénothérapie en cas d'hypoxémie sévère / exacerbation.
@@ -104,7 +104,7 @@ Recherche d'hippocratisme digital, de cyanose, de signes cutanés de connectivit
 **Règles hygiéno-diététiques (RHD)**
 - Arrêt du tabac, éviction des expositions causales (allergènes, toxiques professionnels).
 - **Réhabilitation respiratoire**, activité physique adaptée.
-- Vaccinations (antigrippale, antipneumococcique) *(modalités à vérifier)*.
+- Vaccinations respiratoires selon les recommandations suisses en vigueur, notamment grippe, COVID-19 et pneumocoque selon l'âge et le risque.
 
 **Éducation thérapeutique / suivi**
 - Suivi régulier (EFR, DLCO, TDM, test de marche) pour évaluer l'évolution.
@@ -112,20 +112,20 @@ Recherche d'hippocratisme digital, de cyanose, de signes cutanés de connectivit
 
 ---
 ## Traitement
-**Traitement de 1re ligne** *(DCI, posologie, durée)*
-- **Traitement étiologique selon la cause** (ex. immunosuppression dans les PID des connectivites/inflammatoires ; éviction antigénique dans les pneumopathies d'hypersensibilité) — *molécules, posologie et durée à confirmer sur Firstline / centre expert*.
-- **FPI** : traitements antifibrosants ralentissant le déclin fonctionnel *(molécules et modalités à vérifier)*.
-- Oxygénothérapie de longue durée si hypoxémie chronique *(critères à vérifier)*.
+**Traitement de 1re ligne**
+- **Traitement étiologique** après discussion multidisciplinaire : éviction antigénique ou toxique, traitement d'une connectivite, ou immunomodulation dans certaines PID inflammatoires.
+- **FPI :** pirfénidone ou nintédanib peuvent ralentir le déclin fonctionnel ; ils ne guérissent pas la fibrose et nécessitent une surveillance de la tolérance et de la fonction hépatique.
+- Oxygénothérapie si hypoxémie répondant aux critères, réhabilitation respiratoire et soins de support.
 
 **Alternatives / 2e ligne**
-- Adaptation/escalade du traitement immunomodulateur selon la réponse et la tolérance *(à vérifier — centre expert)*.
+- Adaptation du traitement immunomodulateur selon l'étiologie, la progression et la tolérance en centre expert.
 
 **Traitement chirurgical** *(indications, type d'intervention)*
 - **Transplantation pulmonaire** : option dans les formes évoluées éligibles (notamment FPI).
 - Biopsie pulmonaire (chirurgicale/cryobiopsie) à visée diagnostique dans certains cas.
 
 > [!danger] Contre-indications / interactions
-> Surveillance des effets indésirables des immunosuppresseurs et des antifibrosants (toxicité, interactions, fonction hépatique) — *détails à vérifier*. La corticothérapie/immunosuppression n'est pas indiquée dans toutes les PID (potentiellement délétère dans la FPI) : adapter à l'étiologie.
+> Surveiller toxicités, interactions et fonction hépatique sous antifibrosant ou immunomodulateur. Une corticothérapie ou immunosuppression chronique **n'est pas un traitement de la FPI** et peut être délétère ; le traitement dépend du diagnostic étiologique précis.
 
 **Complications / pronostic**
 - Insuffisance respiratoire chronique, hypertension pulmonaire (groupe 3), exacerbations aiguës.
@@ -133,9 +133,14 @@ Recherche d'hippocratisme digital, de cyanose, de signes cutanés de connectivit
 
 ---
 ## Liens
-- Voir aussi : [[Hypertension-pulmonaire]], [[BPCO]], [[SDRA]], [[Epanchement-pleural]]
-- Diagnostics différentiels : [[BPCO]], [[Hypertension-pulmonaire]], [[Cancer-pulmonaire]], [[Pneumonie-infectieuse]]
-- Source / référence : Recommandations ERS/ATS (PID/FPI), UpToDate ; doses à confirmer sur Firstline / centre expert
-
+- Voir aussi : hypertension pulmonaire, [[bpco]], [[sdra]], [[epanchement-pleural]]
+- Diagnostics différentiels : [[bpco]], hypertension pulmonaire, [[cancer-bronchique]], [[pneumonie-aigue-communautaire]]
 - Source du vault : `Nouvelles fiches/À relire/Pneumopathies-restrictives.md`
+---
+## Références médicales
 
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- [ERS — Clinical practice guidelines](https://www.ersnet.org/science-and-research/development-programme/ers-clinical-practice-guidelines-statements-and-technical-standards/)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

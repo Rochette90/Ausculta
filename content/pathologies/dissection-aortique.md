@@ -14,6 +14,7 @@ tags:
   - angioscanner
   - HTA
 resume: "Déchirure intimale créant un faux chenal : douleur thoracique brutale transfixiante migratrice, urgence vitale (type A = chirurgie immédiate)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -159,4 +160,10 @@ Auscultation cardiaque (souffle diastolique d'insuffisance aortique, assourdisse
 ## Liens
 - Voir aussi : [[infarctus-myocarde-sca]], [[pericardite-aigue]], [[embolie-pulmonaire]]
 - Diagnostics différentiels : infarctus du myocarde / SCA (douleur constrictive non migratrice, sus-décalage ST systématisé, troponine, PAS d'asymétrie TA — attention au piège thrombolyse), embolie pulmonaire (dyspnée + douleur pleurale, contexte thrombo-embolique, D-dimères, angioscanner pulmonaire), péricardite aiguë (douleur positionnelle calmée penché en avant, frottement péricardique, sus-décalage ST diffus concave, contexte viral)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

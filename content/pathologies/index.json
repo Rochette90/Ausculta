@@ -238,27 +238,39 @@
     "title": "Diabète insipide",
     "specialty": "Endocrinologie",
     "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "summary": "Polyurie hypotonique par déficit de vasopressine ou résistance rénale à son action : confirmer la polyurie et prévenir la déshydratation hypernatrémique.",
+    "keyPoints": [
+      "Quantifier la polyurie et confirmer des urines hypotoniques",
+      "Distinguer déficit en AVP, résistance à l’AVP et polydipsie primaire",
+      "Desmopressine uniquement avec éducation et surveillance de la natrémie"
+    ],
+    "status": "ready"
   },
   {
     "slug": "hyperaldosteronisme-primaire",
     "title": "Hyperaldostéronisme primaire",
     "specialty": "Endocrinologie",
     "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "summary": "Cause fréquente d’HTA secondaire par sécrétion autonome d’aldostérone : rénine supprimée et traitement ciblé médical ou chirurgical.",
+    "keyPoints": [
+      "Une kaliémie normale n’exclut pas le diagnostic",
+      "Dépistage par aldostérone, rénine et rapport aldostérone/rénine",
+      "Cathétérisme veineux surrénalien avant chirurgie dans la plupart des cas"
+    ],
+    "status": "ready"
   },
   {
     "slug": "hyperparathyroidie",
     "title": "Hyperparathyroïdie",
     "specialty": "Endocrinologie",
     "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "summary": "Excès de PTH responsable d’hypercalcémie, atteinte osseuse et lithiases : distinguer formes primaire, secondaire et tertiaire.",
+    "keyPoints": [
+      "PTH élevée ou inadaptée malgré l’hypercalcémie dans la forme primaire",
+      "Évaluer rein, calciurie et densité osseuse",
+      "L’imagerie localise avant chirurgie mais ne pose pas le diagnostic"
+    ],
+    "status": "ready"
   },
   {
     "slug": "hyperthyroidie",
@@ -303,10 +315,14 @@
     "slug": "hypoparathyroidie",
     "title": "Hypoparathyroïdie",
     "specialty": "Endocrinologie",
-    "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "criticality": "urgent",
+    "summary": "Déficit de PTH causant hypocalcémie et hyperphosphatémie : rechercher tétanie, QT long et convulsions, puis traiter l’urgence par calcium IV.",
+    "keyPoints": [
+      "Cause la plus fréquente : chirurgie cervicale",
+      "Calcium bas, phosphate haut et PTH basse ou inadaptée",
+      "Calcium IV sous ECG si symptômes sévères"
+    ],
+    "status": "ready"
   },
   {
     "slug": "hypothyroidie",
@@ -338,28 +354,40 @@
     "slug": "pheochromocytome",
     "title": "Phéochromocytome",
     "specialty": "Endocrinologie",
-    "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "criticality": "urgent",
+    "summary": "Tumeur chromaffine sécrétant des catécholamines : confirmer par métanéphrines avant l’imagerie et bloquer les alpha-récepteurs avant chirurgie.",
+    "keyPoints": [
+      "Céphalées, sueurs, palpitations et HTA paroxystique",
+      "Métanéphrines plasmatiques libres ou urinaires fractionnées",
+      "Jamais de bêtabloquant isolé avant alpha-blocage"
+    ],
+    "status": "ready"
   },
   {
     "slug": "syndrome-cushing",
     "title": "Syndrome de Cushing",
     "specialty": "Endocrinologie",
     "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "summary": "Hypercortisolisme chronique souvent iatrogène : confirmer par un test validé, puis déterminer si la sécrétion est ACTH-dépendante.",
+    "keyPoints": [
+      "Rechercher toute exposition aux glucocorticoïdes",
+      "Vergetures pourpres, ecchymoses et faiblesse proximale sont discriminantes",
+      "Confirmer biologiquement avant l’imagerie étiologique"
+    ],
+    "status": "ready"
   },
   {
     "slug": "siadh",
     "title": "Syndrome de sécrétion inappropriée d’ADH",
     "specialty": "Endocrinologie",
-    "criticality": "important",
-    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
-    "keyPoints": [],
-    "status": "planned"
+    "criticality": "urgent",
+    "summary": "Hyponatrémie hypotonique euvolémique avec urines inadaptées concentrées : diagnostic d’exclusion et correction contrôlée selon les symptômes.",
+    "keyPoints": [
+      "Exclure insuffisance surrénale, hypothyroïdie, rein et diurétiques",
+      "NaCl 3 % en bolus si symptômes neurologiques sévères",
+      "Prévenir la surcorrection et la démyélinisation osmotique"
+    ],
+    "status": "ready"
   },
   {
     "slug": "appendicite-aigue",

@@ -14,6 +14,7 @@ tags:
   - Horton
   - migraine
 resume: "Distinguer les céphalées primaires bénignes (migraine, tension) des céphalées secondaires dangereuses (HSA, méningite, Horton) grâce aux red flags (SNNOOP10)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -170,4 +171,10 @@ Recherche d'une raideur nucale, d'un syndrome méningé ; examen neurologique co
   - HSA vs migraine sévère : HSA = brutale < 60 s, « pire de ma vie », raideur tardive ; migraine = progressive, antécédents, photophobie précoce
   - Méningite vs migraine : méningite = fièvre + raideur nucale vraie ; migraine = ni fièvre ni vraie raideur
   - Horton vs migraine temporale : Horton = > 50 ans, claudication de la mâchoire, VS élevée ; migraine = < 50 ans, pulsatile, nausées-vomissements
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

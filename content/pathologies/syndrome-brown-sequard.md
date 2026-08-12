@@ -10,6 +10,7 @@ tags:
   - pattern croisé
   - neurochirurgical
 resume: "Hémisection médullaire : déficit moteur et proprioceptif ipsilatéraux, perte thermo-algésique controlatérale (pattern croisé)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -148,4 +149,10 @@ Recherche d'un niveau sensitif précis (dermatomes), évaluation des ROT et du s
 ## Liens
 - Voir aussi : [[syndromes-medullaires]]
 - Diagnostics différentiels : AVC hémisphérique (pas de pattern croisé), section médullaire transverse complète, syringomyélie (dissociation suspendue), polyradiculopathie
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

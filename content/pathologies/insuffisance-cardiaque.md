@@ -16,6 +16,7 @@ tags:
   - congestion
   - œdème
 resume: "Incapacité du cœur à assurer un débit adapté aux besoins de l'organisme : dyspnée et congestion, à classer selon la FEVG (HFrEF/HFmrEF/HFpEF)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -179,4 +180,10 @@ Auscultation pulmonaire (crépitants bilatéraux des bases, parfois sibilants de
 ## Liens
 - Voir aussi : [[infarctus-myocarde-sca]], [[fibrillation-auriculaire]]
 - Diagnostics différentiels : BPCO / exacerbation (dyspnée chronique, terrain tabagique, distension thoracique, EFR obstructives, BNP normal), embolie pulmonaire (dyspnée brutale, douleur thoracique, facteurs de risque thrombo-emboliques, D-dimères, angio-TDM), pneumonie (fièvre, foyer auscultatoire et radiologique, syndrome inflammatoire)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

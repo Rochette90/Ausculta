@@ -13,6 +13,7 @@ tags:
   - déshydratation
   - urgence endocrinienne
 resume: "Défaillance aiguë de la sécrétion de cortisol (± aldostérone) : collapsus, déshydratation, hyponatrémie-hyperkaliémie et hypoglycémie mettant en jeu le pronostic vital — l'hydrocortisone IV ne doit jamais être différée."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -166,4 +167,10 @@ Prise des constantes (TA couché/debout, fréquence cardiaque, température, gly
 ## Liens
 - Voir aussi : [[sepsis-choc-septique]], [[acidocetose-diabetique]], [[hypothyroidie]]
 - Diagnostics différentiels : sepsis / choc septique (foyer infectieux, mais penser à l'insuffisance surrénale associée en cas de choc réfractaire), choc hypovolémique d'autre cause (contexte hémorragique, pas d'hyperkaliémie), acidocétose diabétique (hyperglycémie, cétose, contexte diabétique), abdomen chirurgical aigu (tableau pseudo-péritonéal trompeur), hyponatrémie d'autre origine (SIADH : euvolémie, pas d'hyperkaliémie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

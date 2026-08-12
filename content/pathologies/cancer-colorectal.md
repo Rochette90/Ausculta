@@ -13,6 +13,7 @@ tags:
   - séquence adénome-cancer
   - anémie ferriprive
 resume: "Adénocarcinome développé le plus souvent à partir d'un adénome (séquence adénome-cancer) : cancer fréquent et curable au stade précoce, justifiant un dépistage organisé par test immunologique fécal (FIT)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,6 +163,12 @@ Recherche d'une matité (ascite, masse), d'un tympanisme et de signes d'occlusio
 
 ---
 ## Liens
-- Voir aussi : [[anemie-ferriprive]], [[hemorragie-digestive]]
+- Voir aussi : anémie ferriprive, [[hemorragie-digestive]]
 - Diagnostics différentiels : maladie diverticulaire / diverticulite (douleur fosse iliaque gauche, fièvre), MICI (Crohn, rectocolite hémorragique : diarrhée chronique, syndrome inflammatoire), hémorroïdes / pathologie proctologique (rectorragies mais exploration indispensable), syndrome de l'intestin irritable (pas de signe d'alarme, examens normaux), tumeurs bénignes (polypes, adénomes)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -13,6 +13,7 @@ tags:
   - artériographie bronchique
   - fibroscopie
 resume: "Émission de sang rouge aéré par la bouche lors d'un effort de toux, provenant des voies aériennes sous-glottiques : urgence potentielle imposant une démarche étiologique et l'évaluation de l'abondance."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -163,4 +164,10 @@ Auscultation pulmonaire (râles localisés orientant le côté du saignement, fo
 ## Liens
 - Voir aussi : [[cancer-bronchique]], [[tuberculose]], [[embolie-pulmonaire]]
 - Diagnostics différentiels : hématémèse (sang digéré, noirâtre, effort de vomissement, contexte digestif), saignement ORL dégluti ou épistaxis postérieure, hémorragie alvéolaire diffuse (contexte de vascularite, anémie), fausse hémoptysie (crachats hémoptoïques d'origine bucco-dentaire ou gingivale)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

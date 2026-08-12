@@ -4,6 +4,7 @@ title: "Infections ostéo-articulaires"
 specialty: Infectiologie
 criticality: urgent
 resume: "Arthrite septique ou ostéomyélite, le plus souvent à Staphylococcus aureus : prélèvements profonds, antibiothérapie rapide et contrôle chirurgical du foyer."
+reviewed_at: 2026-08-12
 ---
 
 > [!warning] Articulation aiguë
@@ -58,3 +59,10 @@ Le traitement empirique couvre au minimum *S. aureus* et est adapté au contexte
 
 - Voir aussi : [[endocardite-infectieuse]], [[sepsis-choc-septique]], [[antibiotherapie-principes]]
 - Sources du vault : `Infection/Staphylocoques.md`, `Nouvelles fiches/À relire/Staphylocoques-fiche.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

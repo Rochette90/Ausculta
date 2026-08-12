@@ -15,6 +15,7 @@ tags:
   - cholécystectomie
   - fièvre
 resume: "Calculs vésiculaires fréquents : de la colique hépatique simple (< 6 h, sans fièvre) à la cholécystite aiguë (obstruction du collet, douleur prolongée + fièvre + Murphy)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -160,6 +161,12 @@ Auscultation abdominale (transit), prise de température (fièvre = cholécystit
 
 ---
 ## Liens
-- Voir aussi : [[pancreatite-aigue]], [[colique-nephretique]]
+- Voir aussi : [[pancreatite-aigue]], colique néphrétique
 - Diagnostics différentiels : ulcère gastro-duodénal (douleur épigastrique rythmée par les repas, endoscopie), pancréatite aiguë (douleur transfixiante, lipasémie > 3 N), colique néphrétique (douleur lombaire à irradiation descendante, agitation, hématurie), hépatite (cytolyse importante, contexte viral/toxique), IDM inférieur (douleur épigastrique, ECG et troponine — ne pas méconnaître)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

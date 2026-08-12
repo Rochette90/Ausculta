@@ -14,6 +14,7 @@ tags:
   - Child-Pugh
   - varices
 resume: "Fibrose hépatique diffuse irréversible avec nodules de régénération, associant hypertension portale et insuffisance hépatocellulaire."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,6 +163,12 @@ Matité déclive des flancs (ascite) ; recherche de l'astérixis bras tendus, ma
 
 ---
 ## Liens
-- Voir aussi : [[hemorragie-digestive]], [[insuffisance-renale-aigue]]
+- Voir aussi : [[hemorragie-digestive]], insuffisance rénale aiguë
 - Diagnostics différentiels : autres hépatopathies chroniques sans cirrhose (hépatite chronique, stéatose simple), autres causes d'ascite (carcinose péritonéale, insuffisance cardiaque droite, syndrome néphrotique, tuberculose péritonéale)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

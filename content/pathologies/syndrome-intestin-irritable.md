@@ -13,6 +13,7 @@ tags:
   - troubles du transit
   - signes d'alarme
 resume: "Trouble fonctionnel intestinal chronique associant douleur abdominale et troubles du transit, sans lésion organique : diagnostic positif sur les critères de Rome IV après élimination des signes d'alarme."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,4 +163,10 @@ Tympanisme lié aux ballonnements, bruits hydro-aériques normaux. **Toucher rec
 ## Liens
 - Voir aussi : [[maladie-de-crohn]], [[rectocolite-hemorragique]]
 - Diagnostics différentiels : maladie cœliaque (sérologie, atrophie villositaire), MICI (maladie de Crohn, rectocolite hémorragique : calprotectine élevée, syndrome inflammatoire, signes d'alarme), cancer colorectal (âge, anémie, rectorragies, coloscopie), intolérance au lactose, colite microscopique (diarrhée aqueuse du sujet âgé), hyperthyroïdie (diarrhée, amaigrissement)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

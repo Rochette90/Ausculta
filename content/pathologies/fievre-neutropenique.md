@@ -4,6 +4,7 @@ title: "Fièvre neutropénique"
 specialty: Infectiologie
 criticality: urgent
 resume: "Fièvre chez un patient neutropénique : urgence infectieuse parfois sans foyer clinique, nécessitant prélèvements rapides et antibiothérapie antipseudomonale empirique."
+reviewed_at: 2026-08-12
 ---
 
 > [!danger] Urgence
@@ -57,3 +58,10 @@ Adapter dès que possible aux cultures, au foyer et à l’évolution. Une fièv
 
 - Voir aussi : [[sepsis-choc-septique]], [[antibiotherapie-principes]]
 - Sources du vault : `Infection/Fièvre et états fébriles.md`, `Pédiatrie/Neutropénie, hémostase et thrombocytopénie.md`, `Nouvelles fiches/À relire/Mycoses-fiche.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

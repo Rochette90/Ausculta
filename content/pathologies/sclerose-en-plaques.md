@@ -14,6 +14,7 @@ tags:
   - IRM
   - névrite optique
 resume: "Maladie inflammatoire démyélinisante chronique du SNC de l'adulte jeune : poussées neurologiques disséminées dans le temps et l'espace, révélées souvent par une névrite optique."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -164,4 +165,10 @@ Examen des réflexes ostéo-tendineux (vifs, diffusés, polycinétiques), recher
 ## Liens
 - Voir aussi : [[epilepsie-syncope-pnes]], [[syndromes-medullaires]], [[syndrome-brown-sequard]]
 - Diagnostics différentiels : NMOSD / neuromyélite optique (anticorps anti-AQP4, névrite optique bilatérale sévère, myélite étendue), maladie associée aux anti-MOG, ADEM (encéphalomyélite aiguë disséminée post-infectieuse, monophasique), neuro-Behçet, neurosarcoïdose, lupus / vascularites, carence en vitamine B12, myélopathie cervicarthrosique, maladie de Lyme neurologique
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

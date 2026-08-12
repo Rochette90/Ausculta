@@ -13,6 +13,7 @@ tags:
   - transsudat
   - exsudat
 resume: "Accumulation anormale de liquide dans la cavité pleurale : la ponction et les critères de Light distinguent transsudat (cause générale) et exsudat (atteinte pleurale locale)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,4 +163,10 @@ Matité franche, déclive, « de bois », à la percussion ; à l'auscultation, 
 ## Liens
 - Voir aussi : [[pneumonie-aigue-communautaire]], [[insuffisance-cardiaque]], [[embolie-pulmonaire]]
 - Diagnostics différentiels : pneumothorax (tympanisme, hypersonorité au lieu de matité, hyperclarté radiologique), atélectasie / condensation pulmonaire (matité mais vibrations vocales augmentées, souffle tubaire), pachypleurite (épaississement pleural fixe sans niveau liquide), surélévation de coupole diaphragmatique
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

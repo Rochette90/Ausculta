@@ -16,6 +16,7 @@ tags:
   - remplissage
   - défaillance d'organe
 resume: "Dysfonction d'organe menaçant le pronostic vital due à une réponse inappropriée de l'hôte à une infection (SOFA ≥ 2) : urgence, reconnaissance et antibiothérapie précoces."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -158,6 +159,12 @@ Auscultation pulmonaire (foyer de crépitants), cardiaque ; examen ciblé de la 
 
 ---
 ## Liens
-- Voir aussi : [[pneumonie-aigue-communautaire]], [[pyelonephrite-aigue]], [[choc-anaphylactique]]
+- Voir aussi : [[pneumonie-aigue-communautaire]], [[pyelonephrite-aigue]], choc anaphylactique
 - Diagnostics différentiels : autres états de choc — choc cardiogénique (signes d'insuffisance cardiaque, débit bas, OAP, élévation troponine/BNP), choc hypovolémique (hémorragie ou pertes liquidiennes, extrémités froides, réponse au remplissage), choc anaphylactique (contexte allergique, urticaire/angio-œdème, bronchospasme, réponse à l'adrénaline)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service des urgences](https://www.chuv.ch/fr/urgences/urg-home)
+- [Revue Médicale Suisse — Médecine d’urgence](https://www.revmed.ch/revue-medicale-suisse/2018/revue-medicale-suisse-614/medecine-d-urgence-pour-qui-pourquoi)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

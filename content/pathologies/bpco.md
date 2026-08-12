@@ -14,6 +14,7 @@ tags:
   - EFR
   - exacerbation
 resume: "Obstruction bronchique chronique non/peu réversible liée au tabac : dyspnée d'effort progressive, diagnostic confirmé par l'EFR (VEMS/CVF < 0,70)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -163,4 +164,10 @@ Percussion : hypersonorité (distension). Auscultation : diminution du murmure v
 ## Liens
 - Voir aussi : [[asthme]], [[pneumonie-aigue-communautaire]]
 - Diagnostics différentiels : asthme (TVO réversible, début souvent jeune, variabilité, terrain atopique), insuffisance cardiaque (dyspnée, orthopnée, crépitants, BNP élevé, cardiomégalie), embolie pulmonaire (dyspnée brutale, douleur, contexte thrombo-embolique, D-dimères / angioscanner), cancer bronchique (amaigrissement, hémoptysie, image radiologique, hippocratisme digital)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

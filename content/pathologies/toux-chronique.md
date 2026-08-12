@@ -4,6 +4,7 @@ title: "Toux chronique"
 specialty: Pneumologie
 criticality: important
 resume: "Toux durant plus de huit semaines chez l’adulte : rechercher drapeaux rouges, médicaments et tabac, puis explorer asthme, voies aériennes supérieures et reflux."
+reviewed_at: 2026-08-12
 ---
 
 > [!warning] Drapeaux rouges
@@ -54,3 +55,10 @@ Asthme ou inflammation éosinophilique : traitement anti-inflammatoire inhalé a
 
 - Voir aussi : [[asthme]], [[bpco]], [[reflux-gastro-oesophagien]], [[cancer-bronchique]], [[tuberculose]]
 - Sources du vault : `Pneumologie/Dyspnée.md`, `Pneumologie/Asthme.md`, `Pneumologie/BPCO (Bronchopneumopathie Chronique Obstructive).md`, `Pneumologie/Bronchiectasies.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

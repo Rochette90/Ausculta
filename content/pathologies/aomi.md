@@ -14,6 +14,7 @@ tags:
   - tabac
   - ischémie
 resume: "Athérosclérose des artères des membres inférieurs : claudication intermittente, IPS < 0,90, marqueur de risque cardiovasculaire global."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -161,4 +162,10 @@ Auscultation des trajets artériels (souffle fémoral, iliaque, aortique abdomin
 ## Liens
 - Voir aussi : [[infarctus-myocarde-sca]], [[diabete-type-2]], [[thrombose-veineuse-profonde]]
 - Diagnostics différentiels : claudication veineuse (lourdeur à la marche, œdème, ATCD de TVP, pouls présents), canal lombaire étroit (claudication neurogène, soulagée par la flexion antérieure, pouls présents), sciatique / radiculalgie (douleur radiculaire, trajet nerveux, signes neurologiques), arthrose de hanche/genou (douleur mécanique articulaire au démarrage)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -18,6 +18,7 @@ tags:
   - angioplastie
   - ECG
 resume: "Douleur thoracique constrictive prolongée par occlusion coronaire aiguë : urgence absolue, le délai de reperfusion conditionne le pronostic — time is muscle."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -130,12 +131,12 @@ Auscultation cardiaque (galop, souffle, frottement péricardique) et pulmonaire 
 ## Prise en charge
 
 > [!warning] Critères d'hospitalisation
-> Toute douleur thoracique aiguë prolongée = SCA jusqu'à preuve du contraire → appel du **15 / SAMU**, ECG en moins de 10 minutes et hospitalisation en USIC. Le **SCA ST+ est une urgence absolue de reperfusion** : la stratégie est décidée sur l'ECG, sans attendre la troponine. L'angor instable et le NSTEMI imposent également l'hospitalisation et la surveillance scopée. Méfiance devant une présentation atypique (femme, diabétique, sujet âgé) : une dyspnée ou une gêne épigastrique isolée peut être un équivalent ischémique.
+> Toute douleur thoracique aiguë prolongée = SCA jusqu'à preuve du contraire → appel du **144 en Suisse**, ECG en moins de 10 minutes et hospitalisation en unité monitorée. Le **SCA ST+ est une urgence absolue de reperfusion** : la stratégie est décidée sur l'ECG, sans attendre la troponine. Méfiance devant une présentation atypique (femme, personne diabétique ou âgée) : une dyspnée ou une gêne épigastrique isolée peut être un équivalent ischémique.
 
 **Mesures urgentes**
-1. Appel du **15**, mise en condition : patient au repos, scopé, voie veineuse, oxygène si SpO₂ < 90 %.
+1. Appel du **144**, mise en condition : patient au repos, scopé, voie veineuse, oxygène uniquement si hypoxémie (généralement SpO₂ < 90 %) ou détresse respiratoire.
 2. **ECG 18 dérivations en < 10 min** : décision STEMI vs NSTEMI.
-3. Traitement antithrombotique immédiat (**MONA-BASH** : Morphine, Oxygène si besoin, Nitré, Aspirine + 2e antiagrégant, Bêtabloquant, Anticoagulant, Statine, Héparine/IEC).
+3. **Aspirine**, second antiagrégant et anticoagulation selon la stratégie invasive et le risque hémorragique ; nitré si douleur/hypertension sans contre-indication, morphine titrée seulement si douleur sévère persistante. Oxygène et bêtabloquant ne sont pas systématiques.
 4. **SCA ST+ : reperfusion en urgence** — angioplastie primaire si délai prévisible < 120 min, sinon fibrinolyse puis transfert (stratégie pharmaco-invasive).
 5. **SCA ST− : stratification du risque (GRACE)** et coronarographie dans les 24 h (haut risque) à 72 h.
 
@@ -144,7 +145,7 @@ Auscultation cardiaque (galop, souffle, frottement péricardique) et pulmonaire 
 - Activité physique adaptée (réadaptation cardiovasculaire), contrôle du poids, équilibre tensionnel, glycémique et lipidique
 
 **Éducation thérapeutique / suivi**
-- Reconnaissance des signes d'alerte (douleur thoracique → appel immédiat du 15) et usage de la trinitrine
+- Reconnaissance des signes d'alerte (douleur thoracique → appel immédiat du 144) et usage de la trinitrine
 - Observance stricte de la double antiagrégation et du traitement de prévention secondaire ; suivi cardiologique régulier
 
 ---
@@ -176,4 +177,11 @@ Auscultation cardiaque (galop, souffle, frottement péricardique) et pulmonaire 
 ## Liens
 - Voir aussi : [[insuffisance-cardiaque]], [[fibrillation-auriculaire]]
 - Diagnostics différentiels : péricardite aiguë (douleur positionnelle calmée par l'antéflexion, sus-décalage ST diffus concave sans miroir, frottement), dissection aortique (douleur migratrice transfixiante, asymétrie tensionnelle/des pouls, élargissement du médiastin), embolie pulmonaire (dyspnée, douleur pleurale, contexte thrombo-embolique, D-dimères/angioscanner), reflux gastro-œsophagien / spasme œsophagien (douleur rythmée par les repas, brûlure rétrosternale, ECG et troponine normaux)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- [ESC — Acute Coronary Syndromes Guidelines 2023](https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/acute-coronary-syndromes/)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

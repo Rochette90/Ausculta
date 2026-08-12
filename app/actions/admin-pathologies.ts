@@ -23,6 +23,13 @@ export type AdminPathologyInput = {
   isPublished: boolean;
 };
 
+export type AdminPathologyUpdateInput = Pick<
+  AdminPathologyInput,
+  "id" | "slug" | "title" | "difficulty" | "isPublished"
+> & {
+  content: string;
+};
+
 export type CreateAdminPathologyInput = Omit<AdminPathologyInput, "id"> & {
   specialtyId: string;
 };
@@ -31,6 +38,8 @@ export type AdminPathologyActionResult = {
   success: boolean;
   error?: string;
   pathologyId?: string;
+  reviewerName?: string;
+  reviewedAt?: string;
 };
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -92,9 +101,14 @@ export async function createAdminPathology(input: CreateAdminPathologyInput): Pr
   }
 }
 
-export async function updateAdminPathology(input: AdminPathologyInput): Promise<AdminPathologyActionResult> {
-  const validationError = validatePathologyContent(input);
-  if (!UUID_PATTERN.test(input.id) || validationError) return { success: false, error: validationError ?? "Fiche invalide" };
+export async function updateAdminPathology(input: AdminPathologyUpdateInput): Promise<AdminPathologyActionResult> {
+  if (!UUID_PATTERN.test(input.id)
+    || input.title.trim().length < 3 || input.title.length > 200
+    || !SLUG_PATTERN.test(input.slug)
+    || !["facile", "moyen", "difficile"].includes(input.difficulty)
+    || input.content.trim().length < 1 || input.content.length > 100_000) {
+    return { success: false, error: "Le titre ou le contenu Markdown est invalide" };
+  }
 
   try {
     const user = await assertAdminUser();
@@ -104,15 +118,7 @@ export async function updateAdminPathology(input: AdminPathologyInput): Promise<
       p_admin_user_id: user.id,
       p_pathology_id: input.id,
       p_title: input.title,
-      p_definition: input.definition,
-      p_pathophysiology: input.pathophysiology,
-      p_symptoms: input.symptoms,
-      p_risk_factors: input.riskFactors,
-      p_complementary_exams: input.complementaryExams,
-      p_differential_diagnosis: input.differentialDiagnosis,
-      p_treatments: input.treatments,
-      p_complications: input.complications,
-      p_monitoring: input.monitoring,
+      p_content: input.content,
       p_difficulty: input.difficulty,
       p_is_published: input.isPublished,
     });
@@ -127,5 +133,36 @@ export async function updateAdminPathology(input: AdminPathologyInput): Promise<
     if (error instanceof AdminAccessError) return { success: false, error: error.message };
     console.error("MedTrain admin pathology update error", error);
     return { success: false, error: "Impossible d’enregistrer la fiche" };
+  }
+}
+
+export async function reviewAdminPathology(input: { id: string; slug: string }): Promise<AdminPathologyActionResult> {
+  if (!UUID_PATTERN.test(input.id) || !SLUG_PATTERN.test(input.slug)) {
+    return { success: false, error: "Fiche invalide" };
+  }
+
+  try {
+    const user = await assertAdminUser();
+    const admin = createAdminClient();
+    await enforceRateLimit(admin, user.id, "admin-pathology-review", 120, 3600);
+    const { data, error } = await admin.rpc("admin_review_pathology", {
+      p_admin_user_id: user.id,
+      p_pathology_id: input.id,
+    });
+    if (error) throw error;
+    const signature = Array.isArray(data) ? data[0] : data;
+    if (!signature?.reviewer_name || !signature?.reviewed_at) throw new Error("Missing review signature");
+    revalidatePath("/admin/pathologies");
+    revalidatePath(`/admin/pathologies/${input.id}`);
+    revalidatePath(`/pathologies/${input.slug}`);
+    return {
+      success: true,
+      reviewerName: signature.reviewer_name,
+      reviewedAt: signature.reviewed_at,
+    };
+  } catch (error) {
+    if (error instanceof AdminAccessError) return { success: false, error: error.message };
+    console.error("MedTrain admin pathology review error", error);
+    return { success: false, error: "Impossible de signer la révision" };
   }
 }

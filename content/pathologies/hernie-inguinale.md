@@ -13,6 +13,7 @@ tags:
   - cure herniaire
   - occlusion
 resume: "Issue d'un viscère à travers une zone de faiblesse de la paroi inguinale : tuméfaction impulsive et réductible, dont l'étranglement constitue une urgence chirurgicale."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -160,4 +161,10 @@ Auscultation de la tuméfaction (bruits hydro-aériques si contenu digestif). En
 ## Liens
 - Voir aussi : [[occlusion-intestinale]]
 - Diagnostics différentiels : hernie crurale (sous la ligne de Malgaigne, femme, fort risque d'étranglement), adénopathie inguinale (masse fixée, non impulsive, contexte infectieux/tumoral), hydrocèle / kyste du cordon (transillumination positive, non réductible), varicocèle (dilatation veineuse, « sac de vers »), lipome de la région inguinale, ectopie testiculaire
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

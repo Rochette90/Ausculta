@@ -13,6 +13,7 @@ tags:
   - anticoagulants
   - croissant hyperdense
 resume: "Collection sanguine entre dure-mère et arachnoïde par rupture des veines-pont : forme aiguë du traumatisme grave et forme chronique insidieuse du sujet âgé / éthylique, croissant hypo- ou hyperdense au scanner."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -159,4 +160,10 @@ Examen neurologique complet et répété : testing moteur des quatre membres, r�
 ## Liens
 - Voir aussi : [[avc-ait]], [[hematome-extra-dural]]
 - Diagnostics différentiels : hématome extradural (intervalle libre, lentille biconvexe, limité par les sutures, urgence neurochirurgicale), AVC ischémique / hémorragique (déficit brutal, territoire vasculaire systématisé), maladie d'Alzheimer et démences (installation lente sans traumatisme, imagerie sans collection), hémorragie sous-arachnoïdienne (céphalée brutale en coup de tonnerre), tumeur cérébrale (installation progressive, prise de contraste à l'imagerie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

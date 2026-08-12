@@ -4,6 +4,7 @@ title: "Nodule pulmonaire"
 specialty: Pneumologie
 criticality: important
 resume: "Opacité pulmonaire focale de 3 cm ou moins, souvent fortuite : comparer aux anciens examens, estimer le risque de malignité et choisir surveillance, PET-CT ou prélèvement."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Définition radiologique
@@ -57,3 +58,10 @@ Il n’existe pas de traitement du « nodule » en soi. Une cause infectieuse ou
 
 - Voir aussi : [[cancer-bronchique]], [[tuberculose]], [[fibrose-pulmonaire]]
 - Sources du vault : `Pneumologie/Cancer pulmonaire.md`, `Pneumologie/Back Cancer pulmonaire.md`, `Radiologie/Imagerie thoracique.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

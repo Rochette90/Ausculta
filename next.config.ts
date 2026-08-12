@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
   outputFileTracingIncludes: {
     "/api/pathologies/[slug]": ["./content/pathologies/*.md"],
+    "/pathologies/[slug]": ["./content/pathologies/*.md"],
   },
   async headers() {
     return [{

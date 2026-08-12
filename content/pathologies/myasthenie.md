@@ -13,6 +13,7 @@ tags:
   - thymus
   - crise myasthénique
 resume: "Maladie auto-immune de la jonction neuromusculaire (anticorps anti-récepteurs de l'acétylcholine) : faiblesse musculaire fluctuante à fatigabilité, atteinte oculaire fréquente, crise myasthénique = urgence respiratoire."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -158,4 +159,10 @@ Testing moteur segmentaire à la recherche d'un déficit proximal, répété pou
 ## Liens
 - Voir aussi : [[syndrome-guillain-barre]]
 - Diagnostics différentiels : syndrome de Lambert-Eaton (atteinte pré-synaptique, syndrome paranéoplasique, réflexes abolis se renforçant à l'effort), syndrome de Guillain-Barré (déficit ascendant, aréflexie, dissociation albumino-cytologique du LCR), botulisme (mydriase, atteinte descendante, contexte toxi-infectieux), myopathies et myosites (déficit proximal fixe, CPK élevées), atteintes du tronc cérébral et sclérose en plaques (signes centraux associés)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -2,6 +2,7 @@ export type Difficulty = "facile" | "moyen" | "difficile";
 export type UserRole = "student" | "admin";
 export type QuestionType = "single_best_answer" | "multiple_choice" | "long_menu";
 export type QuestionReviewStatus = "draft" | "in_review" | "approved" | "rejected";
+export type PathologyReviewStatus = "needs_review" | "reviewed";
 export type QuizMode = "daily" | "specialty" | "difficulty" | "exam" | "errors" | "mixed";
 export type QuizSessionStatus = "active" | "completed" | "abandoned" | "expired";
 export type PathologySectionKey =
@@ -42,6 +43,10 @@ export type Pathology = {
   monitoring: string | null;
   difficulty: Difficulty;
   is_published: boolean;
+  review_status: PathologyReviewStatus;
+  reviewed_by: string | null;
+  reviewer_name: string | null;
+  reviewed_at: string | null;
   created_at: string;
   updated_at: string;
 };

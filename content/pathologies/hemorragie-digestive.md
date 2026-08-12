@@ -18,6 +18,7 @@ tags:
   - transfusion
   - ulcère
 resume: "Saignement du tube digestif (haut ou bas) à risque de choc hémorragique : toute HD impose hospitalisation, évaluation de gravité et voie veineuse."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -176,4 +177,10 @@ Recherche d'une matité déclive (ascite), évaluation hémodynamique : pouls, t
 ## Liens
 - Voir aussi : [[occlusion-intestinale]], [[pancreatite-aigue]]
 - Diagnostics différentiels : hémoptysie (sang rouge aéré, craché lors d'efforts de toux, contexte respiratoire), épistaxis dégluti (saignement nasal postérieur avalé puis vomi/extériorisé), aliments ou médicaments colorés (betterave, fer, charbon, vin → fausse hématémèse/faux méléna)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

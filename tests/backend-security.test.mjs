@@ -89,6 +89,30 @@ test("admins can create a categorized pathology through a role-gated RPC", async
   assert.match(queries, /getAdminSpecialties/);
 });
 
+test("pathology reviews are explicit, invalidated by edits and signed by the reviewer", async () => {
+  const [sql, action, editor, list, page] = await Promise.all([
+    read("../supabase/migrations/20260812170000_pathology_review_workflow.sql"),
+    read("../app/actions/admin-pathologies.ts"),
+    read("../components/admin/PathologyEditor.tsx"),
+    read("../components/admin/AdminPathologyList.tsx"),
+    read("../app/(app)/pathologies/[slug]/page.tsx"),
+  ]);
+  assert.match(sql, /review_status text not null default 'needs_review'/i);
+  assert.match(sql, /update public\.pathologies set[\s\S]+review_status = 'needs_review'/i);
+  assert.match(sql, /admin_update_pathology[\s\S]+reviewer_name = null[\s\S]+reviewed_at = null/i);
+  assert.match(sql, /create or replace function public\.admin_review_pathology/i);
+  assert.match(sql, /where id = p_admin_user_id and role = 'admin'/i);
+  assert.match(sql, /reviewed_by = p_admin_user_id[\s\S]+reviewer_name = v_reviewer_name/i);
+  assert.match(sql, /revoke all on function public\.admin_review_pathology[\s\S]+from public, anon, authenticated/i);
+  assert.match(sql, /grant execute on function public\.admin_review_pathology[\s\S]+to service_role/i);
+  assert.match(action, /admin\.rpc\("admin_review_pathology"/);
+  assert.match(editor, /Valider et signer/);
+  assert.match(editor, /Modifications non enregistrées/);
+  assert.match(list, /À réviser/);
+  assert.match(page, /Validée et signée par/);
+  assert.doesNotMatch(page, /<Sparkles[^>]*\/> Révisée/);
+});
+
 test("the connected app exposes a persistent accessible dark theme", async () => {
   const [layout, navigation, toggle, styles] = await Promise.all([
     read("../app/layout.tsx"),

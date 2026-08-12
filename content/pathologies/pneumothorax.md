@@ -14,6 +14,7 @@ tags:
   - drainage
   - tympanisme
 resume: "Épanchement gazeux dans la cavité pleurale entraînant un collapsus pulmonaire : douleur thoracique brutale + dyspnée ; rechercher la forme compressive, urgence vitale."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -156,4 +157,10 @@ Tympanisme à la percussion (hypersonorité) et silence auscultatoire (murmure v
 ## Liens
 - Voir aussi : [[embolie-pulmonaire]], [[bpco]], [[asthme]]
 - Diagnostics différentiels : embolie pulmonaire (dyspnée + douleur, facteurs de risque thromboemboliques, D-dimères/angio-TDM), infarctus du myocarde / SCA (douleur rétrosternale constrictive, modifications ECG, troponine), pleurésie (épanchement liquidien : matité, abolition du murmure mais pas de tympanisme), péricardite (douleur positionnelle soulagée penché en avant, frottement péricardique, sus-décalage diffus à l'ECG)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -14,6 +14,7 @@ tags:
   - metformine
   - complications
 resume: "Hyperglycémie chronique par insulinorésistance et insulinopénie relative, souvent asymptomatique : dépistage et prévention des complications micro- et macro-angiopathiques."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,4 +163,10 @@ Auscultation cardiaque et des axes artériels (souffles), prise de la tension ar
 ## Liens
 - Voir aussi : [[acidocetose-diabetique]], [[infarctus-myocarde-sca]]
 - Diagnostics différentiels : diabète de type 1 (carence insulinique auto-immune, sujet jeune, amaigrissement, cétose, anticorps), diabète secondaire (pancréatique, endocrinien — Cushing, iatrogène — corticoïdes), diabète gestationnel (apparition pendant la grossesse, dépistage par HGPO)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

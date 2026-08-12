@@ -4,6 +4,7 @@ title: "Infections sexuellement transmissibles"
 specialty: Infectiologie
 criticality: important
 resume: "Infections transmises lors des contacts sexuels, souvent asymptomatiques : dépistage ciblé, prélèvements adaptés au site exposé, traitement du patient et prise en charge des partenaires."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Principe
@@ -62,3 +63,10 @@ Le traitement dépend de l’agent, du site, de la grossesse et des résistances
 
 - Voir aussi : [[infection-vih]], [[hepatites-virales-aigues]]
 - Sources du vault : `Nouvelles fiches/À relire/Chlamydia-fiche.md`, `Nouvelles fiches/À relire/Gonorrhee.md`, `Nouvelles fiches/À relire/Syphilis.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -13,6 +13,7 @@ tags:
   - trithérapie
   - infections opportunistes
 resume: "Infection chronique par un rétrovirus (VIH-1/2) responsable d'une déplétion progressive des lymphocytes CD4 : immunodépression exposant aux infections opportunistes, contrôlée par un traitement antirétroviral à vie."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -155,6 +156,12 @@ Examen pleuro-pulmonaire (pneumocystose, tuberculose — voir [[tuberculose]]), 
 
 ---
 ## Liens
-- Voir aussi : [[tuberculose]], [[hepatites-virales]]
+- Voir aussi : [[tuberculose]], [[hepatites-virales-aigues]]
 - Diagnostics différentiels : primo-infection = mononucléose infectieuse (EBV), autres viroses (CMV, primo-infection à toxoplasme), syphilis secondaire, syndrome grippal ; phase avancée = autres causes d'immunodépression (hémopathies, traitements immunosuppresseurs), tuberculose, cancers
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

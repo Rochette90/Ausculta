@@ -13,6 +13,7 @@ tags:
   - L-DOPA
   - neurodégénératif
 resume: "Maladie neurodégénérative à corps de Lewy avec dégénérescence dopaminergique de la substance noire : triade tremblement de repos, rigidité et akinésie, asymétrique et dopa-sensible."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,4 +163,10 @@ Recherche de l'instabilité posturale par le **test de la poussée (pull-test)**
 ## Liens
 - Voir aussi : [[epilepsie-syncope-pnes]], [[hypothyroidie]]
 - Diagnostics différentiels : tremblement essentiel (tremblement d'action/postural, bilatéral, amélioré par l'alcool, pas d'akinésie), syndrome parkinsonien iatrogène (neuroleptiques, symétrique, réversible), atrophie multisystématisée (dysautonomie sévère précoce, dopa-résistance), paralysie supranucléaire progressive (chutes précoces, paralysie de la verticalité du regard), dégénérescence cortico-basale, démence à corps de Lewy (démence + hallucinations + parkinsonisme), maladie de Wilson (sujet jeune), parkinsonisme vasculaire (« lower body parkinsonism »)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

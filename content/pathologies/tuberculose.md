@@ -16,6 +16,7 @@ tags:
   - contage
   - isolement
 resume: "Infection à Mycobacterium tuberculosis à transmission aérienne : distinguer infection latente (asymptomatique) et tuberculose-maladie ; déclaration obligatoire, isolement air et dépistage de l'entourage."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -159,4 +160,10 @@ Auscultation pulmonaire (souvent normale ou pauvre, contrastant avec l'imagerie)
 ## Liens
 - Voir aussi : [[pneumonie-aigue-communautaire]], [[meningite-encephalite]]
 - Diagnostics différentiels : pneumonie bactérienne (installation aiguë, foyer alvéolaire, réponse aux antibiotiques usuels), cancer bronchique (terrain tabagique, masse / atélectasie, AEG, toux et hémoptysie), autres infections pulmonaires chroniques (mycoses, abcès, dilatation des bronches surinfectée), sarcoïdose (adénopathies médiastinales bilatérales symétriques)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

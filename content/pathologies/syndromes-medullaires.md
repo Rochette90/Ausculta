@@ -14,6 +14,7 @@ tags:
   - queue de cheval < 48 h
   - signe de Lhermitte
 resume: "Syndromes topographiques de la moelle et des racines : queue de cheval (aréflexie, urgence chirurgicale < 48 h), cordonal postérieur (Romberg+, Lhermitte), spinal antérieur et section complète."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -172,4 +173,10 @@ Recherche d'un niveau sensitif précis (dermatomes), évaluation des ROT (aréfl
 ## Liens
 - Voir aussi : [[syndrome-brown-sequard]]
 - Diagnostics différentiels : queue de cheval vs cône médullaire (dissociation sensitive, hyperréflexie du cône) ; cordonal postérieur vs polyneuropathie (atteinte distale longueur-dépendante, sans niveau ni Lhermitte) ; compression médullaire vs SLA (motrice pure, sans niveau sensitif ni troubles sphinctériens) ; myélite transverse vs SEP (monophasique > 3 segments vs dissémination temps + espace, bandes oligoclonales)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -13,6 +13,7 @@ tags:
   - plaques amyloïdes
   - sujet âgé
 resume: "Maladie neurodégénérative la plus fréquente : trouble mnésique antérograde d'installation insidieuse évoluant vers un syndrome démentiel, avec atteinte amyloïde et dégénérescence neurofibrillaire (protéine Tau)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -156,4 +157,10 @@ Examen neurologique complet à la recherche d'un signe focal ou d'un syndrome ex
 ## Liens
 - Voir aussi : [[avc-ait]]
 - Diagnostics différentiels : démence vasculaire (installation en marches d'escalier, facteurs de risque et lésions vasculaires, déficit focal), démence à corps de Lewy (fluctuations, hallucinations visuelles, syndrome parkinsonien, sensibilité aux neuroleptiques), démence fronto-temporale (troubles du comportement / du langage précoces, mémoire relativement préservée au début), maladie de Parkinson avec démence, dépression (« pseudo-démence », plainte au premier plan, bénéfice de l'indiçage), causes curables (hypothyroïdie, carence B12, hydrocéphalie à pression normale, hématome sous-dural)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

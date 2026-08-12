@@ -4,6 +4,7 @@ title: "Infection à Clostridioides difficile"
 specialty: Infectiologie
 criticality: important
 resume: "Diarrhée toxinique souvent post-antibiotique : diagnostic sur selles diarrhéiques, isolement contact et traitement oral ciblé, avec risque élevé de récidive."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Point clé
@@ -60,3 +61,10 @@ Le traitement oral de première intention repose, selon le protocole local et le
 
 - Voir aussi : [[gastro-enterite-aigue]], [[sepsis-choc-septique]]
 - Sources du vault : `Infection/Bactéries anaérobies.md`, `Gastroentéro/Diarrhées aiguës.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -14,6 +14,7 @@ tags:
   - épanchement
   - tamponnade
 resume: "Inflammation aiguë du péricarde : douleur thoracique positionnelle, frottement péricardique et sus-décalage ST diffus ; étiologie virale/idiopathique le plus souvent, bénigne mais guetter la tamponnade."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -164,4 +165,10 @@ Auscultation cardiaque au repos puis penché en avant en fin d'expiration : rech
 ## Liens
 - Voir aussi : [[infarctus-myocarde-sca]], [[dissection-aortique]], [[embolie-pulmonaire]]
 - Diagnostics différentiels : infarctus du myocarde / SCA (douleur constrictive non positionnelle, sus-décalage ST systématisé et convexe avec image en miroir, troponine élevée), embolie pulmonaire (dyspnée brutale, douleur pleurale, contexte thrombo-embolique, D-dimères, angio-TDM), dissection aortique (douleur transfixiante migratrice « en coup de poignard », asymétrie tensionnelle, élargissement du médiastin), pleurésie (douleur pleurale latéralisée, frottement pleural, anomalies auscultatoires et radiologiques pulmonaires)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

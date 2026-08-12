@@ -4,8 +4,8 @@ title: "Hépatites virales aiguës"
 specialty: Infectiologie
 criticality: important
 resume: "Inflammation virale du foie due aux VHA à VHE : présentation souvent paucisymptomatique, sérologies spécifiques et surveillance impérative de la fonction hépatique."
+reviewed_at: 2026-08-12
 ---
-
 
 > [!info] Synonymes
 > Hépatites A/B/C/D/E (VHA, VHB, VHC, VHD, VHE), « viral hepatitis », inflammation virale du foie
@@ -24,7 +24,7 @@ resume: "Inflammation virale du foie due aux VHA à VHE : présentation souvent 
 ## Épidémiologie
 | Paramètre | Valeur |
 |---|---|
-| Prévalence / Incidence | Variable selon le virus et la région *(taux exacts à vérifier)* |
+| Prévalence / Incidence | Très variable selon le virus, l'exposition et la région ; utiliser les données de surveillance OFSP pour la situation suisse |
 | Sex-ratio (H/F) | Variable selon le virus et le mode de contamination |
 | Âge de survenue | Tout âge ; VHA souvent enfant/jeune adulte |
 | Facteurs de risque | Usage de drogues IV, rapports non protégés, transfusions/soins non sécurisés, voyage en zone d'endémie, eau/aliments contaminés (A, E), transmission mère-enfant (B) |
@@ -108,21 +108,21 @@ Recherche d'ascite et de signes de décompensation dans les formes avancées.
 
 ---
 ## Traitement
-**Traitement de 1re ligne** *(DCI, posologie, durée)*
-- **VHA / VHE aiguës** : traitement symptomatique, le plus souvent résolution spontanée *(modalités à vérifier)*.
-- **VHC chronique** : antiviraux à action directe (AAD), permettant la guérison virologique dans la majorité des cas *(molécules, durées et schémas à confirmer sur Firstline / référentiel)*.
-- **VHB chronique** : analogues nucléos(t)idiques au long cours (suppression virale, rarement guérison) selon indications *(molécules et durées à vérifier)*.
+**Traitement de 1re ligne**
+- **VHA / VHE aiguës :** traitement symptomatique et surveillance ; rechercher une insuffisance hépatique aiguë. Le VHE chronique de l'immunodéprimé relève d'un spécialiste.
+- **VHB aigu :** le plus souvent surveillance ; discuter un analogue nucléos(t)idique en cas de forme sévère, prolongée ou fulminante avec un hépatologue.
+- **VHC :** les antiviraux à action directe permettent la guérison virologique dans la grande majorité des cas ; le schéma dépend du génotype, du stade hépatique, des interactions et des recommandations en vigueur.
+- **VHB chronique :** ténofovir ou entécavir sont des traitements de référence dans les situations indiquées ; ils suppriment la réplication sans éradiquer habituellement le cccDNA.
 
 **Alternatives / 2e ligne**
-- VHB : interféron pégylé chez des patients sélectionnés *(à vérifier)*.
-- VHD : prise en charge spécialisée (options en évolution) *(à vérifier)*.
-- VHE chronique de l'immunodéprimé : réduction de l'immunosuppression ± antiviral *(à vérifier)*.
+- VHB : interféron pégylé chez des patients soigneusement sélectionnés.
+- VHD et VHE chronique : prise en charge spécialisée, avec options dépendant du contexte et de leur disponibilité.
 
 **Traitement chirurgical** *(indications, type d'intervention)*
 - Pas de chirurgie spécifique ; **transplantation hépatique** en cas d'hépatite fulminante ou de cirrhose décompensée / CHC.
 
 > [!danger] Contre-indications / interactions
-> Nombreuses interactions des AAD (VHC) et des antiviraux du VHB — vérifier systématiquement. Risque de **réactivation du VHB** sous immunosuppresseurs/chimiothérapie (dépistage et prophylaxie). Éviter alcool et hépatotoxiques *(à vérifier)*.
+> Rechercher systématiquement les interactions des AAD. Dépister le VHB avant immunosuppression/chimiothérapie et instaurer surveillance ou prophylaxie selon le risque de réactivation. Éviter alcool et médicaments hépatotoxiques pendant l'atteinte aiguë.
 
 **Complications / pronostic**
 - Hépatite fulminante (rare mais grave) ; chronicité (B, C) → cirrhose → carcinome hépatocellulaire.
@@ -131,9 +131,14 @@ Recherche d'ascite et de signes de décompensation dans les formes avancées.
 
 ---
 ## Liens
-- Voir aussi : [[Cirrhose-hepatique]], [[Carcinome-hepatocellulaire]], [[Ictere]], [[Hemorragies-digestives]]
+- Voir aussi : [[cirrhose]], carcinome hépatocellulaire, ictère, [[hemorragie-digestive]]
 - Diagnostics différentiels : hépatites médicamenteuses/toxiques, hépatite alcoolique, hépatite auto-immune, cholestase obstructive, autres viroses (EBV, CMV)
-- Source / référence : UpToDate ; EASL / OFSP (recommandations vaccinales suisses) ; doses et schémas à confirmer sur Firstline
-
 - Source du vault : `Nouvelles fiches/À relire/Hepatites-virales.md`
+---
+## Références médicales
 
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- [EASL — Clinical Practice Guidelines](https://easl.eu/publications/clinical-practice-guidelines/)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -15,6 +15,7 @@ tags:
   - insuline
   - déshydratation
 resume: "Décompensation aiguë du diabète par carence absolue en insuline : hyperglycémie, cétose et acidose métabolique — urgence métabolique vitale."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -169,4 +170,10 @@ Auscultation cardio-pulmonaire (foyer infectieux, signes d'IDM), recherche d'un 
 ## Liens
 - Voir aussi : [[diabete-type-2]], [[sepsis-choc-septique]]
 - Diagnostics différentiels : coma hyperosmolaire (DT2 du sujet âgé, hyperglycémie majeure > 6 g/L, osmolarité très élevée, pas de cétose ni d'acidose franches), acidose lactique (lactates élevés, contexte de metformine / hypoxie / choc, pas de cétose marquée), autres comas métaboliques ou toxiques (hypoglycémie, intoxications) — glycémie capillaire et cétonémie systématiques
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -16,6 +16,7 @@ tags:
   - végétations
   - Duke
 resume: "Greffe bactérienne sur l'endocarde valvulaire (végétations) : toute fièvre prolongée inexpliquée + souffle = EI jusqu'à preuve du contraire."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -170,4 +171,10 @@ Auscultation cardiaque à la recherche d'un souffle nouveau ou modifié (régurg
 ## Liens
 - Voir aussi : [[sepsis-choc-septique]], [[insuffisance-cardiaque]], [[fibrillation-auriculaire]]
 - Diagnostics différentiels : autres causes de fièvre prolongée inexpliquée (infections profondes, tuberculose, hémopathies, néoplasies, maladies de système), sepsis d'autre origine (porte d'entrée non valvulaire), fièvre sur dispositif intracardiaque sans atteinte valvulaire, autres valvulopathies fébriles
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -13,6 +13,7 @@ tags:
   - oseltamivir
   - vaccination
 resume: "Infection respiratoire aiguë virale (Influenza A/B) épidémique hivernale : début brutal fébrile avec myalgies et signes respiratoires, bénigne mais grave sur terrain fragile."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -157,4 +158,10 @@ Auscultation pulmonaire (normale dans la forme simple ; crépitants en foyer év
 ## Liens
 - Voir aussi : [[pneumonie-aigue-communautaire]], [[bpco]]
 - Diagnostics différentiels : autres viroses respiratoires / syndrome grippal (rhinovirus, VRS, coronavirus — début plus progressif, signes moins marqués), COVID-19 (contexte épidémiologique, PCR/antigénique dédiée, anosmie), pneumonie aiguë communautaire bactérienne (foyer auscultatoire et radiologique, hyperleucocytose franche), angine / pharyngite (signes localisés prédominants)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

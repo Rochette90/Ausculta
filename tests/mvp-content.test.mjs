@@ -7,8 +7,8 @@ const readJson = async (path) => JSON.parse(await readFile(new URL(path, import.
 test("the UNIL MVP contains 90 balanced pathology entries", async () => {
   const catalog = await readJson("../content/pathologies/index.json");
   assert.equal(catalog.length, 90);
-  assert.equal(catalog.filter((item) => item.status === "ready").length, 83);
-  assert.equal(catalog.filter((item) => item.status === "planned").length, 7);
+  assert.equal(catalog.filter((item) => item.status === "ready").length, 90);
+  assert.equal(catalog.filter((item) => item.status === "planned").length, 0);
   const counts = Object.groupBy(catalog, (item) => item.specialty);
   assert.deepEqual(Object.values(counts).map((items) => items.length).sort(), [15, 15, 15, 15, 15, 15]);
 });

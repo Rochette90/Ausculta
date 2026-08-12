@@ -13,6 +13,7 @@ tags:
   - neuroglucopénie
   - diabète
 resume: "Baisse de la glycémie sous le seuil critique définie par la triade de Whipple : urgence à reconnaître pour un resucrage immédiat (oral ou glucagon/glucose IV) afin de prévenir le coma et les séquelles neurologiques."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -156,4 +157,10 @@ Prise des constantes (fréquence cardiaque souvent élevée, tension artérielle
 ## Liens
 - Voir aussi : [[diabete-type-2]], [[diabete-type-1]]
 - Diagnostics différentiels : crise d'épilepsie, accident vasculaire cérébral / AIT (déficit focal), syncope, intoxication alcoolique, trouble anxieux / attaque de panique (signes adrénergiques sans hypoglycémie), hypoglycémie factice (injection cachée d'insuline : peptide C bas)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

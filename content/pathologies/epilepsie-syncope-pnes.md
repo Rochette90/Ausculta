@@ -13,6 +13,7 @@ tags:
   - différentiel
   - sémiologie comparée
 resume: "Différencier épilepsie (décharge neuronale), syncope (hypoperfusion cérébrale) et PNES (dissociation psychogène) devant une perte de connaissance : l'interrogatoire du témoin est crucial (durée, mouvements, yeux, morsure, récupération)."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -175,4 +176,10 @@ Auscultation cardiaque (souffle de sténose aortique), prise de tension artérie
 ## Liens
 - Voir aussi : [[avc-ait]], [[cephalees-primaires-secondaires]]
 - Diagnostics différentiels : syncope vs hypoglycémie (glycémie < 3 mmol/L, signes adrénergiques, récupération lente après resucrage) ; AIT vs épilepsie focale (AIT = déficit négatif, brutal, > 5 min, FRCV ; épilepsie = signes positifs, < 2 min, post-ictale) — [[avc-ait]]
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

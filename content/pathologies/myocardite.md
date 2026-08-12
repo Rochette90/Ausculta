@@ -14,6 +14,7 @@ tags:
   - IRM cardiaque
   - insuffisance cardiaque
 resume: "Inflammation aiguë du myocarde, le plus souvent d'origine virale : douleur thoracique pseudo-infarctus, élévation de la troponine et ECG anormal chez un sujet jeune, avec risque d'insuffisance cardiaque et de troubles du rythme."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -171,4 +172,10 @@ Auscultation cardiaque : tachycardie, galop (B3), assourdissement des bruits, so
 ## Liens
 - Voir aussi : [[pericardite-aigue]], [[insuffisance-cardiaque]]
 - Diagnostics différentiels : syndrome coronarien aigu (le principal DD : douleur, troponine, ECG — mais coronaires sténosées ; voir [[infarctus-myocarde-sca]]), péricardite aiguë (douleur positionnelle, frottement, sus-décalage concave diffus, troponine normale ou peu élevée), embolie pulmonaire (dyspnée, D-dimères, angioscanner), cardiomyopathie de stress (Tako-Tsubo : contexte émotionnel, ballonisation apicale), sepsis avec dysfonction myocardique
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

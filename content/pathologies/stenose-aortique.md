@@ -14,6 +14,7 @@ tags:
   - échocardiographie
   - valvulopathie
 resume: "Obstacle à l'éjection ventriculaire gauche par rétrécissement de l'orifice aortique : souffle systolique éjectionnel, triade angor / syncope / dyspnée d'effort ; échocardiographie clé, remplacement valvulaire dès qu'elle devient serrée et symptomatique."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -153,4 +154,10 @@ Pouls **parvus et tardus** (faible amplitude, ascension lente) ; frémissement s
 ## Liens
 - Voir aussi : [[infarctus-myocarde-sca]], [[insuffisance-cardiaque]], [[endocardite-infectieuse]]
 - Diagnostics différentiels : cardiomyopathie hypertrophique obstructive (souffle qui augmente à la manœuvre de Valsalva, sujet jeune), insuffisance mitrale (souffle holosystolique irradiant vers l'aisselle), sclérose aortique sans obstacle significatif (souffle sans gradient), angor coronarien sur coronaropathie (à rechercher systématiquement car souvent associé)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

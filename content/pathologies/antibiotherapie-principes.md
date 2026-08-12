@@ -4,6 +4,7 @@ title: "Principes d’antibiothérapie"
 specialty: Infectiologie
 criticality: important
 resume: "Choisir l’antibiotique selon le foyer, la gravité, l’hôte et l’écologie locale ; prélever avant traitement si possible, puis réévaluer et désescalader."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Objectif
@@ -62,3 +63,10 @@ Le choix final repose sur les recommandations locales et l’antibiogramme. Priv
 
 - Voir aussi : [[sepsis-choc-septique]], [[endocardite-infectieuse]], [[pneumonie-aigue-communautaire]], [[infection-clostridioides-difficile]]
 - Sources du vault : `Pharmaco/Antibiotiques et anti-tuberculeux.md`, `Infection/Tests de Laboratoire Clinique.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

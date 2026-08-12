@@ -14,6 +14,7 @@ tags:
   - endoscopie
   - hémorragie digestive
 resume: "Perte de substance de la paroi gastrique ou duodénale liée à H. pylori ou aux AINS : épigastralgies rythmées, risque d'hémorragie et de perforation."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -167,4 +168,10 @@ Percussion à la recherche d'une disparition de la matité pré-hépatique (pneu
 ## Liens
 - Voir aussi : [[reflux-gastro-oesophagien]], [[hemorragie-digestive]]
 - Diagnostics différentiels : reflux gastro-œsophagien (pyrosis, régurgitations, brûlure ascendante), dyspepsie fonctionnelle (inconfort épigastrique, endoscopie normale), lithiase biliaire / cholécystite (douleur hypochondre droit post-prandiale), pancréatite aiguë (douleur transfixiante, lipase élevée), cancer gastrique (amaigrissement, altération de l'état général, ulcère gastrique atypique), syndrome coronarien aigu (douleur épigastrique haute à écarter, ECG-troponine)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

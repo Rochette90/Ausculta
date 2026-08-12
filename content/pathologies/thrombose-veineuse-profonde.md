@@ -15,6 +15,7 @@ tags:
   - écho-doppler
   - anticoagulation
 resume: "Obstruction thrombotique d'une veine profonde (mollet +++) : risque majeur d'embolie pulmonaire, anticoagulation urgente."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -169,4 +170,10 @@ Examen cardio-pulmonaire systématique à la recherche de signes d'embolie pulmo
 ## Liens
 - Voir aussi : [[embolie-pulmonaire]], [[insuffisance-cardiaque]]
 - Diagnostics différentiels : érysipèle (placard inflammatoire bien limité, fièvre, porte d'entrée, syndrome inflammatoire), rupture de kyste de Baker (douleur poplitée brutale, ecchymose du mollet, ATCD de gonarthrose), hématome du mollet (contexte traumatique ou anticoagulation, ecchymose), lymphœdème (œdème souvent bilatéral, chronique, indolore, godet tardif)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

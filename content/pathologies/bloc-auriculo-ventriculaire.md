@@ -14,6 +14,7 @@ tags:
   - syncope
   - pacemaker
 resume: "Ralentissement ou interruption de la conduction de l'influx entre oreillettes et ventricules : du simple allongement du PR (BAV 1) à la dissociation complète (BAV 3) avec risque de syncope d'Adams-Stokes et indication de pacemaker."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -167,4 +168,10 @@ Auscultation cardiaque : bradycardie, variabilité d'intensité du premier bruit
 ## Liens
 - Voir aussi : [[fibrillation-auriculaire]], [[infarctus-myocarde-sca]]
 - Diagnostics différentiels : dysfonction sinusale / maladie de l'oreillette (bradycardie sinusale, pauses sinusales sans dissociation AV), bradycardie sinusale (hypertonie vagale, hypothyroïdie, médicaments), fibrillation auriculaire à réponse ventriculaire lente (voir [[fibrillation-auriculaire]]), syncope vasovagale (prodromes, contexte, ECG normal), autres causes de syncope (voir [[epilepsie-syncope-pnes]])
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de cardiologie : maladies prises en charge](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees)
+- [Revue Médicale Suisse — Cardiologie](https://www.revmed.ch/specialites/cardiologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

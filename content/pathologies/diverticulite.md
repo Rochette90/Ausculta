@@ -14,6 +14,7 @@ tags:
   - antibiothérapie
   - diverticules
 resume: "Inflammation/infection d'un diverticule sigmoïdien (« appendicite du côté gauche ») : douleur de la fosse iliaque gauche fébrile, diagnostic au scanner injecté."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,6 +163,12 @@ Auscultation des bruits hydro-aériques (diminués en cas d'iléus/occlusion) ; 
 
 ---
 ## Liens
-- Voir aussi : [[appendicite-aigue]], [[occlusion-intestinale]], [[colique-nephretique]]
+- Voir aussi : [[appendicite-aigue]], [[occlusion-intestinale]], colique néphrétique
 - Diagnostics différentiels : appendicite aiguë (douleur de la FID ; mais formes pelviennes/mésocœliaques trompeuses), colique néphrétique gauche (douleur lombaire irradiant aux organes génitaux, hématurie, agitation, apyrexie), colite (infectieuse, inflammatoire ou ischémique : diarrhée, contexte), cancer colique (à éliminer par coloscopie à distance), pathologie gynécologique (salpingite, torsion/kyste ovarien, GEU — β-hCG, échographie pelvienne)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

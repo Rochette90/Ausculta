@@ -14,6 +14,7 @@ tags:
   - détresse respiratoire
   - immunoglobulines
 resume: "Polyradiculonévrite aiguë auto-immune post-infectieuse : paralysie flasque ascendante avec aréflexie, urgence par le risque de détresse respiratoire et de dysautonomie."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -166,4 +167,10 @@ Recherche de l'**aréflexie ostéo-tendineuse** (réflexes abolis) — signe cl�
 ## Liens
 - Voir aussi : [[syndromes-medullaires]], [[embolie-pulmonaire]], [[sepsis-choc-septique]]
 - Diagnostics différentiels : compression médullaire aiguë / myélite (niveau sensitif, syndrome pyramidal, troubles sphinctériens précoces — IRM en urgence), myasthénie (fatigabilité, atteinte oculaire, pas d'aréflexie), botulisme (paralysie descendante, mydriase), hypokaliémie / paralysie périodique, poliomyélite et neuropathies toxiques ou carentielles, PIDC (forme chronique évoluant sur plus de 8 semaines)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

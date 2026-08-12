@@ -13,6 +13,7 @@ tags:
   - CPAP
   - somnolence diurne
 resume: "Collapsus répété des voies aériennes supérieures durant le sommeil : ronflements, apnées et somnolence diurne, quantifiés par l'index d'apnées-hypopnées (IAH) et traités par CPAP."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -162,4 +163,10 @@ Auscultation cardio-pulmonaire (recherche de troubles du rythme, d'HTA, de signe
 ## Liens
 - Voir aussi : [[hypertension-arterielle]], [[fibrillation-auriculaire]]
 - Diagnostics différentiels : apnées centrales du sommeil (efforts respiratoires absents, contexte d'insuffisance cardiaque ou neurologique), syndrome obésité-hypoventilation (hypercapnie diurne), narcolepsie et autres hypersomnies centrales, insomnie chronique, hypothyroïdie (asthénie et somnolence)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

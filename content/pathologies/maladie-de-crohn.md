@@ -14,6 +14,7 @@ tags:
   - fistule
   - anti-TNF
 resume: "MICI transmurale et segmentaire pouvant toucher tout le tube digestif : diarrhée, douleurs, atteinte périnéale et fistules, évoluant par poussées."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -170,4 +171,10 @@ Auscultation abdominale (bruits hydro-aériques, silence en cas d'occlusion) ; *
 ## Liens
 - Voir aussi : [[rectocolite-hemorragique]], [[occlusion-intestinale]]
 - Diagnostics différentiels : rectocolite hémorragique (atteinte colique continue rectale, muqueuse et non transmurale, sans granulome ni atteinte du grêle), appendicite aiguë (iléite pseudo-appendiculaire à distinguer), tuberculose intestinale / iléite infectieuse (contexte, granulome caséeux), colite infectieuse (coprocultures, C. difficile), lymphome / tumeur du grêle, colite ischémique
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

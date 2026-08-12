@@ -4,6 +4,7 @@ title: "Exacerbations d’asthme et de BPCO"
 specialty: Pneumologie
 criticality: urgent
 resume: "Aggravation aiguë de la dyspnée, de la toux ou des expectorations : évaluer immédiatement la gravité, administrer bronchodilatateurs et oxygène contrôlé, puis traiter le déclencheur."
+reviewed_at: 2026-08-12
 ---
 
 > [!warning] D’abord la gravité
@@ -60,3 +61,10 @@ Avant la sortie : traitement de fond optimisé, technique d’inhalation contrô
 
 - Voir aussi : [[asthme]], [[bpco]], [[pneumonie-aigue-communautaire]], [[embolie-pulmonaire]], [[pneumothorax]]
 - Sources du vault : `Pneumologie/Asthme.md`, `Pneumologie/BPCO (Bronchopneumopathie Chronique Obstructive).md`, `Pneumologie/Dyspnée.md`
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -13,6 +13,7 @@ tags:
   - myélinolyse
   - natrémie
 resume: "Trouble hydro-électrolytique le plus fréquent, défini par une natrémie < 135 mmol/L : le raisonnement repose sur l'osmolarité et la volémie (SIADH, déplétion, surcharge), avec un risque majeur de myélinolyse en cas de correction trop rapide."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -160,4 +161,10 @@ Prise de la tension artérielle (couché/debout, recherche d'hypotension orthost
 ## Liens
 - Voir aussi : [[insuffisance-surrenale-aigue]]
 - Diagnostics différentiels : fausse hyponatrémie (hyperglycémie, hyperprotidémie, hyperlipidémie : osmolalité normale/élevée), hypernatrémie, SIADH vs déplétion sodée vs surcharge (démarche sur volémie et natriurèse), hypothyroïdie profonde, insuffisance surrénale (hyponatrémie + hyperkaliémie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Endocrinologie, diabétologie et métabolisme](https://www.hug.ch/endocrinologie-diabetologie-metabolisme/activites-medicales)
+- [Société Suisse d’Endocrinologie et de Diabétologie — Recommandations](https://www.sgedssed.ch/fr/diabetologie/recommandations-de-la-ssed-diabetologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

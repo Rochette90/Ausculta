@@ -16,6 +16,7 @@ tags:
   - TDM thoracique
   - nodule pulmonaire
 resume: "Tumeur maligne développée aux dépens de l'épithélium bronchique, très liée au tabac : signes respiratoires traînants (toux, hémoptysie) et altération de l'état général, souvent découverte tardive ; diagnostic histologique et bilan d'extension avant traitement."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -158,4 +159,10 @@ Recherche d'un syndrome de condensation, d'une atélectasie (matité, abolition 
 ## Liens
 - Voir aussi : [[bpco]], [[pneumothorax]], [[embolie-pulmonaire]]
 - Diagnostics différentiels : pneumonie / abcès pulmonaire (contexte infectieux, fièvre, évolution sous antibiotiques), tuberculose (contexte, imagerie apicale, recherche de BK), nodule bénin (hamartome, granulome), métastases pulmonaires d'un autre cancer primitif, tumeur bénigne des bronches (carcinoïde)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [HUG — Service de pneumologie](https://www.hug.ch/pneumologie)
+- [CHUV — Service de pneumologie](https://www.chuv.ch/fr/pneumologie/pne-home)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

@@ -14,6 +14,7 @@ tags:
   - lithiase
   - scanner
 resume: "Inflammation aiguë du pancréas par auto-digestion enzymatique : douleur épigastrique transfixiante, lipase > 3N ; lithiase et alcool en tête, gravité à dépister en urgence."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -161,4 +162,10 @@ Météorisme tympanique, silence auscultatoire (iléus réflexe) ; auscultation 
 ## Liens
 - Voir aussi : [[lithiase-biliaire-cholecystite]], [[occlusion-intestinale]]
 - Diagnostics différentiels : ulcère gastro-duodénal perforé (contracture abdominale, pneumopéritoine à l'ASP/TDM), infarctus mésentérique (douleur intense contrastant avec un abdomen souple, terrain vasculaire, lactates), occlusion intestinale (arrêt des matières et des gaz, niveaux hydro-aériques), IDM inférieur (douleur épigastrique, ECG et troponine), cholécystite aiguë (douleur de l'hypochondre droit, Murphy, paroi vésiculaire épaissie)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

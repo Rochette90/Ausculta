@@ -7,6 +7,7 @@ const catalogBySlug = new Map(pathologyCatalog.map((entry) => [entry.slug, entry
 type ListItem = { text: string; children: ListItem[] };
 export type Block =
   | { kind: "h2"; text: string; id: string }
+  | { kind: "h3"; text: string; id: string }
   | { kind: "label"; text: string }
   | { kind: "hr" }
   | { kind: "p"; text: string }
@@ -48,11 +49,12 @@ export function parseMarkdown(source: string): Block[] {
 
     if (/^#{2,6}\s+/.test(trimmed)) {
       flushParagraph();
+      const level = trimmed.match(/^(#{2,6})\s+/)?.[1].length ?? 2;
       const text = trimmed.replace(/^#{2,6}\s+/, "");
       let id = slugify(text) || "section";
       while (usedIds.has(id)) id = `${id}-x`;
       usedIds.add(id);
-      blocks.push({ kind: "h2", text, id });
+      blocks.push({ kind: level === 2 ? "h2" : "h3", text, id });
       continue;
     }
 
@@ -121,17 +123,18 @@ export function parseMarkdown(source: string): Block[] {
 
 function renderInline(text: string, onNavigate?: NavigateHandler): ReactNode[] {
   const nodes: ReactNode[] = [];
-  const pattern = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[\[([a-z0-9-]+)\]\]/g;
+  const pattern = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[\[([a-z0-9-]+)\]\]/g;
   let cursor = 0;
   let match: RegExpExecArray | null;
   let key = 0;
   while ((match = pattern.exec(text)) !== null) {
     if (match.index > cursor) nodes.push(text.slice(cursor, match.index));
-    if (match[1] !== undefined) nodes.push(<strong key={key}>{renderInline(match[1], onNavigate)}</strong>);
-    else if (match[2] !== undefined) nodes.push(<em key={key}>{match[2]}</em>);
-    else if (match[3] !== undefined) nodes.push(<code key={key}>{match[3]}</code>);
+    if (match[1] !== undefined) nodes.push(<a href={match[2]} key={key} rel="noreferrer" target="_blank">{match[1]}</a>);
+    else if (match[3] !== undefined) nodes.push(<strong key={key}>{renderInline(match[3], onNavigate)}</strong>);
+    else if (match[4] !== undefined) nodes.push(<em key={key}>{match[4]}</em>);
+    else if (match[5] !== undefined) nodes.push(<code key={key}>{match[5]}</code>);
     else {
-      const slug = match[4];
+      const slug = match[6];
       const target = catalogBySlug.get(slug);
       const label = target?.title ?? slug.replaceAll("-", " ");
       if (target?.status === "ready" && onNavigate) nodes.push(<button key={key} type="button" className="wiki-ref" onClick={() => onNavigate(slug)}>{label}</button>);
@@ -155,6 +158,9 @@ function renderItems(items: ListItem[], onNavigate?: NavigateHandler) {
 
 const calloutMeta: Record<string, { icon: string; fallbackTitle: string }> = {
   info: { icon: "ℹ", fallbackTitle: "À savoir" },
+  note: { icon: "✎", fallbackTitle: "Note clinique" },
+  tip: { icon: "✓", fallbackTitle: "Réflexe pratique" },
+  success: { icon: "✓", fallbackTitle: "À retenir" },
   warning: { icon: "△", fallbackTitle: "Attention" },
   danger: { icon: "⚠", fallbackTitle: "Ne pas manquer" },
 };
@@ -164,6 +170,7 @@ export function MarkdownBlocks({ blocks, onNavigate }: { blocks: Block[]; onNavi
     <>
       {blocks.map((block, index) => {
         if (block.kind === "h2") return <h2 key={index} id={block.id}>{block.text}</h2>;
+        if (block.kind === "h3") return <h3 key={index} id={block.id}>{block.text}</h3>;
         if (block.kind === "label") return <h3 key={index}>{block.text}</h3>;
         if (block.kind === "hr") return <hr key={index} />;
         if (block.kind === "p") return <p key={index}>{renderInline(block.text, onNavigate)}</p>;

@@ -13,6 +13,7 @@ tags:
   - traumatisme crânien
   - lentille biconvexe
 resume: "Collection sanguine entre l'os et la dure-mère, d'origine artérielle (artère méningée moyenne) : urgence neurochirurgicale du sujet jeune avec intervalle libre et image en lentille biconvexe au scanner."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -158,4 +159,10 @@ Examen neurologique complet et répété : testing moteur des quatre membres à 
 ## Liens
 - Voir aussi : [[hematome-sous-dural]]
 - Diagnostics différentiels : hématome sous-dural (croissant, franchit les sutures, origine veineuse, sujet âgé/OH, installation plus lente), contusion cérébrale et lésions axonales diffuses (troubles de conscience d'emblée, sans intervalle libre), hémorragie sous-arachnoïdienne (céphalée brutale en coup de tonnerre), AVC (déficit brutal, contexte non traumatique)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Service de neurologie : maladies traitées](https://www.chuv.ch/fr/neurologie/nlg-home/patients-et-familles/maladies-traitees/)
+- [Revue Médicale Suisse — Neurologie](https://www.revmed.ch/specialites/neurologie)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

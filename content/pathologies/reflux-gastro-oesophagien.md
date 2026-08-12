@@ -14,6 +14,7 @@ tags:
   - endoscopie
   - hernie hiatale
 resume: "Remontée du contenu gastrique dans l'œsophage responsable de pyrosis et régurgitations : diagnostic clinique, traitement par IPP, endoscopie si signes d'alarme."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -161,4 +162,10 @@ Examen général et cardio-pulmonaire pour écarter une cause thoracique devant 
 ## Liens
 - Voir aussi : [[ulcere-gastroduodenal]], [[hemorragie-digestive]]
 - Diagnostics différentiels : ulcère gastroduodénal (douleur épigastrique rythmée par les repas, calmée par l'alimentation), syndrome coronarien aigu (douleur thoracique à écarter en priorité, ECG-troponine), spasme / trouble moteur œsophagien (dysphagie, douleur thoracique, manométrie), cancer de l'œsophage (dysphagie progressive, amaigrissement), dyspepsie fonctionnelle (inconfort épigastrique sans reflux)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [CHUV — Gastro-entérologie et hépatologie : maladies et affections](https://www.chuv.ch/fr/gastro-hepato/glg-home/patients-et-familles/maladies-et-affections/)
+- [HUG — Gastro-entérologie, hépatologie et nutrition](https://www.hug.ch/gastro-enterologie-hepatologie-nutrition)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

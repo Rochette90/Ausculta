@@ -14,6 +14,7 @@ tags:
   - BU/ECBU
   - antibiothérapie
 resume: "Infection bactérienne du parenchyme rénal et des voies excrétrices hautes (E. coli +++) : fièvre, douleur lombaire et signes urinaires — éliminer l'obstacle."
+reviewed_at: 2026-08-12
 ---
 
 > [!info] Synonymes
@@ -160,6 +161,12 @@ Palpation des fosses lombaires : **contact lombaire douloureux** unilatéral. Pa
 
 ---
 ## Liens
-- Voir aussi : [[appendicite-aigue]], [[choc-anaphylactique]]
+- Voir aussi : [[appendicite-aigue]], choc anaphylactique
 - Diagnostics différentiels : cystite simple (signes urinaires SANS fièvre ni douleur lombaire), colique néphrétique (douleur lombaire paroxystique sans fièvre — sauf surinfection — BU sans leucocytes/nitrites), appendicite aiguë (douleur fosse iliaque droite, défense, BU normale), salpingite / infection génitale haute (douleurs pelviennes, leucorrhées, douleur à la mobilisation utérine au TV)
-- Source / référence :
+---
+## Références médicales
+
+- **Base pédagogique :** notes de cours personnelles « MED – Last Dance », confrontées aux références ci-dessous.
+- [OFSP — Maladies transmissibles de A à Z](https://www.bag.admin.ch/fr/maladies-de-a-a-z)
+- [Revue Médicale Suisse — Maladies infectieuses](https://www.revmed.ch/specialites/maladies-infectieuses)
+- **Dernière revue éditoriale :** 12.08.2026 — synthèse de révision, à adapter aux protocoles institutionnels et au contexte clinique.

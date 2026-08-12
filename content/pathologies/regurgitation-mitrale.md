@@ -3,156 +3,84 @@ slug: regurgitation-mitrale
 title: "Valvulopathies mitrales"
 specialty: Cardiologie
 criticality: important
-resume: "Sténose ou insuffisance de la valve mitrale : dyspnée, fibrillation auriculaire et congestion pulmonaire ; l’échocardiographie en précise le mécanisme et la sévérité."
+resume: "Sténose ou insuffisance mitrale : dyspnée, fibrillation auriculaire et congestion pulmonaire ; l’échocardiographie en précise le mécanisme, la sévérité et le moment de l’intervention."
+reviewed_at: 2026-08-12
 ---
 
+> [!danger] Valvulopathie mitrale aiguë
+> Une insuffisance mitrale aiguë après infarctus, rupture de cordage/pilier ou endocardite peut provoquer **œdème pulmonaire et choc** sans cardiomégalie préalable. Stabilisation, échocardiographie urgente et discussion chirurgicale immédiate sont prioritaires.
 
-> [!info] Synonymes
-> Valvulopathies ; maladies valvulaires cardiaques ; RA (rétrécissement/sténose aortique) ; IA (insuffisance aortique) ; RM (rétrécissement/sténose mitral) ; IM (insuffisance mitrale) ; valvular heart disease (VHD)
-
----
 ## Définition
-*Anomalies structurelles ou fonctionnelles d'une ou plusieurs valves cardiaques, responsables soit d'un obstacle à l'écoulement du sang (sténose / rétrécissement), soit d'un reflux (insuffisance / régurgitation). Elles entraînent une surcharge de pression et/ou de volume des cavités cardiaques, conduisant à terme à un remodelage et à une insuffisance cardiaque. L'échocardiographie (ETT) est l'examen de référence pour le diagnostic et la quantification.*
 
-**Classification :**
-- **Sténose aortique (RA)** : obstacle à l'éjection du VG (surcharge de pression).
-- **Insuffisance aortique (IA)** : reflux aorte → VG en diastole (surcharge de volume du VG).
-- **Insuffisance mitrale (IM)** : reflux VG → OG en systole (surcharge de volume).
-- **Sténose mitrale (RM)** : obstacle au remplissage du VG (surcharge OG, retentissement pulmonaire).
-- (Valvulopathies tricuspide/pulmonaire : plus rares.)
-- **Selon l'évolutivité :** aiguë (souvent mal tolérée) vs chronique (compensée puis décompensée) ; **sévérité** quantifiée à l'ETT (légère/modérée/sévère).
+- **Insuffisance mitrale (IM) :** reflux systolique du ventricule gauche vers l’oreillette gauche par défaut de coaptation.
+- **Sténose mitrale (SM) :** obstacle diastolique au remplissage du ventricule gauche, le plus souvent séquelle rhumatismale.
 
----
-## Épidémiologie
-| Paramètre | Valeur |
-|---|---|
-| Prévalence / Incidence | Fréquentes, en augmentation avec le vieillissement ; **sténose aortique dégénérative** = valvulopathie la plus fréquente du sujet âgé en Europe *(chiffres à vérifier)* |
-| Sex-ratio (H/F) | Variable selon la valvulopathie (ex. RM rhumatismal plus fréquent chez la femme) *(à vérifier)* |
-| Âge de survenue | RA dégénératif et IM dégénérative surtout après 65–70 ans ; valvulopathies rhumatismales plus précoces *(à vérifier)* |
-| Facteurs de risque | Âge, facteurs de risque cardiovasculaire (RA dégénératif), antécédent de RAA (rhumatisme articulaire aigu), endocardite, bicuspidie aortique congénitale, dégénérescence myxoïde (prolapsus mitral) |
+L’IM est dite **primaire** si la valve/les cordages sont lésés (prolapsus, rupture, endocardite) et **secondaire** si la valve est structurellement normale mais tractée par le remodelage ventriculaire ou auriculaire.
 
-**Remarques :** Le rhumatisme articulaire aigu reste une cause majeure dans les pays à faibles ressources ; les causes dégénératives prédominent en Suisse/Europe. La décision opératoire dépend de la sévérité, des symptômes et de la fonction VG.
-
----
 ## Physiopathologie
-**Mécanisme principal**
-- **Sténoses** : réduction de l'orifice valvulaire → obstacle à l'écoulement → surcharge de **pression** en amont (hypertrophie concentrique du VG pour le RA ; dilatation OG/HTAP pour le RM).
-- **Insuffisances** : défaut de coaptation → reflux → surcharge de **volume** de la cavité receveuse (dilatation excentrique du VG pour IA/IM). 
-- L'adaptation est d'abord compensée (asymptomatique), puis le remodelage devient délétère → dysfonction VG, insuffisance cardiaque, troubles du rythme (FA fréquente dans les atteintes mitrales). Les formes **aiguës** (ex. IM par rupture de pilier, IA sur endocardite/dissection) sont mal tolérées car la cavité n'a pas eu le temps de s'adapter → OAP/choc.
 
-**Étiologies**
-- **RA** : dégénératif/calcifié (âge), bicuspidie aortique, post-rhumatismal
-- **IA** : dégénérative, bicuspidie, dilatation de l'aorte/dissection ([[Dissection-aortique]], [[Syndrome-de-Marfan]]), endocardite ([[Endocardite-infectieuse]]), rhumatismale
-- **IM** : dégénérative (prolapsus/dégénérescence myxoïde, rupture de cordage), ischémique/fonctionnelle, post-IDM (rupture de pilier), endocardite, rhumatismale
-- **RM** : essentiellement rhumatismal (séquelle de RAA)
+L’IM chronique crée une surcharge volumique de l’oreillette et du ventricule gauches. La dilatation compense longtemps le reflux, puis apparaissent dysfonction ventriculaire, hypertension pulmonaire et fibrillation auriculaire. Dans l’IM aiguë, l’oreillette non dilatée ne peut absorber brutalement le volume régurgité : la pression pulmonaire monte rapidement.
 
-**Facteurs déclenchants** (de décompensation)
-- Passage en FA (mal toléré, surtout RM/IM), effort, grossesse
-- Endocardite infectieuse, ischémie/IDM (IM aiguë), poussée hypertensive (IA)
-- Anémie, fièvre, écart de traitement
+La SM élève la pression auriculaire gauche, favorise congestion/œdème pulmonaire, hypertension pulmonaire, dilatation auriculaire, FA et thrombus auriculaire.
 
----
-## Symptômes
-**Symptômes fonctionnels**
-- **Sténose aortique (triade classique) :** angor d'effort, syncope d'effort, dyspnée d'effort → l'apparition des symptômes marque un tournant pronostique
-- **Insuffisance mitrale :** dyspnée d'effort, fatigue, palpitations (FA), signes d'IC gauche
-- **Sténose mitrale :** dyspnée, hémoptysie, signes congestifs, palpitations (FA), parfois dysphonie/dysphagie (dilatation OG)
-- **Insuffisance aortique :** longtemps asymptomatique, puis dyspnée d'effort, palpitations, angor
+## Causes
 
-**Symptômes généraux**
-- Asthénie, intolérance à l'effort ; fièvre/altération de l'état général orientant vers une endocardite
+| Lésion | Causes principales en Suisse/Europe |
+|---|---|
+| IM primaire | Prolapsus/dégénérescence myxoïde, rupture de cordage, endocardite, atteinte rhumatismale |
+| IM secondaire | Cardiopathie ischémique, infarctus, cardiomyopathie dilatée, dilatation atriale liée à la FA |
+| SM | Rhumatisme articulaire aigu ; plus rarement calcification annulaire sévère ou cause congénitale |
 
-**Mode d'installation :** Chronique et progressif (longue phase asymptomatique) pour les formes dégénératives ; brutal et sévère (OAP/choc) pour les formes aiguës.
+## Présentation clinique
 
----
-## Signes
-**Signes physiques** (souffles caractéristiques)
-- **RA :** souffle **systolique éjectionnel** râpeux, foyer aortique, irradiant aux carotides ; abolition/diminution de B2, pouls parvus et tardus dans les formes serrées
-- **IA :** souffle **diastolique** doux, aspiratif, le long du bord gauche du sternum, patient penché en avant ; signes périphériques d'hyperpulsatilité (élargissement de la différentielle)
-- **IM :** souffle **holosystolique** apexien, irradiant vers l'aisselle
-- **RM :** roulement **diastolique** apexien, éclat de B1, claquement d'ouverture mitral
-- Signes d'IC associés (crépitants, œdèmes, turgescence jugulaire), signes d'HTAP
+- Dyspnée d’effort, baisse de performance, orthopnée et œdèmes dans les formes avancées.
+- Palpitations ou décompensation lors du passage en fibrillation auriculaire.
+- SM : hémoptysie possible, événements emboliques, parfois dysphonie par dilatation atriale.
+- IM aiguë : détresse respiratoire, hypotension ou choc.
 
-**Signes biologiques**
-- Pas de marqueur diagnostique spécifique ; **BNP/NT-proBNP** utiles pour le retentissement/suivi
-- En cas de suspicion d'endocardite : hémocultures, syndrome inflammatoire
-
-**Signes radiologiques / imagerie**
-- **ETT (transthoracique) : examen de référence** — mécanisme, sévérité (gradients, surface valvulaire, volume régurgité), retentissement (taille des cavités, FEVG, pressions pulmonaires)
-- **ETO** (transœsophagienne) : précision du mécanisme (surtout mitral), bilan pré-opératoire, endocardite
-- **ECG** (HVG, dilatation auriculaire, FA), **radiographie thoracique** (cardiomégalie, congestion, calcifications)
-- Coronarographie pré-opératoire, scanner (TAVI), épreuve d'effort dans certains cas *(à vérifier)*
-
----
 ## Examen clinique
-**Inspection**
-État général, signes d'IC (dyspnée, œdèmes), signes périphériques d'IA (hyperpulsatilité), recherche de signes d'endocardite.
 
-**Palpation**
-Pouls (parvus et tardus dans le RA serré ; ample et bondissant dans l'IA), choc de pointe (dévié si dilatation VG), frémissement (thrill) au foyer correspondant, pression artérielle (différentielle élargie dans l'IA).
+- **IM :** souffle holosystolique apexien irradiant vers l’aisselle ; B3 possible si surcharge importante. Le souffle peut être peu intense dans l’IM aiguë sévère.
+- **SM :** éclat de B1, claquement d’ouverture puis roulement diastolique apexien, mieux entendu en décubitus latéral gauche.
+- Rechercher crépitants, signes d’HTP/insuffisance droite, pouls irrégulier et signes d’endocardite.
 
-**Percussion / Auscultation**
-Auscultation systématique des 4 foyers, patient en décubitus puis penché en avant (IA) et en décubitus latéral gauche (RM/IM) : caractériser le souffle (temps, foyer, irradiation, intensité), B1/B2, bruits surajoutés. Auscultation pulmonaire (congestion).
+## Examens complémentaires
 
-**Examens complémentaires à prescrire** *(avec justification)*
-- **ETT** : confirme et quantifie la valvulopathie, évalue le retentissement (clé de la décision).
-- **ECG** : HVG, dilatation auriculaire, FA, troubles de conduction.
-- **Radiographie thoracique** : cardiomégalie, congestion, calcifications valvulaires.
-- **BNP/NT-proBNP** : retentissement et suivi.
-- **ETO** : précision du mécanisme et bilan pré-opératoire (notamment mitral, endocardite).
-- **Coronarographie** pré-opératoire (recherche de coronaropathie associée) ; **scanner** pour planification TAVI ; épreuve d'effort si symptômes ambigus *(à vérifier)*.
+1. **Échocardiographie transthoracique :** mécanisme, quantification multiparamétrique, dimensions OG/VG, FEVG, pression pulmonaire et autres valves.
+2. Échocardiographie transœsophagienne si mécanisme incertain, endocardite, thrombus, ou planification d’une intervention.
+3. ECG pour FA, signes de surcharge ; BNP et épreuve d’effort dans des situations sélectionnées.
+4. Coronarographie/CT coronaire selon âge et risque avant intervention ; discussion en Heart Team.
 
----
-## Prise en charge
-> [!warning] Critères d'hospitalisation
-> Valvulopathie symptomatique sévère, décompensation cardiaque/OAP, valvulopathie aiguë (IM/IA aiguë → OAP/choc), syncope (RA serré), suspicion d'endocardite, trouble du rythme mal toléré, bilan/intervention programmée. Critères opératoires précis selon sévérité, symptômes et FEVG *(à vérifier — confirmer sur Firstline / référentiel)*.
+> [!warning] Interprétation de la FEVG
+> Dans l’IM chronique, une FEVG « normale basse » peut déjà traduire une dysfonction, car une partie du volume est éjectée vers l’oreillette à faible résistance. Le suivi du diamètre/volume ventriculaire et des symptômes est essentiel.
 
-**Mesures urgentes**
-- Formes aiguës mal tolérées (IM/IA aiguë, OAP) : traitement de l'IC aiguë, orientation rapide vers chirurgie/cardiologie interventionnelle *(protocole à vérifier)*
-- Contrôle d'une FA rapide, traitement des facteurs déclenchants
-- **Attention au RA serré :** prudence avec les vasodilatateurs/diurétiques excessifs (risque de chute du débit) *(à vérifier)*
-
-**Règles hygiéno-diététiques (RHD)**
-- Contrôle des facteurs de risque cardiovasculaire, activité physique adaptée à la sévérité
-- Hygiène bucco-dentaire rigoureuse et mesures de **prévention de l'endocardite** chez les patients à risque *(indications/antibioprophylaxie à vérifier — Firstline)*
-- Sevrage tabagique, suivi du poids
-
-**Éducation thérapeutique / suivi**
-- Information sur les symptômes d'alerte imposant une réévaluation (dyspnée, angor, syncope)
-- **Suivi échographique régulier** adapté à la sévérité (la fréquence varie) *(intervalles à vérifier)*
-- Pour les valves prothétiques : éducation à l'anticoagulation (prothèses mécaniques), prévention de l'endocardite
-
----
 ## Traitement
-**Traitement de 1re ligne** *(DCI, posologie, durée)*
-- **Le traitement curatif des valvulopathies sévères symptomatiques est interventionnel** (chirurgie ou cathétérisme) ; le traitement médical est surtout symptomatique/adjuvant.
-- **Traitement médical** : prise en charge de l'IC associée (diurétiques pour la congestion, traitement de fond selon FEVG), contrôle de la TA (IA), contrôle de la fréquence/rythme en cas de FA, anticoagulation si indiquée *(molécules/doses à vérifier — Firstline)*.
-- Contrôle des facteurs de risque cardiovasculaire.
 
-**Alternatives / 2e ligne**
-- Surveillance rapprochée des formes asymptomatiques (pas de traitement spécifique tant que les critères opératoires ne sont pas atteints)
-- Adaptation médicamenteuse selon comorbidités *(à vérifier)*
+### Insuffisance mitrale
 
-**Traitement chirurgical / interventionnel** *(indications, type d'intervention)*
-- **RA sévère symptomatique** (ou asymptomatique avec dysfonction VG / critères spécifiques) : **remplacement valvulaire aortique chirurgical (RVA)** ou **TAVI** (implantation percutanée), choix selon le risque/âge (Heart Team) *(critères à vérifier)*
-- **IM sévère** : **réparation mitrale** (à privilégier quand possible) ou remplacement ; option percutanée (réparation bord-à-bord) chez les patients à haut risque *(indications à vérifier)*
-- **IA sévère** symptomatique ou avec dilatation VG/dysfonction : remplacement valvulaire ± chirurgie de l'aorte ascendante
-- **RM serré** : commissurotomie mitrale percutanée (anatomie favorable) ou remplacement *(à vérifier)*
+- IM primaire sévère : **réparation chirurgicale** privilégiée lorsqu’elle est durablement réalisable ; intervenir selon symptômes, fonction/dimensions VG, FA, pression pulmonaire et probabilité de réparation.
+- IM secondaire : optimiser d’abord le traitement de l’insuffisance cardiaque et la resynchronisation si indiquée ; réparation percutanée bord-à-bord chez certains patients symptomatiques sélectionnés.
+- Diurétiques pour congestion ; traiter HTA, FA et cause ischémique. Le traitement médical ne corrige pas une IM primaire sévère.
 
-> [!danger] Contre-indications / interactions
-> RA serré : prudence avec vasodilatateurs (nitrés, IEC à forte dose) et diurétiques excessifs (risque d'hypotension/bas débit). Prothèses **mécaniques** : anticoagulation par AVK indispensable (les AOD/ACOD ne sont pas indiqués) ; gestion péri-opératoire/grossesse spécifique *(à vérifier — Firstline)*. Vérifier les indications d'antibioprophylaxie de l'endocardite.
+### Sténose mitrale
 
-**Complications / pronostic**
-- Insuffisance cardiaque ([[Insuffisance-cardiaque]]), fibrillation auriculaire et complications thromboemboliques
-- Endocardite infectieuse ([[Endocardite-infectieuse]]), HTAP, mort subite (RA serré symptomatique)
-- Complications des prothèses (thrombose, désinsertion, dégénérescence, endocardite sur prothèse)
-- Pronostic transformé par la chirurgie/intervention au bon moment ; l'apparition des symptômes (surtout RA) impose une prise en charge rapide
+- Diurétiques pour congestion et contrôle de fréquence en FA.
+- Anticoagulation par AVK en cas de FA associée à une SM rhumatismale modérée/sévère ; les AOD ne sont pas le choix de référence dans ce contexte.
+- Commissurotomie mitrale percutanée si SM sévère symptomatique avec anatomie favorable, sans thrombus atrial ni IM significative ; sinon chirurgie.
 
----
+## Suivi et prévention
+
+- Suivi clinique et échographique selon sévérité ; réévaluer rapidement si dyspnée, baisse de performance, FA ou grossesse envisagée.
+- Hygiène bucco-dentaire et prévention de l’endocardite ; antibioprophylaxie seulement dans les groupes à haut risque définis par les recommandations.
+- Après prothèse mécanique : AVK indispensable et suivi spécialisé.
+
 ## Liens
-- Voir aussi : [[Insuffisance-cardiaque]], [[Endocardite-infectieuse]], [[Angor-stable-et-SCC]]
-- Diagnostics différentiels : [[Insuffisance-cardiaque]] (autres causes), [[Angor-stable-et-SCC]] (angor du RA), [[Dissection-aortique]] / [[Syndrome-de-Marfan]] (IA), cardiomyopathie hypertrophique (souffle), [[Embolie-pulmonaire]]
-- Source / référence : Recommandations ESC/EACTS (valvulopathies) ; UpToDate ; doses à confirmer sur Firstline
 
-- Source du vault : `Nouvelles fiches/À relire/Valvulopathies-cardiaques.md`
+- Voir aussi : [[insuffisance-cardiaque]], [[fibrillation-auriculaire]], [[endocardite-infectieuse]], [[infarctus-myocarde-sca]]
 
+## Références médicales
+
+- **Base pédagogique :** notes personnelles « MED – Last Dance », notamment `Nouvelles fiches/À relire/Valvulopathies-cardiaques.md`.
+- [CHUV — Affections des valves](https://www.chuv.ch/fr/cardiologie/car-home/patients-et-famille/maladies-traitees/affections-des-valves-et-vaisseaux)
+- [ESC/EACTS — Valvular Heart Disease Guidelines](https://www.escardio.org/guidelines/clinical-practice-guidelines/valvular-heart-disease/)
+- **Dernière revue éditoriale :** 12.08.2026.
