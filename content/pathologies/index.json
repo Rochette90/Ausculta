@@ -1,0 +1,1144 @@
+[
+  {
+    "slug": "aomi",
+    "title": "Artériopathie oblitérante des membres inférieurs",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Athérosclérose des artères des membres inférieurs : claudication intermittente, IPS < 0,90, marqueur de risque cardiovasculaire global.",
+    "keyPoints": [
+      "Claudication intermittente : douleur (crampe) à la marche, dans un territoire musculaire (mollet +++), cédant à l'arrêt de l'effort",
+      "Index de pression systolique (IPS) — confirme le diagnostic : IPS < 0,90 = AOMI ; > 1,40 = incompressibilité (médiacalcose diabétique)",
+      "Sevrage tabagique total (mesure la plus efficace sur le pronostic du membre et cardiovasculaire)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "bloc-auriculo-ventriculaire",
+    "title": "Bloc auriculo-ventriculaire",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Ralentissement ou interruption de la conduction de l'influx entre oreillettes et ventricules : du simple allongement du PR (BAV 1) à la dissociation complète (BAV 3) avec risque de syncope d'Adams-Stokes et indication de pacemaker.",
+    "keyPoints": [
+      "BAV 1er degré et Mobitz I : le plus souvent asymptomatiques (découverte ECG) — *fréquent*",
+      "ECG 12 dérivations — diagnostic et classification : PR > 200 ms (BAV 1) ; allongement progressif du PR puis P bloquée (Mobitz I) ; P bloquée inopinée sans allongement (Mobitz II) ; dissociation complète P/QRS (BAV 3)",
+      "Révision de l'ordonnance : suppression/adaptation des bradycardisants"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "dissection-aortique",
+    "title": "Dissection aortique",
+    "specialty": "Cardiologie",
+    "criticality": "urgent",
+    "summary": "Déchirure intimale créant un faux chenal : douleur thoracique brutale transfixiante migratrice, urgence vitale (type A = chirurgie immédiate).",
+    "keyPoints": [
+      "Douleur thoracique brutale, intense d'emblée, transfixiante (en coup de poignard), à type de déchirure",
+      "Angioscanner thoraco-abdominal injecté en urgence — examen de référence : confirme le diagnostic, visualise le flap intimal, classe Stanford A/B et précise l'extension aux branches",
+      "Contrôle tensionnel rigoureux au long cours, sevrage tabagique, arrêt des stimulants (cocaïne)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "fibrillation-auriculaire",
+    "title": "Fibrillation auriculaire",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Trouble du rythme supraventriculaire le plus fréquent : activité auriculaire anarchique, rythme ventriculaire irrégulier, risque thrombo-embolique majeur (AVC).",
+    "keyPoints": [
+      "Palpitations (irrégulières, « cœur qui s'emballe ») — symptôme le plus évocateur",
+      "ECG 12 dérivations — confirmer le diagnostic (absence d'onde P, ondes f, RR irréguliers) et évaluer la cadence ventriculaire",
+      "Réduction / arrêt de l'alcool et des excitants, sevrage tabagique"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hypertension-arterielle",
+    "title": "Hypertension artérielle",
+    "specialty": "Cardiologie",
+    "criticality": "frequent",
+    "summary": "Élévation chronique de la pression artérielle (≥ 140/90 mmHg) : facteur de risque cardiovasculaire majeur, souvent asymptomatique (« tueur silencieux »).",
+    "keyPoints": [
+      "Le plus souvent aucun (« tueur silencieux ») : découverte fortuite ou lors d'un dépistage",
+      "Kaliémie, créatininémie avec DFG — retentissement rénal et orientation vers une HTA secondaire (hypokaliémie → Conn)",
+      "Réduction des apports en sel (< 6 g/j), perte de poids, activité physique régulière"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "infarctus-myocarde-sca",
+    "title": "Infarctus du myocarde (SCA ST+)",
+    "specialty": "Cardiologie",
+    "criticality": "urgent",
+    "summary": "Douleur thoracique constrictive prolongée par occlusion coronaire aiguë : urgence absolue, le délai de reperfusion conditionne le pronostic — time is muscle.",
+    "keyPoints": [
+      "Douleur thoracique rétrosternale constrictive (« en étau »), prolongée (> 20 min), non calmée par la trinitrine — *cardinal*",
+      "ECG 18 dérivations en urgence (< 10 min) — distinguer SCA ST+ (reperfusion immédiate) du SCA ST−, localiser le territoire",
+      "Sevrage tabagique impératif, régime méditerranéen pauvre en graisses saturées"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "insuffisance-cardiaque",
+    "title": "Insuffisance cardiaque",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Incapacité du cœur à assurer un débit adapté aux besoins de l'organisme : dyspnée et congestion, à classer selon la FEVG (HFrEF/HFmrEF/HFpEF).",
+    "keyPoints": [
+      "Dyspnée d'effort puis de repos (maître symptôme), à quantifier selon la NYHA",
+      "BNP / NT-proBNP — orientation diagnostique et valeur d'élimination devant une dyspnée",
+      "Régime pauvre en sel (≈ 4–6 g/j), restriction hydrique si hyponatrémie"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "myocardite",
+    "title": "Myocardite",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Inflammation aiguë du myocarde, le plus souvent d'origine virale : douleur thoracique pseudo-infarctus, élévation de la troponine et ECG anormal chez un sujet jeune, avec risque d'insuffisance cardiaque et de troubles du rythme.",
+    "keyPoints": [
+      "Douleur thoracique, souvent de type péricardique ou pseudo-angineuse — *fréquent*",
+      "ECG — anomalies de repolarisation, troubles du rythme et de conduction",
+      "Arrêt de tout effort physique et du sport (au moins 3–6 mois, jusqu'à normalisation du bilan)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "oedeme-aigu-pulmonaire",
+    "title": "Œdème aigu pulmonaire",
+    "specialty": "Cardiologie",
+    "criticality": "urgent",
+    "summary": "Inondation alvéolaire aiguë d'origine cardiogénique par élévation brutale des pressions capillaires pulmonaires : détresse respiratoire aiguë avec orthopnée, crépitants bilatéraux et expectoration mousseuse — urgence vitale.",
+    "keyPoints": [
+      "Dyspnée intense d'installation brutale, souvent nocturne (réveil) — *cardinal*",
+      "ECG (systématique, immédiat) — rechercher un SCA, un trouble du rythme (FA rapide) déclenchant",
+      "Régime hyposodé, restriction hydrique en cas de surcharge"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "pericardite-aigue",
+    "title": "Péricardite aiguë",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Inflammation aiguë du péricarde : douleur thoracique positionnelle, frottement péricardique et sus-décalage ST diffus ; étiologie virale/idiopathique le plus souvent, bénigne mais guetter la tamponnade.",
+    "keyPoints": [
+      "Douleur thoracique rétrosternale ou précordiale, prolongée, à type de pesanteur ou de brûlure",
+      "ECG 12 dérivations — sus-décalage ST diffus concave, sous-décalage PQ ; distinguer d'un SCA (sus-décalage systématisé, convexe, miroir)",
+      "Repos et restriction de l'activité physique jusqu'à disparition des symptômes et normalisation de la CRP/ECG (au moins jusqu'à résolution ; arrêt du sport de compétition prolongé en cas de myopéricardite)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "stenose-aortique",
+    "title": "Sténose aortique",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Obstacle à l'éjection ventriculaire gauche par rétrécissement de l'orifice aortique : souffle systolique éjectionnel, triade angor / syncope / dyspnée d'effort ; échocardiographie clé, remplacement valvulaire dès qu'elle devient serrée et symptomatique.",
+    "keyPoints": [
+      "Longtemps asymptomatique (obstacle bien toléré au repos)",
+      "Échocardiographie transthoracique doppler — confirmer le diagnostic, quantifier la sévérité (surface, gradient moyen, Vmax), évaluer la fonction VG et les valvulopathies associées",
+      "Éviter les efforts physiques intenses et la compétition en cas de sténose serrée"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "tachycardies-supraventriculaires",
+    "title": "Tachycardies supraventriculaires",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Tachycardies naissant au-dessus du faisceau de His : palpitations à début et fin brusques, QRS généralement fins, traitement guidé par la tolérance et le mécanisme.",
+    "keyPoints": [
+      "Tachycardie régulière à QRS fins : manœuvres vagales puis adénosine sous monitorage si bonne tolérance",
+      "Instabilité hémodynamique : cardioversion électrique synchronisée urgente",
+      "Ablation par cathéter : traitement curatif de référence des réentrées symptomatiques récidivantes"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "tamponnade-cardiaque",
+    "title": "Tamponnade cardiaque",
+    "specialty": "Cardiologie",
+    "criticality": "urgent",
+    "summary": "Compression aiguë des cavités cardiaques par un épanchement péricardique sous tension : chute du débit cardiaque avec triade de Beck (hypotension, turgescence jugulaire, bruits du cœur assourdis) — urgence vitale imposant un drainage.",
+    "keyPoints": [
+      "Dyspnée d'aggravation progressive, orthopnée — *fréquent*",
+      "Échocardiographie transthoracique en urgence — confirme l'épanchement et le retentissement (diagnostic + guide le drainage)",
+      "Aucune mesure hygiéno-diététique en phase aiguë : priorité au drainage"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "thrombose-veineuse-profonde",
+    "title": "Thrombose veineuse profonde",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Obstruction thrombotique d'une veine profonde (mollet +++) : risque majeur d'embolie pulmonaire, anticoagulation urgente.",
+    "keyPoints": [
+      "Douleur unilatérale du mollet (spontanée ou à la palpation, sensation de tension)",
+      "Score de Wells — stratifier la probabilité clinique de TVP avant tout examen",
+      "Lever et mobilisation précoces, éviter l'immobilisation prolongée"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "regurgitation-mitrale",
+    "title": "Valvulopathies mitrales",
+    "specialty": "Cardiologie",
+    "criticality": "important",
+    "summary": "Sténose ou insuffisance de la valve mitrale : dyspnée, fibrillation auriculaire et congestion pulmonaire ; l’échocardiographie en précise le mécanisme et la sévérité.",
+    "keyPoints": [
+      "Insuffisance mitrale : souffle holosystolique apexien irradiant vers l’aisselle",
+      "Sténose mitrale : roulement diastolique apexien, souvent compliqué de fibrillation auriculaire",
+      "Échocardiographie transthoracique : examen de référence pour le mécanisme, la sévérité et le retentissement"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "acidocetose-diabetique",
+    "title": "Acidocétose diabétique",
+    "specialty": "Endocrinologie",
+    "criticality": "urgent",
+    "summary": "Décompensation aiguë du diabète par carence absolue en insuline : hyperglycémie, cétose et acidose métabolique — urgence métabolique vitale.",
+    "keyPoints": [
+      "Syndrome polyuro-polydipsique marqué (soif intense, mictions abondantes)",
+      "Glycémie capillaire et veineuse — confirmer l'hyperglycémie",
+      "Reprise progressive de l'alimentation après résolution de la cétose et de l'acidose"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "diabete-type-1",
+    "title": "Diabète de type 1",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Diabète auto-immun par destruction des cellules β des îlots de Langerhans : carence insulinique absolue du sujet jeune, révélé par un syndrome cardinal ou une acidocétose, imposant une insulinothérapie à vie.",
+    "keyPoints": [
+      "Polyurie (y compris nocturne, énurésie chez l'enfant) et polydipsie — *cardinal*",
+      "Glycémie veineuse, HbA1c — confirmation du diagnostic et évaluation du déséquilibre",
+      "Alimentation équilibrée avec comptage des glucides (insulinothérapie fonctionnelle) plutôt que régime restrictif"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "diabete-type-2",
+    "title": "Diabète de type 2",
+    "specialty": "Endocrinologie",
+    "criticality": "frequent",
+    "summary": "Hyperglycémie chronique par insulinorésistance et insulinopénie relative, souvent asymptomatique : dépistage et prévention des complications micro- et macro-angiopathiques.",
+    "keyPoints": [
+      "Le plus souvent aucun symptôme (découverte fortuite ou au dépistage)",
+      "Glycémie veineuse à jeun (± répétée) — confirmer le diagnostic (≥ 1,26 g/L à 2 reprises)",
+      "1re intention : équilibre alimentaire (réduction des sucres rapides et des graisses saturées, fractionnement, perte de poids) et activité physique régulière (≈ 150 min/semaine)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "diabete-insipide",
+    "title": "Diabète insipide",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "hyperaldosteronisme-primaire",
+    "title": "Hyperaldostéronisme primaire",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "hyperparathyroidie",
+    "title": "Hyperparathyroïdie",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "hyperthyroidie",
+    "title": "Hyperthyroïdie",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Excès d'hormones thyroïdiennes responsable d'un syndrome de thyrotoxicose : TSH effondrée, tachycardie, amaigrissement avec appétit conservé.",
+    "keyPoints": [
+      "Amaigrissement contrastant avec un appétit conservé ou augmenté",
+      "TSH ± T4L/T3L — confirmer la thyrotoxicose (TSH effondrée + hormones libres élevées)",
+      "Repos relatif en phase aiguë ; éviter la surcharge iodée (produits de contraste, amiodarone) qui peut aggraver ou déclencher la thyrotoxicose"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hypoglycemie",
+    "title": "Hypoglycémie",
+    "specialty": "Endocrinologie",
+    "criticality": "urgent",
+    "summary": "Baisse de la glycémie sous le seuil critique définie par la triade de Whipple : urgence à reconnaître pour un resucrage immédiat (oral ou glucagon/glucose IV) afin de prévenir le coma et les séquelles neurologiques.",
+    "keyPoints": [
+      "Signes adrénergiques : sueurs, tremblements, palpitations, pâleur, faim impérieuse, anxiété — *cardinal (précoces)*",
+      "Glycémie capillaire immédiate puis glycémie veineuse de confirmation — geste diagnostique prioritaire",
+      "Ne jamais sauter de repas, fractionner les apports glucidiques, collation avant l'effort"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hyponatremie",
+    "title": "Hyponatrémie",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Trouble hydro-électrolytique le plus fréquent, défini par une natrémie < 135 mmol/L : le raisonnement repose sur l'osmolarité et la volémie (SIADH, déplétion, surcharge), avec un risque majeur de myélinolyse en cas de correction trop rapide.",
+    "keyPoints": [
+      "Formes modérées : nausées, céphalées, asthénie, troubles de la concentration, difficultés à la marche",
+      "Ionogramme sanguin, osmolalité plasmatique — confirmer et caractériser l'hyponatrémie",
+      "Restriction hydrique adaptée dans le SIADH et les formes hypervolémiques"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hypoparathyroidie",
+    "title": "Hypoparathyroïdie",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "hypothyroidie",
+    "title": "Hypothyroïdie",
+    "specialty": "Endocrinologie",
+    "criticality": "frequent",
+    "summary": "Déficit en hormones thyroïdiennes responsable d'un syndrome d'hypométabolisme : asthénie, frilosité, prise de poids ; TSH élevée, traitement substitutif par lévothyroxine.",
+    "keyPoints": [
+      "Asthénie, frilosité, prise de poids modérée malgré un appétit conservé",
+      "TSH — examen de première intention ; élevée dans l'hypothyroïdie périphérique",
+      "Apport iodé suffisant (prévention de la carence)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "insuffisance-surrenale-aigue",
+    "title": "Insuffisance surrénale aiguë",
+    "specialty": "Endocrinologie",
+    "criticality": "urgent",
+    "summary": "Défaillance aiguë de la sécrétion de cortisol (± aldostérone) : collapsus, déshydratation, hyponatrémie-hyperkaliémie et hypoglycémie mettant en jeu le pronostic vital — l'hydrocortisone IV ne doit jamais être différée.",
+    "keyPoints": [
+      "Asthénie intense, adynamie, faiblesse musculaire majeure",
+      "Ionogramme sanguin, urée, créatinine — hyponatrémie, hyperkaliémie, insuffisance rénale",
+      "Apports sodés et hydriques suffisants ; ne jamais interrompre le traitement substitutif"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "pheochromocytome",
+    "title": "Phéochromocytome",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "syndrome-cushing",
+    "title": "Syndrome de Cushing",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "siadh",
+    "title": "Syndrome de sécrétion inappropriée d’ADH",
+    "specialty": "Endocrinologie",
+    "criticality": "important",
+    "summary": "Fiche prioritaire du programme MVP UNIL en cours de validation éditoriale.",
+    "keyPoints": [],
+    "status": "planned"
+  },
+  {
+    "slug": "appendicite-aigue",
+    "title": "Appendicite aiguë",
+    "specialty": "Gastro-entérologie",
+    "criticality": "urgent",
+    "summary": "Inflammation aiguë de l’appendice : douleur migrant vers la fosse iliaque droite, diagnostic clinique appuyé par l’imagerie et prise en charge chirurgicale.",
+    "keyPoints": [
+      "Douleur péri-ombilicale migrant vers la fosse iliaque droite, anorexie et nausées",
+      "Échographie en première intention chez l’enfant et la femme enceinte ; scanner chez l’adulte si doute",
+      "Antibiothérapie périopératoire et appendicectomie, en urgence si forme compliquée"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "cancer-colorectal",
+    "title": "Cancer colorectal",
+    "specialty": "Gastro-entérologie",
+    "criticality": "important",
+    "summary": "Adénocarcinome développé le plus souvent à partir d'un adénome (séquence adénome-cancer) : cancer fréquent et curable au stade précoce, justifiant un dépistage organisé par test immunologique fécal (FIT).",
+    "keyPoints": [
+      "Troubles du transit récents et persistants (constipation, diarrhée, alternance) — *évocateur*",
+      "Coloscopie totale avec biopsies — diagnostic histologique de certitude",
+      "Arrêt du tabac et de l'alcool, activité physique, correction du surpoids"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "cirrhose",
+    "title": "Cirrhose",
+    "specialty": "Gastro-entérologie",
+    "criticality": "important",
+    "summary": "Fibrose hépatique diffuse irréversible avec nodules de régénération, associant hypertension portale et insuffisance hépatocellulaire.",
+    "keyPoints": [
+      "Longtemps asymptomatique (cirrhose compensée, découverte fortuite)",
+      "Bilan hépatique complet — TP, facteur V, albumine, bilirubine, transaminases, GGT, PAL (synthèse, cytolyse, cholestase)",
+      "Sevrage alcoolique total et définitif (clé de voûte de l'étiologie alcoolique)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "diverticulite",
+    "title": "Diverticulite sigmoïdienne",
+    "specialty": "Gastro-entérologie",
+    "criticality": "important",
+    "summary": "Inflammation/infection d'un diverticule sigmoïdien (« appendicite du côté gauche ») : douleur de la fosse iliaque gauche fébrile, diagnostic au scanner injecté.",
+    "keyPoints": [
+      "Douleur de la fosse iliaque gauche (parfois hypogastrique), continue, d'aggravation progressive",
+      "Scanner abdomino-pelvien injecté en urgence — confirmer le diagnostic, classer selon Hinchey, dépister les complications (abcès, perforation, fistule, occlusion)",
+      "En aigu : régime pauvre en fibres / sans résidu puis réintroduction progressive"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hemorragie-digestive",
+    "title": "Hémorragie digestive",
+    "specialty": "Gastro-entérologie",
+    "criticality": "urgent",
+    "summary": "Saignement du tube digestif (haut ou bas) à risque de choc hémorragique : toute HD impose hospitalisation, évaluation de gravité et voie veineuse.",
+    "keyPoints": [
+      "Hématémèse (vomissement de sang rouge ou « marc de café ») — HD haute",
+      "NFS, groupe sanguin + RAI, hémostase (TP/TCA, plaquettes) — évaluer l'anémie et préparer la transfusion",
+      "À distance : éviction des AINS et de l'aspirine non indispensables, modération de l'alcool"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hernie-inguinale",
+    "title": "Hernie inguinale",
+    "specialty": "Gastro-entérologie",
+    "criticality": "frequent",
+    "summary": "Issue d'un viscère à travers une zone de faiblesse de la paroi inguinale : tuméfaction impulsive et réductible, dont l'étranglement constitue une urgence chirurgicale.",
+    "keyPoints": [
+      "Tuméfaction de la région inguinale apparaissant à l'effort ou en position debout, disparaissant en décubitus — *cardinal*",
+      "Aucun examen indispensable — diagnostic clinique (tuméfaction inguinale réductible et impulsive)",
+      "Correction des facteurs d'hyperpression : lutte contre la constipation, arrêt du tabac (toux), traitement d'un obstacle urinaire"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "ischemie-mesenterique",
+    "title": "Ischémie mésentérique",
+    "specialty": "Gastro-entérologie",
+    "criticality": "urgent",
+    "summary": "Urgence vasculaire abdominale : douleur brutale et intense disproportionnée à l'examen, avec ischémie du grêle ; l'angio-TDM en urgence conditionne le pronostic vital.",
+    "keyPoints": [
+      "Douleur abdominale brutale, intense, permanente, péri-ombilicale ou diffuse — *cardinal*",
+      "Angio-TDM abdomino-pelvienne en urgence — examen diagnostique de référence, à réaliser sans délai",
+      "À jeun strict, aspiration digestive ; nutrition parentérale en phase aiguë"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "lithiase-biliaire-cholecystite",
+    "title": "Lithiase biliaire / Cholécystite aiguë",
+    "specialty": "Gastro-entérologie",
+    "criticality": "frequent",
+    "summary": "Calculs vésiculaires fréquents : de la colique hépatique simple (< 6 h, sans fièvre) à la cholécystite aiguë (obstruction du collet, douleur prolongée + fièvre + Murphy).",
+    "keyPoints": [
+      "Douleur de l'hypochondre droit ou de l'épigastre, à type de torsion / pesanteur",
+      "Échographie abdominale en première intention — confirmer la lithiase, rechercher des signes de cholécystite (paroi > 4 mm, Murphy échographique)",
+      "Réduction des apports en graisses, prise en charge du surpoids"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "maladie-de-crohn",
+    "title": "Maladie de Crohn",
+    "specialty": "Gastro-entérologie",
+    "criticality": "important",
+    "summary": "MICI transmurale et segmentaire pouvant toucher tout le tube digestif : diarrhée, douleurs, atteinte périnéale et fistules, évoluant par poussées.",
+    "keyPoints": [
+      "Diarrhée chronique (> 4 semaines), parfois glairo-sanglante selon la localisation colique — *cardinal*",
+      "Iléo-coloscopie avec biopsies étagées — examen clé : diagnostic, extension, histologie (granulome)",
+      "Arrêt du tabac impératif (bénéfice majeur sur l'évolution)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "occlusion-intestinale",
+    "title": "Occlusion intestinale",
+    "specialty": "Gastro-entérologie",
+    "criticality": "urgent",
+    "summary": "Arrêt du transit intestinal par obstacle mécanique ou paralysie : tétrade douleur–vomissements–arrêt des matières et gaz–météorisme, urgence diagnostique et souvent chirurgicale.",
+    "keyPoints": [
+      "Douleur abdominale (crampes intermittentes dans l'occlusion mécanique du grêle, plus sourde dans l'occlusion colique ou l'iléus)",
+      "Scanner abdomino-pelvien injecté en urgence — confirmer l'occlusion, localiser le siège (zone de transition), identifier la cause et dépister une strangulation",
+      "Reprise progressive de l'alimentation après reprise du transit"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "pancreatite-aigue",
+    "title": "Pancréatite aiguë",
+    "specialty": "Gastro-entérologie",
+    "criticality": "urgent",
+    "summary": "Inflammation aiguë du pancréas par auto-digestion enzymatique : douleur épigastrique transfixiante, lipase > 3N ; lithiase et alcool en tête, gravité à dépister en urgence.",
+    "keyPoints": [
+      "Douleur épigastrique intense, transfixiante, irradiant dans le dos (« en barre »)",
+      "Lipasémie — confirme le diagnostic si > 3N (à demander en première intention)",
+      "Sevrage alcoolique complet et accompagnement (forme alcoolique)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "rectocolite-hemorragique",
+    "title": "Rectocolite hémorragique",
+    "specialty": "Gastro-entérologie",
+    "criticality": "important",
+    "summary": "MICI de la muqueuse colique, continue et rectale ascendante : diarrhée glairo-sanglante et syndrome rectal, avec risque de colite aiguë grave.",
+    "keyPoints": [
+      "Diarrhée glairo-sanglante avec émission de sang et de glaires — *cardinal*",
+      "Coloscopie avec biopsies étagées — diagnostic, extension, histologie ; rectosigmoïdoscopie prudente en poussée grave",
+      "Correction des carences (fer, folates) et de la dénutrition ; hydratation, apports adaptés"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "reflux-gastro-oesophagien",
+    "title": "Reflux gastro-œsophagien",
+    "specialty": "Gastro-entérologie",
+    "criticality": "frequent",
+    "summary": "Remontée du contenu gastrique dans l'œsophage responsable de pyrosis et régurgitations : diagnostic clinique, traitement par IPP, endoscopie si signes d'alarme.",
+    "keyPoints": [
+      "Pyrosis : brûlure rétrosternale ascendante, à recrudescence post-prandiale et positionnelle (antéflexion, décubitus) — *cardinal*",
+      "Aucun examen chez le sujet jeune (< 50 ans) sans signe d'alarme — diagnostic clinique, test thérapeutique par IPP",
+      "Perte de poids en cas de surpoids, arrêt du tabac et de l'alcool"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "syndrome-intestin-irritable",
+    "title": "Syndrome de l'intestin irritable",
+    "specialty": "Gastro-entérologie",
+    "criticality": "frequent",
+    "summary": "Trouble fonctionnel intestinal chronique associant douleur abdominale et troubles du transit, sans lésion organique : diagnostic positif sur les critères de Rome IV après élimination des signes d'alarme.",
+    "keyPoints": [
+      "Douleur ou inconfort abdominal chronique récurrent, souvent soulagé par la défécation — *cardinal*",
+      "Aucun examen invasif systématique — diagnostic positif clinique sur les critères de Rome IV en l'absence de signes d'alarme",
+      "Conseils diététiques : régime pauvre en FODMAPs (encadré par un diététicien), fractionnement des repas, adaptation des fibres selon le transit"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "ulcere-gastroduodenal",
+    "title": "Ulcère gastroduodénal",
+    "specialty": "Gastro-entérologie",
+    "criticality": "important",
+    "summary": "Perte de substance de la paroi gastrique ou duodénale liée à H. pylori ou aux AINS : épigastralgies rythmées, risque d'hémorragie et de perforation.",
+    "keyPoints": [
+      "Épigastralgie : douleur épigastrique à type de crampe ou de faim douloureuse, sans irradiation — *cardinal*",
+      "FOGD (endoscopie haute) avec biopsies — examen clé : diagnostic, biopsies de l'ulcère gastrique, recherche de H. pylori",
+      "Arrêt du tabac (favorise la cicatrisation et prévient la récidive)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "endocardite-infectieuse",
+    "title": "Endocardite infectieuse",
+    "specialty": "Infectiologie",
+    "criticality": "urgent",
+    "summary": "Greffe bactérienne sur l'endocarde valvulaire (végétations) : toute fièvre prolongée inexpliquée + souffle = EI jusqu'à preuve du contraire.",
+    "keyPoints": [
+      "Fièvre prolongée inexpliquée (parfois fébricule traînant dans les formes subaiguës) +++",
+      "Hémocultures répétées (≥ 3 paires) avant antibiothérapie — identifier le germe et orienter le traitement (critère de Duke majeur)",
+      "Éradication de la porte d'entrée (soins bucco-dentaires, retrait de cathéter / dispositif infecté)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "erysipele",
+    "title": "Érysipèle",
+    "specialty": "Infectiologie",
+    "criticality": "frequent",
+    "summary": "Dermohypodermite bactérienne aiguë non nécrosante (streptocoque A +++) : placard inflammatoire bien limité du membre inférieur avec fièvre brutale et frissons.",
+    "keyPoints": [
+      "Douleur du membre atteint, sensation de tension et de chaleur locale",
+      "Aucun examen indispensable au diagnostic — diagnostic clinique (placard + fièvre + porte d'entrée)",
+      "Repos avec membre surélevé, antalgiques (paracétamol), vérification du statut antitétanique"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "fievre-neutropenique",
+    "title": "Fièvre neutropénique",
+    "specialty": "Infectiologie",
+    "criticality": "urgent",
+    "summary": "Fièvre chez un patient neutropénique : urgence infectieuse parfois sans foyer clinique, nécessitant prélèvements rapides et antibiothérapie antipseudomonale empirique.",
+    "keyPoints": [
+      "Une fièvre isolée peut être le seul signe d’une infection invasive",
+      "Hémocultures et bilan rapide sans retarder l’antibiothérapie empirique",
+      "Couverture antipseudomonale IV urgente chez le patient à haut risque ou instable"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "gastro-enterite-aigue",
+    "title": "Gastro-entérite aiguë",
+    "specialty": "Infectiologie",
+    "criticality": "frequent",
+    "summary": "Inflammation aiguë du tube digestif, le plus souvent virale : diarrhée ± vomissements spontanément résolutifs, dont la principale gravité est la déshydratation (nourrisson, sujet âgé).",
+    "keyPoints": [
+      "Diarrhée aiguë (selles molles à liquides), douleurs abdominales / crampes, ténesme",
+      "Aucun examen dans la forme bénigne — diagnostic clinique, prise en charge symptomatique",
+      "Réhydratation orale fractionnée, poursuite de l'alimentation, éviction des aliments irritants ; SRO systématique chez le nourrisson"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "grippe-saisonniere",
+    "title": "Grippe saisonnière",
+    "specialty": "Infectiologie",
+    "criticality": "frequent",
+    "summary": "Infection respiratoire aiguë virale (Influenza A/B) épidémique hivernale : début brutal fébrile avec myalgies et signes respiratoires, bénigne mais grave sur terrain fragile.",
+    "keyPoints": [
+      "Signes respiratoires : toux sèche, douleurs pharyngées, rhinorrhée, gêne respiratoire",
+      "Aucun examen indispensable dans la forme typique en contexte épidémique — diagnostic clinique",
+      "Repos, hydratation abondante, paracétamol en première intention (éviter l'aspirine chez l'enfant — risque de syndrome de Reye)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hepatites-virales-aigues",
+    "title": "Hépatites virales aiguës",
+    "specialty": "Infectiologie",
+    "criticality": "important",
+    "summary": "Inflammation virale du foie due aux VHA à VHE : présentation souvent paucisymptomatique, sérologies spécifiques et surveillance impérative de la fonction hépatique.",
+    "keyPoints": [
+      "VHA et VHE : transmission entérale ; VHB, VHC et VHD : transmission parentérale, sexuelle ou verticale",
+      "ALAT/ASAT élevées et sérologies ou PCR ciblées confirment l’étiologie",
+      "TP, INR, facteur V et état neurologique dépistent l’insuffisance hépatique aiguë"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "infection-clostridioides-difficile",
+    "title": "Infection à Clostridioides difficile",
+    "specialty": "Infectiologie",
+    "criticality": "important",
+    "summary": "Diarrhée toxinique souvent post-antibiotique : diagnostic sur selles diarrhéiques, isolement contact et traitement oral ciblé, avec risque élevé de récidive.",
+    "keyPoints": [
+      "Ne tester que des selles non moulées chez un patient symptomatique",
+      "Arrêt si possible de l’antibiotique déclenchant, précautions contact et nettoyage sporicide",
+      "Fidaxomicine ou vancomycine orale selon protocole et risque de récidive"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "infection-vih",
+    "title": "Infection par le VIH",
+    "specialty": "Infectiologie",
+    "criticality": "important",
+    "summary": "Infection chronique par un rétrovirus (VIH-1/2) responsable d'une déplétion progressive des lymphocytes CD4 : immunodépression exposant aux infections opportunistes, contrôlée par un traitement antirétroviral à vie.",
+    "keyPoints": [
+      "Primo-infection : syndrome pseudo-grippal (fièvre, pharyngite, myalgies), parfois éruption cutanée et ulcérations muqueuses",
+      "Sérologie VIH (test combiné Ag/Ac de 4e génération) — diagnostic, avec confirmation obligatoire — *examen clé*",
+      "Observance thérapeutique stricte (clé du succès : charge virale indétectable), vie sexuelle protégée, dépistage régulier des IST"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "infections-osteo-articulaires",
+    "title": "Infections ostéo-articulaires",
+    "specialty": "Infectiologie",
+    "criticality": "urgent",
+    "summary": "Arthrite septique ou ostéomyélite, le plus souvent à Staphylococcus aureus : prélèvements profonds, antibiothérapie rapide et contrôle chirurgical du foyer.",
+    "keyPoints": [
+      "Toute monoarthrite aiguë fébrile doit être ponctionnée rapidement",
+      "Staphylococcus aureus est le pathogène principal",
+      "Associer antibiothérapie ciblée et contrôle du foyer par drainage ou débridement"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "infections-sexuellement-transmissibles",
+    "title": "Infections sexuellement transmissibles",
+    "specialty": "Infectiologie",
+    "criticality": "important",
+    "summary": "Infections souvent asymptomatiques transmises lors des contacts sexuels : prélèvements adaptés au site exposé, traitement du patient et prise en charge des partenaires.",
+    "keyPoints": [
+      "Tester les sites réellement exposés : génital, rectal et/ou pharyngé",
+      "Une IST diagnostiquée conduit à proposer le dépistage des autres IST selon le contexte",
+      "Informer, traiter et organiser la prise en charge des partenaires dans le respect de la confidentialité"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "paludisme",
+    "title": "Paludisme",
+    "specialty": "Infectiologie",
+    "criticality": "urgent",
+    "summary": "Parasitose à Plasmodium transmise par l'anophèle, urgence diagnostique chez tout fébrile au retour de zone d'endémie : P. falciparum peut évoluer vers un accès grave mortel.",
+    "keyPoints": [
+      "Fièvre (parfois accès rythmés : tierce/quarte), frissons, sueurs",
+      "Frottis sanguin + goutte épaisse en URGENCE (± test antigénique rapide) — diagnostic, espèce, parasitémie — *examen clé, résultat en quelques heures*",
+      "Prévention (voyageur) : chimioprophylaxie adaptée à la zone, mesures anti-vectorielles (répulsifs, moustiquaire imprégnée, vêtements couvrants)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "antibiotherapie-principes",
+    "title": "Principes d’antibiothérapie",
+    "specialty": "Infectiologie",
+    "criticality": "important",
+    "summary": "Choisir l’antibiotique selon le foyer, la gravité, l’hôte et l’écologie locale ; prélever avant traitement si possible, puis réévaluer et désescalader.",
+    "keyPoints": [
+      "Prélever avant traitement lorsque cela ne retarde pas une antibiothérapie urgente",
+      "Contrôle du foyer : drainage, débridement ou retrait de matériel si nécessaire",
+      "Réévaluation à 48–72 heures : réponse, cultures, désescalade, voie orale et durée"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "pyelonephrite-aigue",
+    "title": "Pyélonéphrite aiguë",
+    "specialty": "Infectiologie",
+    "criticality": "frequent",
+    "summary": "Infection bactérienne du parenchyme rénal et des voies excrétrices hautes (E. coli +++) : fièvre, douleur lombaire et signes urinaires — éliminer l'obstacle.",
+    "keyPoints": [
+      "Douleur lombaire unilatérale (fosse lombaire), à irradiation descendante vers l'aine",
+      "Bandelette urinaire (BU) — premier dépistage : leucocytes + nitrites ; sa négativité (leucocytes ET nitrites) rend le diagnostic peu probable",
+      "Hydratation abondante ; mictions régulières et post-coïtales"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "sepsis-choc-septique",
+    "title": "Sepsis / Choc septique",
+    "specialty": "Infectiologie",
+    "criticality": "urgent",
+    "summary": "Dysfonction d'organe menaçant le pronostic vital due à une réponse inappropriée de l'hôte à une infection (SOFA ≥ 2) : urgence, reconnaissance et antibiothérapie précoces.",
+    "keyPoints": [
+      "Fièvre ou frissons (ou hypothermie chez le sujet âgé / immunodéprimé — signe de gravité)",
+      "Lactate artériel/veineux — quantifier l'hypoperfusion et orienter la réanimation (cible : clairance)",
+      "Mesures de prévention des infections (asepsie des gestes, gestion des cathéters), équilibre des comorbidités (diabète)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "tuberculose",
+    "title": "Tuberculose",
+    "specialty": "Infectiologie",
+    "criticality": "important",
+    "summary": "Infection à Mycobacterium tuberculosis à transmission aérienne : distinguer infection latente (asymptomatique) et tuberculose-maladie ; déclaration obligatoire, isolement air et dépistage de l'entourage.",
+    "keyPoints": [
+      "Toux persistante > 3 semaines, initialement sèche puis productive",
+      "Recherche de BAAR sur expectorations (3 prélèvements) ou tubages gastriques — examen direct (Ziehl-Neelsen / auramine), culture sur milieu spécifique (référence, ± 3–6 semaines) et PCR (rapide, identifie aussi les résistances)",
+      "Renutrition, sevrage tabagique et alcoolique, prise en charge sociale (précarité)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "avc-ait",
+    "title": "AVC / AIT",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Déficit neurologique focal d'apparition brutale (ischémie 85 %, hémorragie 15 %) : urgence absolue, time is brain.",
+    "keyPoints": [
+      "Faiblesse ou impossibilité de mobiliser un hémicorps (face-bras +++ si ACM)",
+      "Scanner cérébral sans injection en urgence — éliminer une hémorragie (contre-indication absolue à la thrombolyse)",
+      "Contrôle des facteurs de risque cardiovasculaires : sevrage tabagique, équilibre tensionnel, glycémique et lipidique"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "cephalees-primaires-secondaires",
+    "title": "Céphalées (tension / migraine / secondaires)",
+    "specialty": "Neurologie",
+    "criticality": "important",
+    "summary": "Distinguer les céphalées primaires bénignes (migraine, tension) des céphalées secondaires dangereuses (HSA, méningite, Horton) grâce aux red flags (SNNOOP10).",
+    "keyPoints": [
+      "Migraine : douleur unilatérale, pulsatile, modérée à sévère, aggravée par l'effort (escaliers), avec nausées/vomissements et/ou photophobie-phonophobie",
+      "Scanner cérébral sans injection en urgence si céphalée brutale ou red flag — recherche d'HSA, de masse, d'HTIC",
+      "Céphalée brutale < 60 s : scanner cérébral sans injection + PL si scanner négatif"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "epilepsie-syncope-pnes",
+    "title": "Épilepsie vs Syncope vs PNES",
+    "specialty": "Neurologie",
+    "criticality": "important",
+    "summary": "Différencier épilepsie (décharge neuronale), syncope (hypoperfusion cérébrale) et PNES (dissociation psychogène) devant une perte de connaissance : l'interrogatoire du témoin est crucial (durée, mouvements, yeux, morsure, récupération).",
+    "keyPoints": [
+      "Épilepsie : aura (déjà-vu, hallucinations olfactives), puis perte de contact",
+      "Interrogatoire du témoin — élément diagnostique majeur : durée, type de mouvements, yeux ouverts/fermés, morsure, qualité de la récupération",
+      "Pendant la crise : position latérale de sécurité, protéger la tête, chronométrer. NE PAS mettre d'objet dans la bouche, NE PAS contenir les mouvements"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hematome-extra-dural",
+    "title": "Hématome extradural",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Collection sanguine entre l'os et la dure-mère, d'origine artérielle (artère méningée moyenne) : urgence neurochirurgicale du sujet jeune avec intervalle libre et image en lentille biconvexe au scanner.",
+    "keyPoints": [
+      "Céphalées intenses et croissantes après le traumatisme — *fréquent*",
+      "Scanner cérébral sans injection en extrême urgence — examen de référence, ne doit jamais retarder la prise en charge chirurgicale",
+      "Prévention primaire : port du casque (deux-roues, sports), sécurité routière, prévention des chutes et des rixes"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hematome-sous-dural",
+    "title": "Hématome sous-dural",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Collection sanguine entre dure-mère et arachnoïde par rupture des veines-pont : forme aiguë du traumatisme grave et forme chronique insidieuse du sujet âgé / éthylique, croissant hypo- ou hyperdense au scanner.",
+    "keyPoints": [
+      "HSD chronique : céphalées progressives, ralentissement psychomoteur, troubles de l'attention et de la mémoire, confusion — *tableau trompeur pseudo-démentiel*",
+      "Scanner cérébral sans injection en urgence — examen de première intention, confirme et date la collection",
+      "Prévention des chutes chez le sujet âgé (aménagement du domicile, correction visuelle, révision des traitements sédatifs)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hemorragie-sous-arachnoidienne",
+    "title": "Hémorragie sous-arachnoïdienne",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Céphalée brutale « en coup de tonnerre » par irruption de sang dans les espaces sous-arachnoïdiens (rupture d'anévrisme +++) : urgence neurochirurgicale.",
+    "keyPoints": [
+      "Céphalée brutale « en coup de tonnerre », maximale d'emblée, décrite comme « la pire céphalée de ma vie » (+++)",
+      "Scanner cérébral sans injection en urgence — confirmer l'HSA (hyperdensité des citernes), évaluer l'abondance (score de Fisher)",
+      "Repos strict au lit, calme, prévention de l'effort et de la constipation (Valsalva)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "maladie-alzheimer",
+    "title": "Maladie d'Alzheimer",
+    "specialty": "Neurologie",
+    "criticality": "frequent",
+    "summary": "Maladie neurodégénérative la plus fréquente : trouble mnésique antérograde d'installation insidieuse évoluant vers un syndrome démentiel, avec atteinte amyloïde et dégénérescence neurofibrillaire (protéine Tau).",
+    "keyPoints": [
+      "Trouble de la mémoire antérograde (oublis des faits récents, répétitions, égarement d'objets) — *cardinal, souvent inaugural*",
+      "Évaluation neuropsychologique (MMSE puis bilan approfondi) — objectiver le profil et le stade",
+      "Contrôle des facteurs de risque cardiovasculaires (HTA, diabète, tabac), activité physique et cognitive régulière, maintien du lien social"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "maladie-de-parkinson",
+    "title": "Maladie de Parkinson",
+    "specialty": "Neurologie",
+    "criticality": "frequent",
+    "summary": "Maladie neurodégénérative à corps de Lewy avec dégénérescence dopaminergique de la substance noire : triade tremblement de repos, rigidité et akinésie, asymétrique et dopa-sensible.",
+    "keyPoints": [
+      "Tremblement de repos : lent (4–6 Hz), distal, asymétrique, type « émiettement / compte-monnaie », disparaît à l'action et au sommeil, majoré par l'émotion — *cardinal*",
+      "Diagnostic essentiellement clinique — triade asymétrique + dopa-sensibilité",
+      "Activité physique régulière et rééducation (kinésithérapie : marche, équilibre, posture ; orthophonie : voix, déglutition)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "meningite-encephalite",
+    "title": "Méningite / Encéphalite",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Triade céphalées + fièvre + raideur de nuque : urgence vitale imposant l'antibiothérapie IV immédiate, avant tout examen si délai.",
+    "keyPoints": [
+      "Céphalées intenses, diffuses, non calmées par les antalgiques",
+      "Ponction lombaire — confirme le diagnostic, identifie le germe, adapte l'antibiothérapie (reste interprétable même après les antibiotiques, stérilisation en 2-4 h)",
+      "Antibiothérapie IV à large spectre IMMÉDIATEMENT (ne jamais attendre la PL en cas de délai)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "myasthenie",
+    "title": "Myasthénie",
+    "specialty": "Neurologie",
+    "criticality": "important",
+    "summary": "Maladie auto-immune de la jonction neuromusculaire (anticorps anti-récepteurs de l'acétylcholine) : faiblesse musculaire fluctuante à fatigabilité, atteinte oculaire fréquente, crise myasthénique = urgence respiratoire.",
+    "keyPoints": [
+      "Fatigabilité musculaire à l'effort, s'aggravant en fin de journée, régressant au repos — *cardinal*",
+      "Anticorps anti-RACh (puis anti-MuSK / anti-LRP4 si négatifs) — confirmation diagnostique",
+      "Remise au patient d'une liste des médicaments contre-indiqués et d'une carte de myasthénique"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "paralysie-faciale-peripherique",
+    "title": "Paralysie faciale périphérique",
+    "specialty": "Neurologie",
+    "criticality": "important",
+    "summary": "Déficit de l’ensemble d’un hémiface par atteinte du nerf facial : protéger la cornée, rechercher une cause secondaire et traiter précocement une paralysie de Bell.",
+    "keyPoints": [
+      "Atteinte périphérique : front et partie inférieure de l’hémiface déficitaires",
+      "Protection cornéenne immédiate si fermeture palpébrale incomplète",
+      "Corticoïdes oraux précoces dans une paralysie de Bell typique sans contre-indication"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "sclerose-en-plaques",
+    "title": "Sclérose en plaques",
+    "specialty": "Neurologie",
+    "criticality": "important",
+    "summary": "Maladie inflammatoire démyélinisante chronique du SNC de l'adulte jeune : poussées neurologiques disséminées dans le temps et l'espace, révélées souvent par une névrite optique.",
+    "keyPoints": [
+      "Névrite optique rétrobulbaire : baisse d'acuité visuelle monoculaire subaiguë, douleur à la mobilisation du globe, dyschromatopsie (rouge-vert) — *inaugural fréquent*",
+      "IRM cérébrale et médullaire avec injection de gadolinium — examen de référence, dissémination spatio-temporelle",
+      "Arrêt du tabac (aggrave le pronostic), supplémentation en vitamine D, activité physique adaptée régulière"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "syndrome-brown-sequard",
+    "title": "Syndrome de Brown-Séquard",
+    "specialty": "Neurologie",
+    "criticality": "important",
+    "summary": "Hémisection médullaire : déficit moteur et proprioceptif ipsilatéraux, perte thermo-algésique controlatérale (pattern croisé).",
+    "keyPoints": [
+      "Faiblesse d'un hémicorps sous-lésionnel (jambe du côté de la lésion)",
+      "IRM médullaire en urgence (T1, T2, STIR ± gadolinium) — examen de référence pour localiser et caractériser la lésion",
+      "IRM médullaire en urgence + orientation neurochirurgicale immédiate si compression"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "syndrome-guillain-barre",
+    "title": "Syndrome de Guillain-Barré",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Polyradiculonévrite aiguë auto-immune post-infectieuse : paralysie flasque ascendante avec aréflexie, urgence par le risque de détresse respiratoire et de dysautonomie.",
+    "keyPoints": [
+      "Déficit moteur bilatéral, symétrique et ascendant : commence typiquement aux membres inférieurs et remonte (« paralysie ascendante ») — *cardinal*",
+      "Ponction lombaire — dissociation albumino-cytologique (à répéter si précoce et normale)",
+      "Prévention thromboembolique (HBPM, bas de contention) chez le patient alité"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "syndromes-medullaires",
+    "title": "Syndromes médullaires (queue de cheval, cordonal postérieur, spinal)",
+    "specialty": "Neurologie",
+    "criticality": "urgent",
+    "summary": "Syndromes topographiques de la moelle et des racines : queue de cheval (aréflexie, urgence chirurgicale < 48 h), cordonal postérieur (Romberg+, Lhermitte), spinal antérieur et section complète.",
+    "keyPoints": [
+      "Douleurs radiculaires lombaires/sacrées irradiant aux membres inférieurs (queue de cheval)",
+      "IRM médullaire / lombaire en urgence (T1, T2, STIR ± gadolinium) — examen de référence pour localiser et caractériser la lésion",
+      "Localiser cliniquement le niveau lésionnel (myotomes, niveau sensitif, ROT, toucher rectal)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "asthme",
+    "title": "Asthme",
+    "specialty": "Pneumologie",
+    "criticality": "important",
+    "summary": "Inflammation chronique des bronches avec hyperréactivité et obstruction réversible : dyspnée sifflante paroxystique, traitement de fond par corticoïdes inhalés.",
+    "keyPoints": [
+      "Dyspnée paroxystique avec sensation d'oppression thoracique",
+      "EFR (spirométrie) — affirme le trouble ventilatoire obstructif (TVO) : VEMS/CVF abaissé, avec réversibilité après bronchodilatateur (gain de VEMS ≥ 12 % ET ≥ 200 mL)",
+      "Éviction des facteurs déclenchants (allergènes, tabac, irritants), sevrage tabagique"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "bpco",
+    "title": "BPCO",
+    "specialty": "Pneumologie",
+    "criticality": "frequent",
+    "summary": "Obstruction bronchique chronique non/peu réversible liée au tabac : dyspnée d'effort progressive, diagnostic confirmé par l'EFR (VEMS/CVF < 0,70).",
+    "keyPoints": [
+      "Dyspnée d'effort progressive, insidieuse (à quantifier par l'échelle mMRC : 0 = effort intense → 4 = dyspnée au moindre effort / habillage)",
+      "EFR (spirométrie) avec test de réversibilité — examen clé : confirme le TVO si VEMS/CVF < 0,70 après bronchodilatateur, non/peu réversible ; classe la sévérité (GOLD 1–4)",
+      "Sevrage tabagique = pierre angulaire : seule mesure qui ralentit le déclin du VEMS et améliore le pronostic ; accompagnement et substituts nicotiniques"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "cancer-bronchique",
+    "title": "Cancer bronchique",
+    "specialty": "Pneumologie",
+    "criticality": "important",
+    "summary": "Tumeur maligne développée aux dépens de l'épithélium bronchique, très liée au tabac : signes respiratoires traînants (toux, hémoptysie) et altération de l'état général, souvent découverte tardive ; diagnostic histologique et bilan d'extension avant traitement.",
+    "keyPoints": [
+      "Toux persistante ou modification d'une toux chronique de fumeur",
+      "TDM thoracique et abdominale supérieure injectée — caractériser la tumeur et le bilan d'extension locorégional",
+      "Sevrage tabagique impératif (améliore le pronostic, la tolérance des traitements et réduit le risque de second cancer)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "embolie-pulmonaire",
+    "title": "Embolie pulmonaire",
+    "specialty": "Pneumologie",
+    "criticality": "urgent",
+    "summary": "Obstruction aiguë du lit artériel pulmonaire par un thrombus (le plus souvent d'origine veineuse profonde) : urgence dont la gravité dépend du retentissement hémodynamique.",
+    "keyPoints": [
+      "Dyspnée d'apparition brutale, souvent inexpliquée (signe le plus fréquent)",
+      "Score de probabilité clinique (Wells ou Genève) — première étape : oriente la stratégie diagnostique (D-dimères vs imagerie d'emblée)",
+      "Lever précoce dès que possible sous anticoagulation efficace, contention veineuse en cas de TVP associée"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "epanchement-pleural",
+    "title": "Épanchement pleural",
+    "specialty": "Pneumologie",
+    "criticality": "important",
+    "summary": "Accumulation anormale de liquide dans la cavité pleurale : la ponction et les critères de Light distinguent transsudat (cause générale) et exsudat (atteinte pleurale locale).",
+    "keyPoints": [
+      "Dyspnée d'aggravation progressive, proportionnelle à l'abondance et à la rapidité de constitution — *cardinal*",
+      "Radiographie thoracique de face (± profil) — confirmer et quantifier l'épanchement",
+      "Prise en charge de la pathologie causale (régime pauvre en sel et diurétiques si origine cardiaque)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "exacerbation-asthme-bpco",
+    "title": "Exacerbations d’asthme et de BPCO",
+    "specialty": "Pneumologie",
+    "criticality": "urgent",
+    "summary": "Aggravation aiguë de la dyspnée, de la toux ou des expectorations : évaluer immédiatement la gravité, administrer bronchodilatateurs et oxygène contrôlé, puis traiter le déclencheur.",
+    "keyPoints": [
+      "Silence auscultatoire, épuisement ou confusion sont des signes de gravité",
+      "Bronchodilatateurs inhalés répétés et corticoïdes systémiques précoces",
+      "BPCO à risque d’hypercapnie : oxygène titré généralement vers 88–92 % en attendant les gaz du sang"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "fibrose-pulmonaire",
+    "title": "Fibrose pulmonaire et pneumopathies restrictives",
+    "specialty": "Pneumologie",
+    "criticality": "important",
+    "summary": "Atteinte interstitielle fibrosante responsable d’une dyspnée progressive, de crépitants velcro et d’un trouble ventilatoire restrictif avec DLCO abaissée.",
+    "keyPoints": [
+      "Dyspnée d’effort progressive, toux sèche et crépitants inspiratoires bibasaux en velcro",
+      "TDM thoracique haute résolution : examen clé pour caractériser le pattern interstitiel",
+      "EFR : CPT diminuée et DLCO abaissée ; recherche systématique d’une cause exposée, médicamenteuse ou auto-immune"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "hemoptysie",
+    "title": "Hémoptysie",
+    "specialty": "Pneumologie",
+    "criticality": "urgent",
+    "summary": "Émission de sang rouge aéré par la bouche lors d'un effort de toux, provenant des voies aériennes sous-glottiques : urgence potentielle imposant une démarche étiologique et l'évaluation de l'abondance.",
+    "keyPoints": [
+      "Émission par la bouche, à l'effort de toux, de sang rouge, aéré, spumeux (mousseux) — *cardinal*",
+      "Angio-TDM thoracique — localisation, étiologie et cartographie vasculaire (avant embolisation)",
+      "Repos, arrêt du tabac, éviction des efforts et des gestes favorisant le saignement"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "insuffisance-respiratoire-aigue",
+    "title": "Insuffisance respiratoire aiguë",
+    "specialty": "Pneumologie",
+    "criticality": "urgent",
+    "summary": "Défaillance aiguë des échanges gazeux avec hypoxémie et/ou hypercapnie : oxygène titré, traitement de la cause et soutien ventilatoire sans délai.",
+    "keyPoints": [
+      "Altération de la conscience, respiration paradoxale ou instabilité annoncent l’épuisement",
+      "La gazométrie distingue hypoxémie, hypercapnie et acidose",
+      "Oxygène titré, traitement causal et escalade du support ventilatoire selon la réponse"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "nodule-pulmonaire",
+    "title": "Nodule pulmonaire",
+    "specialty": "Pneumologie",
+    "criticality": "important",
+    "summary": "Opacité pulmonaire focale de 3 cm ou moins, souvent fortuite : comparer aux anciens examens, estimer le risque de malignité et choisir surveillance, PET-CT ou prélèvement.",
+    "keyPoints": [
+      "Comparer systématiquement avec les anciens examens pour évaluer la croissance",
+      "Le risque dépend de la taille, densité, morphologie, croissance, âge et tabagisme",
+      "La stratégie va de l’absence de suivi au PET-CT, prélèvement ou traitement en réunion multidisciplinaire"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "pneumonie-aigue-communautaire",
+    "title": "Pneumonie aiguë communautaire",
+    "specialty": "Pneumologie",
+    "criticality": "frequent",
+    "summary": "Infection aiguë du parenchyme pulmonaire acquise hors hôpital : fièvre, toux, foyer de crépitants et opacité radiologique ; le pneumocoque domine et le CRB-65 oriente la prise en charge.",
+    "keyPoints": [
+      "Toux (productive avec expectorations purulentes voire rouillées, ou sèche dans les formes atypiques)",
+      "Radiographie de thorax (face) — confirmer le foyer et préciser son étendue (opacité alvéolaire systématisée)",
+      "Sevrage tabagique, hydratation, repos"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "pneumothorax",
+    "title": "Pneumothorax",
+    "specialty": "Pneumologie",
+    "criticality": "urgent",
+    "summary": "Épanchement gazeux dans la cavité pleurale entraînant un collapsus pulmonaire : douleur thoracique brutale + dyspnée ; rechercher la forme compressive, urgence vitale.",
+    "keyPoints": [
+      "Douleur thoracique brutale, latéralisée, « en coup de poignard », à type de point de côté, majorée par l'inspiration",
+      "Radiographie de thorax de face (debout, en inspiration) — confirmer le diagnostic, quantifier l'abondance, rechercher une déviation médiastinale",
+      "Sevrage tabagique impératif (réduit fortement le risque de récidive)"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "syndrome-apnees-obstructives-sommeil",
+    "title": "Syndrome d'apnées obstructives du sommeil",
+    "specialty": "Pneumologie",
+    "criticality": "frequent",
+    "summary": "Collapsus répété des voies aériennes supérieures durant le sommeil : ronflements, apnées et somnolence diurne, quantifiés par l'index d'apnées-hypopnées (IAH) et traités par CPAP.",
+    "keyPoints": [
+      "Ronflements chroniques, intenses et quotidiens — *cardinal*",
+      "Polygraphie ventilatoire nocturne — enregistrement des flux, efforts respiratoires, SpO2 et ronflements (dépistage/diagnostic en première intention)",
+      "Perte de poids (mesure centrale), activité physique régulière"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "sdra",
+    "title": "Syndrome de détresse respiratoire aiguë",
+    "specialty": "Pneumologie",
+    "criticality": "urgent",
+    "summary": "Œdème pulmonaire lésionnel par atteinte de la membrane alvéolo-capillaire : hypoxémie réfractaire aiguë définie par les critères de Berlin, imposant une ventilation protectrice en réanimation.",
+    "keyPoints": [
+      "Dyspnée aiguë intense, polypnée, sensation d'oppression thoracique — *cardinal*",
+      "Gazométrie artérielle — quantifier l'hypoxémie et calculer le rapport PaO2/FiO2 (critère de Berlin)",
+      "Balance hydrosodée restrictive pour limiter l'œdème pulmonaire"
+    ],
+    "status": "ready"
+  },
+  {
+    "slug": "toux-chronique",
+    "title": "Toux chronique",
+    "specialty": "Pneumologie",
+    "criticality": "important",
+    "summary": "Toux durant plus de huit semaines chez l’adulte : rechercher drapeaux rouges, médicaments et tabac, puis explorer asthme, voies aériennes supérieures et reflux.",
+    "keyPoints": [
+      "Radiographie thoracique et spirométrie constituent le bilan initial habituel",
+      "Rechercher tabac, inhibiteur de l’enzyme de conversion, asthme, rhinosinusite et reflux",
+      "Hémoptysie, amaigrissement ou radiographie anormale imposent une investigation accélérée"
+    ],
+    "status": "ready"
+  }
+]

@@ -1,0 +1,70 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { Pricing, type PricingPlan } from "../../../components/ui/pricing";
+import { Header } from "../../../components/ui/header-2";
+import { getCurrentUser } from "../../../lib/auth/require-user";
+
+export const metadata: Metadata = {
+  title: "Tarifs — MedTrain",
+  description: "Découvrez les offres MedTrain pour progresser avec des fiches, des QCM expliqués et des cas cliniques.",
+};
+export const dynamic = "force-dynamic";
+
+export default async function PricingPage() {
+  const user = await getCurrentUser();
+  const startHref = user ? "/dashboard" : "/signup?next=%2Fdashboard";
+  const proHref = user ? "/profil" : "/signup?next=%2Fprofil";
+  const plans: PricingPlan[] = [
+    {
+      name: "Découverte",
+      eyebrow: "POUR COMMENCER",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      description: "L’essentiel pour découvrir la méthode MedTrain et installer une routine régulière.",
+      features: [
+        "Accès aux fiches médicales publiées",
+        "Quiz du jour avec correction expliquée",
+        "Tableau de bord, XP et série quotidienne",
+        "Progression sauvegardée sur tous vos appareils",
+      ],
+      buttonText: user ? "Continuer gratuitement" : "Créer mon compte",
+      href: startHref,
+    },
+    {
+      name: "MedTrain Pro",
+      eyebrow: "ENTRAÎNEMENT COMPLET",
+      monthlyPrice: 14.9,
+      yearlyPrice: 119,
+      description: "Pour réviser plus intensément, cibler vos lacunes et consolider votre raisonnement clinique.",
+      features: [
+        "Tous les modes de QCM et séries illimitées",
+        "Révision ciblée des erreurs",
+        "Cas cliniques et entraînements guidés",
+        "Statistiques détaillées par spécialité",
+        "Accès prioritaire aux futurs modules ECOS",
+      ],
+      buttonText: user ? "Passer à MedTrain Pro" : "Commencer avec Pro",
+      href: proHref,
+      isPopular: true,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
+      <Header signedIn={Boolean(user)} />
+
+      <main>
+        <Pricing plans={plans} />
+        <section className="mx-auto mb-20 w-[calc(100%-2rem)] max-w-[1180px] overflow-hidden rounded-[32px] bg-[var(--surface-dark)] px-6 py-10 text-center sm:px-10 sm:py-14">
+          <p className="m-0 text-xs font-bold tracking-[0.14em] text-teal-300">UNE QUESTION AVANT DE COMMENCER ?</p>
+          <h2 className="mx-auto mb-0 mt-3 max-w-2xl text-balance text-3xl text-white sm:text-4xl">Commencez gratuitement, choisissez Pro quand vous en avez besoin.</h2>
+          <p className="mx-auto mb-0 mt-4 max-w-xl text-sm leading-6 text-slate-300">Votre progression reste enregistrée si vous changez d’offre. Aucun engagement à long terme.</p>
+          <Link className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-950 no-underline transition-transform hover:-translate-y-0.5" href={startHref}>
+            <ArrowLeft aria-hidden="true" size={16} /> {user ? "Retour au tableau de bord" : "Créer mon espace gratuit"}
+          </Link>
+        </section>
+      </main>
+    </div>
+  );
+}

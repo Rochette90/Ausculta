@@ -1,0 +1,194 @@
+[
+  {
+    "slug": "douleur-thoracique-aigue",
+    "title": "Douleur thoracique aigue",
+    "specialty": "Cardiologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Favre, 62 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true,
+    "sourceFile": "chest-pain-case.ts"
+  },
+  {
+    "slug": "fibrillation-auriculaire",
+    "title": "Palpitations d'apparition brutale chez un sexagenaire",
+    "specialty": "Cardiologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Girard, 64 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "fibrillation-auriculaire-case.ts"
+  },
+  {
+    "slug": "avc-ischemique-sylvien-gauche",
+    "title": "AVC ischemique sylvien gauche",
+    "specialty": "Neurologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mme Rossier, 68 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "stroke-case.ts"
+  },
+  {
+    "slug": "meningite-aigue",
+    "title": "Cephalee febrile avec raideur de nuque",
+    "specialty": "Neurologie",
+    "difficulty": "Difficile",
+    "setting": "urgences",
+    "patient": "M. Meier, 19 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "meningite-case.ts"
+  },
+  {
+    "slug": "pneumonie-communautaire",
+    "title": "Pneumonie communautaire",
+    "specialty": "Pneumologie",
+    "difficulty": "Facile",
+    "setting": "cabinet",
+    "patient": "M. Bernard, 65 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "pneumonie-case.ts"
+  },
+  {
+    "slug": "pneumothorax-spontane",
+    "title": "Douleur thoracique brutale chez un homme jeune",
+    "specialty": "Pneumologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Lambert, 22 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "pneumothorax-case.ts"
+  },
+  {
+    "slug": "embolie-pulmonaire-post-voyage",
+    "title": "Embolie pulmonaire post-voyage",
+    "specialty": "Pneumologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mme Leroy, 34 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "embolie-pulmonaire-case.ts"
+  },
+  {
+    "slug": "appendicite-aigue",
+    "title": "Douleur de la fosse iliaque droite chez un jeune adulte",
+    "specialty": "Gastro-entérologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Rossier, 24 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "appendicite-case.ts"
+  },
+  {
+    "slug": "pancreatite-aigue",
+    "title": "Douleur épigastrique transfixiante après un repas",
+    "specialty": "Gastro-entérologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Rossi, 54 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "pancreatite-case.ts"
+  },
+  {
+    "slug": "acidocetose-diabetique",
+    "title": "Syndrome polyuro-polydipsique et douleurs abdominales chez un jeune",
+    "specialty": "Endocrinologie",
+    "difficulty": "Difficile",
+    "setting": "urgences",
+    "patient": "M. Rossi, 19 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "acidocetose-case.ts"
+  },
+  {
+    "slug": "endocardite-infectieuse",
+    "title": "Endocardite infectieuse a staphylococcus aureus",
+    "specialty": "Cardiologie",
+    "difficulty": "Difficile",
+    "setting": "urgences",
+    "patient": "M. Costa, 45 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "endocardite-case.ts"
+  },
+  {
+    "slug": "crise-asthme",
+    "title": "Crise d'asthme",
+    "specialty": "Pneumologie",
+    "difficulty": "Facile",
+    "setting": "urgences",
+    "patient": "Mme Petit, 24 ans",
+    "duration": "10 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": false,
+    "sourceFile": "asthme-case.ts"
+  }
+]
