@@ -1,21 +1,28 @@
 import "server-only";
-import { SUPPORTED_ECOS_SLUG } from "./timing";
 
 import { cache } from "react";
 import caseCatalog from "@/content/cases/index.json";
 import { SLUG_PATTERN } from "@/lib/validation";
-import { createAdminClient, createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
+import { ecosPublicCode, hasEcosScenario } from "./stations/index.ts";
+import { EXAM_DURATION_SECONDS } from "./timing.ts";
 
+/**
+ * Catalog card of a station, safe to send to the browser. Neither the
+ * diagnosis nor the internal slug (which names it) is included: the station is
+ * addressed by a neutral public code and the diagnosis is only revealed by the
+ * debrief, after the server has graded the station.
+ */
 export type ClinicalCaseSummary = {
-  slug: string;
+  /** Public code (`station-04`), or null for a draft without patient script. */
+  code: string | null;
   candidateTitle: string;
-  diagnosis: string | null;
   specialty: string | null;
   difficulty: "easy" | "medium" | "hard";
   published: boolean;
   patientLabel: string | null;
   setting: string | null;
-  duration: string | null;
+  duration: string;
   tags: string[];
 };
 
@@ -25,14 +32,12 @@ type CaseRow = {
   difficulty: "easy" | "medium" | "hard";
   status: string;
   patient: { label?: string } | null;
-  scenario: { setting?: string; duration?: string; tags?: string[]; candidate_title?: string; diagnosis?: string } | null;
+  scenario: { setting?: string; tags?: string[]; candidate_title?: string } | null;
   specialties: { name: string } | null;
 };
 
-const editorialDetails = new Map(caseCatalog.map((item) => [item.slug, {
-  candidateTitle: item.candidateTitle,
-  diagnosis: item.diagnosis,
-}]));
+const editorialTitles = new Map(caseCatalog.map((item) => [item.slug, item.candidateTitle]));
+const STATION_DURATION = `${Math.round(EXAM_DURATION_SECONDS / 60)} min`;
 
 function fallbackCandidateTitle(setting: string | undefined) {
   if (setting?.toLocaleLowerCase("fr").includes("urgence")) return "Consultation aux urgences";
@@ -41,22 +46,23 @@ function fallbackCandidateTitle(setting: string | undefined) {
 }
 
 function toSummary(row: CaseRow): ClinicalCaseSummary {
-  const details = editorialDetails.get(row.slug);
   return {
-    slug: row.slug,
+    code: ecosPublicCode(row.slug),
     candidateTitle: row.scenario?.candidate_title?.trim()
-      || details?.candidateTitle
+      || editorialTitles.get(row.slug)
       || fallbackCandidateTitle(row.scenario?.setting),
-    diagnosis: row.scenario?.diagnosis?.trim() || details?.diagnosis || null,
     specialty: row.specialties?.name ?? null,
     difficulty: row.difficulty,
-    published: row.status === "published" && row.slug === SUPPORTED_ECOS_SLUG,
+    // Publié en base ET doté d'un patient simulé scripté.
+    published: row.status === "published" && hasEcosScenario(row.slug),
     patientLabel: row.patient?.label ?? null,
     setting: row.scenario?.setting ?? null,
-    duration: row.scenario?.duration ?? null,
+    duration: STATION_DURATION,
     tags: row.scenario?.tags ?? [],
   };
 }
+
+const CASE_COLUMNS = "slug, title, difficulty, status, patient, scenario, specialties(name)";
 
 // Le catalogue affiche aussi les stations en préparation (status draft),
 // que la policy RLS masque volontairement : lecture via le client admin,
@@ -65,20 +71,26 @@ export const getClinicalCaseCatalog = cache(async (): Promise<ClinicalCaseSummar
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("clinical_cases")
-    .select("slug, title, difficulty, status, patient, scenario, specialties(name)")
+    .select(CASE_COLUMNS)
     .neq("status", "archived")
     .order("status", { ascending: false })
     .order("title");
   if (error) throw error;
-  return ((data ?? []) as unknown as CaseRow[]).map(toSummary);
+  return ((data ?? []) as unknown as CaseRow[])
+    .map(toSummary)
+    .sort((left, right) => Number(right.published) - Number(left.published));
 });
 
+/**
+ * `slug` is the internal station slug. Read with the service role: authenticated
+ * clients can no longer select `title` or `scenario`, which name the diagnosis.
+ */
 export async function getPublishedClinicalCase(slug: string): Promise<ClinicalCaseSummary | null> {
-  if (!SLUG_PATTERN.test(slug) || slug !== SUPPORTED_ECOS_SLUG) return null;
-  const supabase = await createClient();
-  const { data, error } = await supabase
+  if (!SLUG_PATTERN.test(slug) || !hasEcosScenario(slug)) return null;
+  const admin = createAdminClient();
+  const { data, error } = await admin
     .from("clinical_cases")
-    .select("slug, title, difficulty, status, patient, scenario, specialties(name)")
+    .select(CASE_COLUMNS)
     .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();

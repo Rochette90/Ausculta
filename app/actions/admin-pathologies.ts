@@ -117,8 +117,8 @@ export async function updateAdminPathology(input: AdminPathologyUpdateInput): Pr
   }
 }
 
-export async function reviewAdminPathology(input: { id: string; slug: string }): Promise<AdminPathologyActionResult> {
-  if (!UUID_PATTERN.test(input.id) || !SLUG_PATTERN.test(input.slug)) {
+export async function reviewAdminPathology(input: { id: string; slug: string; version: number }): Promise<AdminPathologyActionResult> {
+  if (!UUID_PATTERN.test(input.id) || !SLUG_PATTERN.test(input.slug) || !Number.isInteger(input.version) || input.version < 1) {
     return { success: false, error: "Fiche invalide" };
   }
 
@@ -126,10 +126,15 @@ export async function reviewAdminPathology(input: { id: string; slug: string }):
     const user = await assertAdminUser();
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "admin-pathology-review", 120, 3600);
+    // La signature ne vaut que pour la version relue par l'administrateur.
     const { data, error } = await admin.rpc("admin_review_pathology", {
       p_admin_user_id: user.id,
       p_pathology_id: input.id,
+      p_expected_version: input.version,
     });
+    if (error?.message.includes("pathology version mismatch")) {
+      return { success: false, error: "La fiche a été modifiée entre-temps. Recharge la page et relis la dernière version avant de signer." };
+    }
     if (error) throw error;
     const signature = Array.isArray(data) ? data[0] : data;
     if (!signature?.reviewer_name || !signature?.reviewed_at) throw new Error("Missing review signature");

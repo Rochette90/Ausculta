@@ -12,7 +12,7 @@
 
 Le mode examen masque les indices et le score pendant l’entretien. Le chronomètre commence après la création de la session, utilise une échéance réelle et déclenche la sauvegarde à expiration. Un échange en cours est attendu avant la clôture. Le rapport affiche les critères recalculés par le serveur et propose de réessayer si la sauvegarde échoue. La reconnaissance et la synthèse vocales sont arrêtées à la sortie.
 
-Le moteur de conversation existant concerne seulement `douleur-thoracique-aigue`. Les autres stations restent en préparation même si une ligne de catalogue a été publiée sans moteur correspondant. L’API vérifie le scénario demandé et sa publication, et refuse les nouveaux messages après huit minutes. Le repérage de compétences reste fondé sur des mots-clés : ce n’est pas une évaluation clinique validée.
+Mise à jour : les 12 stations disposent désormais d’un moteur de conversation, d’une grille et d’un débriefing (voir [Stations ECOS et correctifs](ecos-stations-et-correctifs.md)). L’API vérifie le scénario demandé et sa publication, et refuse les nouveaux messages après 13 minutes en mode examen (l’entraînement est sans chronomètre). Le repérage de compétences reste fondé sur des mots-clés : ce n’est pas une évaluation clinique validée.
 
 ## Backend
 

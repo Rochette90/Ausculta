@@ -1,7 +1,9 @@
 import Stripe from "stripe";
 import { ApiError, apiJson, handleApiError } from "../../../lib/api-security";
+import { grantsPro } from "../../../lib/billing";
 import { getStripe } from "../../../lib/stripe";
 import { createAdminClient } from "../../../../lib/supabase/server";
+import { UUID_PATTERN } from "@/lib/validation";
 
 type SubscriptionShape = {
   id: string;
@@ -17,14 +19,35 @@ function idOf(value: string | { id: string }) {
   return typeof value === "string" ? value : value.id;
 }
 
-async function syncSubscription(subscription: SubscriptionShape) {
+/**
+ * Stripe may deliver events out of order or retry them days later, so the
+ * subscription is re-read from Stripe instead of trusting the event snapshot.
+ */
+async function currentSubscription(snapshot: SubscriptionShape): Promise<SubscriptionShape> {
+  try {
+    return (await getStripe().subscriptions.retrieve(snapshot.id)) as unknown as SubscriptionShape;
+  } catch (error) {
+    if (error instanceof Stripe.errors.StripeInvalidRequestError && error.code === "resource_missing") return snapshot;
+    throw error;
+  }
+}
+
+async function syncSubscription(snapshot: SubscriptionShape) {
   const admin = createAdminClient();
+  const subscription = await currentSubscription(snapshot);
   const customerId = idOf(subscription.customer);
-  const userId = subscription.metadata?.supabase_user_id ||
-    (await admin.from("profiles").select("id").eq("stripe_customer_id", customerId).maybeSingle()).data?.id;
-  if (!userId) throw new Error("Subscription owner not found");
+  const metadataUserId = subscription.metadata?.supabase_user_id;
+  const ownerQuery = metadataUserId && UUID_PATTERN.test(metadataUserId)
+    ? admin.from("profiles").select("id").eq("id", metadataUserId).maybeSingle()
+    : admin.from("profiles").select("id").eq("stripe_customer_id", customerId).maybeSingle();
+  const { data: owner, error: ownerError } = await ownerQuery;
+  if (ownerError) throw ownerError;
+  // Compte supprimé (ses abonnements sont résiliés juste avant) : rien à
+  // synchroniser. Répondre 200 évite que Stripe relance l'événement.
+  if (!owner) return;
+
+  const userId = owner.id as string;
   const periodEnd = subscription.current_period_end ?? subscription.items?.data?.[0]?.current_period_end;
-  const active = ["active", "trialing"].includes(subscription.status);
   const { error } = await admin.from("subscriptions").upsert({
     id: subscription.id,
     user_id: userId,
@@ -35,7 +58,16 @@ async function syncSubscription(subscription: SubscriptionShape) {
     cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
   });
   if (error) throw error;
-  const { error: profileError } = await admin.from("profiles").update({ plan: active ? "pro" : "free" }).eq("id", userId);
+
+  // Le plan dépend de tous les abonnements de l'utilisateur, pas seulement de
+  // celui de l'événement : résilier un doublon ne doit pas retirer l'accès Pro.
+  const { data: subscriptions, error: listError } = await admin
+    .from("subscriptions")
+    .select("status")
+    .eq("user_id", userId);
+  if (listError) throw listError;
+  const plan = (subscriptions ?? []).some((row) => grantsPro(String(row.status))) ? "pro" : "free";
+  const { error: profileError } = await admin.from("profiles").update({ plan }).eq("id", userId);
   if (profileError) throw profileError;
 }
 

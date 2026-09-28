@@ -1,3 +1,4 @@
+import { zurichDate } from "@/lib/dates";
 import { UUID_PATTERN } from "@/lib/validation";
 import {
   ApiError,
@@ -28,12 +29,12 @@ function optionalExamDate(value: unknown) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     throw new ApiError(400, "invalid_onboarding", "La date d’examen est invalide.");
   }
+  // Dates du calendrier suisse : entre minuit et 2 h, le jour UTC est encore la veille.
   const parsed = new Date(`${value}T12:00:00Z`);
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  const maximum = new Date(today);
-  maximum.setUTCFullYear(maximum.getUTCFullYear() + 10);
-  if (Number.isNaN(parsed.getTime()) || parsed < today || parsed > maximum) {
+  const today = zurichDate();
+  const maximum = `${Number(today.slice(0, 4)) + 10}${today.slice(4)}`;
+  const isRealDate = !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+  if (!isRealDate || value < today || value > maximum) {
     throw new ApiError(400, "invalid_onboarding", "Choisissez une date d’examen à venir.");
   }
   return value;

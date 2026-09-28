@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Difficulty, QuestionReviewStatus, QuestionType } from "../../types/content";
 import { createAdminClient } from "../supabase/server";
+import { selectAllPages } from "../supabase/select-all";
 
 export type AdminQuestionListItem = {
   id: string; text: string; specialtyName: string; pathologyTitle: string | null;
@@ -34,7 +35,7 @@ type QuestionRow = {
 export async function getAdminQuestions(): Promise<AdminQuestionListItem[]> {
   const admin = createAdminClient();
   const [questionsResult, specialtiesResult, pathologiesResult] = await Promise.all([
-    admin.from("questions").select("id, specialty_id, pathology_id, question_text, difficulty, review_status, is_published, version, updated_at").order("updated_at", { ascending: false }),
+    selectAllPages((from, to) => admin.from("questions").select("id, specialty_id, pathology_id, question_text, difficulty, review_status, is_published, version, updated_at").order("updated_at", { ascending: false }).order("id").range(from, to)),
     admin.from("specialties").select("id, name"),
     admin.from("pathologies").select("id, title"),
   ]);

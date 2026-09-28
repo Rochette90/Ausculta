@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { zurichDate } from "../dates";
+import { activeStreak } from "../progress/streak";
 import { createClient } from "../supabase/server";
 
 export const getProfileSummary = cache(async (userId: string) => {
@@ -6,7 +8,7 @@ export const getProfileSummary = cache(async (userId: string) => {
   const [{ data: profile }, { data: onboarding }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("full_name, avatar_url, plan, role, xp, level, streak, stripe_customer_id, created_at, updated_at")
+      .select("full_name, avatar_url, plan, role, xp, level, streak, last_activity_date, stripe_customer_id, created_at, updated_at")
       .eq("id", userId)
       .maybeSingle(),
     supabase
@@ -18,6 +20,7 @@ export const getProfileSummary = cache(async (userId: string) => {
   if (!profile) return null;
   return {
     ...profile,
+    streak: activeStreak(profile.streak, profile.last_activity_date, zurichDate()),
     onboarding_completed_at: onboarding?.onboarding_completed_at ?? null,
     onboarding_skipped_at: onboarding?.onboarding_skipped_at ?? null,
   };

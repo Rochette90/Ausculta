@@ -6,39 +6,55 @@ import { BRAND_EMAIL_FROM, BRAND_NAME } from "@/lib/brand";
 
 const CONTACT_EMAIL = BRAND_EMAIL_FROM;
 
-type Status = "idle" | "pending" | "sent" | "error";
+type Status = "idle" | "pending" | "sent" | "invalid" | "limited" | "error";
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
 
   async function submitContact(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    if (status === "pending") return;
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const name = String(form.get("name") ?? "").trim();
     const email = String(form.get("email") ?? "").trim();
     const topic = String(form.get("topic") ?? "Question générale").trim();
     const message = String(form.get("message") ?? "").trim();
 
+    if (message.length < 5) {
+      setStatus("invalid");
+      return;
+    }
+
     setStatus("pending");
-    let ok = false;
+    let responseStatus = 0;
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ name, email, topic, message }),
       });
-      ok = response.ok;
+      responseStatus = response.status;
     } catch {
-      ok = false;
+      responseStatus = 0;
     }
-    setStatus(ok ? "sent" : "error");
 
-    if (!ok) {
-      // Repli local : un brouillon reste disponible si l'envoi serveur échoue.
-      const subject = encodeURIComponent(`[${BRAND_NAME}] ${topic}`);
-      const body = encodeURIComponent(`${message}\n\n—\n${name}\n${email}`);
-      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    if (responseStatus >= 200 && responseStatus < 300) {
+      formElement.reset();
+      setStatus("sent");
+      return;
     }
+    // Un champ refusé ou une limite atteinte se corrige sur place : ouvrir la
+    // messagerie n'a de sens que si le service est réellement indisponible.
+    if (responseStatus === 400 || responseStatus === 429) {
+      setStatus(responseStatus === 400 ? "invalid" : "limited");
+      return;
+    }
+    setStatus("error");
+    // Repli local : un brouillon reste disponible si l'envoi serveur échoue.
+    const subject = encodeURIComponent(`[${BRAND_NAME}] ${topic}`);
+    const body = encodeURIComponent(`${message}\n\n—\n${name}\n${email}`);
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   }
 
   const fieldClass = "mt-2 min-h-12 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 text-[var(--ink)] outline-none transition focus:border-[var(--primary)] focus:ring-4 focus:ring-[var(--primary-glow)]";
@@ -47,6 +63,8 @@ export function ContactForm() {
     idle: "Votre message est transmis directement à notre équipe.",
     pending: "Envoi en cours…",
     sent: "Message envoyé. Nous répondons généralement sous 48 heures.",
+    invalid: "Merci de vérifier les champs : un nom, une adresse e-mail valide et un message d’au moins 5 caractères.",
+    limited: `Plusieurs messages viennent d’être envoyés depuis cette connexion. Réessayez dans une heure ou écrivez-nous à ${CONTACT_EMAIL}.`,
     error: `L’envoi a échoué. Un brouillon s’est ouvert dans votre messagerie, ou écrivez-nous directement à ${CONTACT_EMAIL}.`,
   }[status];
 
@@ -62,7 +80,7 @@ export function ContactForm() {
         <label className="text-sm font-bold text-[var(--ink)]">Adresse e-mail<input autoComplete="email" className={fieldClass} name="email" placeholder="prenom.nom@unil.ch" required type="email" /></label>
       </div>
       <label className="mt-5 block text-sm font-bold text-[var(--ink)]">Sujet<select className={fieldClass} defaultValue="Question générale" name="topic"><option>Question générale</option><option>Problème technique</option><option>Contenu médical</option><option>Partenariat ou faculté</option><option>Compte et abonnement</option></select></label>
-      <label className="mt-5 block text-sm font-bold text-[var(--ink)]">Message<textarea className={`${fieldClass} min-h-40 resize-y py-3`} name="message" placeholder="Expliquez-nous votre demande…" required /></label>
+      <label className="mt-5 block text-sm font-bold text-[var(--ink)]">Message<textarea className={`${fieldClass} min-h-40 resize-y py-3`} maxLength={4000} minLength={5} name="message" placeholder="Expliquez-nous votre demande…" required /></label>
 
       <button className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[var(--primary-hover)] disabled:opacity-60 sm:w-auto" disabled={status === "pending"} type="submit">
         {status === "pending" ? <LoaderCircle aria-hidden="true" className="animate-spin" size={17} /> : <ArrowUpRight aria-hidden="true" size={17} />}

@@ -57,7 +57,7 @@ export async function createPathologyReport(input: CreatePathologyReportInput): 
     });
     if (error) {
       console.error(`${BRAND_NAME} create pathology report error`, error);
-      return { success: false, error: error.message.includes("selected text mismatch") ? "Le passage sélectionné n’est plus à jour" : "Impossible d’envoyer le signalement" };
+      return { success: false, error: /selected text (?:mismatch|not found)|report section not found/.test(error.message) ? "Le passage sélectionné n’est plus à jour" : "Impossible d’envoyer le signalement" };
     }
     return { success: true, reportId: typeof data === "string" ? data : undefined };
   } catch (error) {

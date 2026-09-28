@@ -5,9 +5,11 @@ import {
   handleApiError,
   requireAuthenticatedUser,
 } from "../../lib/api-security";
+import { needsCancellation } from "../../lib/billing";
 import { getStripe } from "../../lib/stripe";
 import { enforceRateLimit } from "../../lib/rate-limit";
 import { createAdminClient } from "../../../lib/supabase/server";
+import { isOwnAvatarPath } from "../../../lib/profile/avatar-path";
 
 export async function DELETE(request: Request) {
   try {
@@ -28,20 +30,21 @@ export async function DELETE(request: Request) {
     if (profile?.stripe_customer_id && process.env.STRIPE_SECRET_KEY) {
       try {
         const stripe = getStripe();
-        const subscriptions = await stripe.subscriptions.list({
+        // Tous les statuts, pas seulement `active` : un essai (`trialing`) ou un
+        // impayé (`past_due`, `unpaid`) continuerait sinon à être facturé.
+        for await (const subscription of stripe.subscriptions.list({
           customer: profile.stripe_customer_id,
-          status: "active",
-          limit: 10,
-        });
-        for (const subscription of subscriptions.data) {
-          await stripe.subscriptions.cancel(subscription.id);
+          status: "all",
+          limit: 100,
+        })) {
+          if (needsCancellation(subscription.status)) await stripe.subscriptions.cancel(subscription.id);
         }
       } catch {
         throw new ApiError(502, "billing_cancellation_failed", "La résiliation de l’abonnement a échoué. Réessayez ou contactez le support.");
       }
     }
 
-    if (profile?.avatar_url?.startsWith(`${user.id}/`)) {
+    if (profile?.avatar_url && isOwnAvatarPath(user.id, profile.avatar_url)) {
       await admin.storage.from("avatars").remove([profile.avatar_url]);
     }
 

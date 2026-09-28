@@ -13,11 +13,16 @@ export function BillingActions({ hasCustomer, isPro }: { hasCustomer: boolean; i
     setError(null);
     try {
       const response = await fetch(path, { method: "POST" });
-      const data = await response.json() as { url?: string; error?: string };
-      if (!response.ok || !data.url) throw new Error(data.error);
+      const data = await response.json().catch(() => ({})) as { url?: string; error?: string; code?: string };
+      if (!response.ok || !data.url) {
+        // Les refus métier (abonnement déjà en cours, limite de tentatives)
+        // portent un message destiné à l'utilisateur.
+        const readable = data.code === "subscription_exists" || response.status === 429;
+        throw new Error(readable && data.error ? data.error : "La facturation est momentanément indisponible.");
+      }
       window.location.assign(data.url);
-    } catch {
-      setError("La facturation est momentanément indisponible.");
+    } catch (cause) {
+      setError(cause instanceof Error && cause.message ? cause.message : "La facturation est momentanément indisponible.");
       setLoading(false);
     }
   }

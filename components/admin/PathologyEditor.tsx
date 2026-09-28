@@ -32,6 +32,8 @@ export function PathologyEditor({ pathology }: { pathology: AdminPathologyDetail
     reviewerName: pathology.reviewerName,
     reviewedAt: pathology.reviewedAt,
   });
+  // Version relue : chaque enregistrement l'incrémente côté base.
+  const [version, setVersion] = useState(pathology.version);
   const [mode, setMode] = useState<EditorMode>("edit");
   const [message, setMessage] = useState<string | null>(null);
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
@@ -51,6 +53,7 @@ export function PathologyEditor({ pathology }: { pathology: AdminPathologyDetail
       const result = await updateAdminPathology(form);
       if (result.success) {
         setDirty(false);
+        setVersion((current) => current + 1);
         setReview({ status: "needs_review", reviewerName: null, reviewedAt: null });
         setMessageTone("success");
         setMessage("Version enregistrée. La fiche est maintenant à réviser.");
@@ -65,7 +68,7 @@ export function PathologyEditor({ pathology }: { pathology: AdminPathologyDetail
   function signReview() {
     setMessage(null);
     startTransition(async () => {
-      const result = await reviewAdminPathology({ id: pathology.id, slug: pathology.slug });
+      const result = await reviewAdminPathology({ id: pathology.id, slug: pathology.slug, version });
       if (result.success && result.reviewerName && result.reviewedAt) {
         setReview({ status: "reviewed", reviewerName: result.reviewerName, reviewedAt: result.reviewedAt });
         setMessageTone("success");
@@ -92,7 +95,7 @@ export function PathologyEditor({ pathology }: { pathology: AdminPathologyDetail
               <p className={`m-0 text-sm font-extrabold uppercase tracking-[.12em] ${reviewed ? "text-emerald-800" : "text-amber-800"}`}>{reviewed ? "Révision validée" : "À réviser"}</p>
               <p className="mb-0 mt-1 text-sm leading-6 text-slate-700">
                 {reviewed
-                  ? <>Signée par <strong>{review.reviewerName}</strong> le {new Date(review.reviewedAt!).toLocaleString("fr-CH")}.</>
+                  ? <>Signée par <strong>{review.reviewerName}</strong> le {new Date(review.reviewedAt!).toLocaleString("fr-CH", { timeZone: "Europe/Zurich" })}.</>
                   : "Relis le contenu, enregistre tes corrections, puis signe la version finale avec ton compte."}
               </p>
               {dirty && <p className="mb-0 mt-2 text-xs font-bold text-amber-800">Modifications non enregistrées — la signature est bloquée.</p>}

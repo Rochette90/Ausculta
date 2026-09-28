@@ -30,7 +30,7 @@ function MessageCard({ message }: { message: AdminContactMessage }) {
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{message.topic}</span>
           </div>
           <h2 className="mb-0 mt-3 !text-xl">{message.name}</h2>
-          <p className="mt-1 text-sm text-slate-500"><a className="underline" href={`mailto:${message.email}`}>{message.email}</a> · {new Date(message.createdAt).toLocaleDateString("fr-CH")}</p>
+          <p className="mt-1 text-sm text-slate-500"><a className="underline" href={`mailto:${message.email}`}>{message.email}</a> · {new Date(message.createdAt).toLocaleDateString("fr-CH", { timeZone: "Europe/Zurich" })}</p>
         </div>
         <Button disabled={pending || status === "resolved"} onClick={resolve} size="sm"><CheckCircle2 size={15} /> Marquer comme traité</Button>
       </header>

@@ -130,9 +130,9 @@ for (const item of questionsOnly ? [] : caseCatalog) {
       setting: item.setting,
       duration: item.duration,
       tags: item.tags,
-      source_file: item.sourceFile,
       candidate_title: item.candidateTitle,
-      diagnosis: item.diagnosis,
+      // Le diagnostic reste dans le dépôt (content/cases) et n'est jamais
+      // stocké dans une colonne lisible par les comptes connectés.
     },
     evaluation_grid: [],
     difficulty: item.difficulty === "Facile" ? "easy" : item.difficulty === "Difficile" ? "hard" : "medium",

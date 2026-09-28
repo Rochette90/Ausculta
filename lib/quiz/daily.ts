@@ -3,6 +3,7 @@ import "server-only";
 
 import { randomInt } from "node:crypto";
 import { createAdminClient } from "../supabase/server";
+import { selectAllPages } from "../supabase/select-all";
 import { isMissingQuestionImageColumns } from "./question-images";
 
 export type DailyQuiz = {
@@ -105,10 +106,12 @@ export async function getDailyQuiz(): Promise<DailyQuiz> {
 
   let daily = existing.data as DailyQuizRow | null;
   if (!daily) {
-    const candidates = await admin
+    const candidates = await selectAllPages((from, to) => admin
       .from("questions")
       .select("id")
-      .eq("is_published", true);
+      .eq("is_published", true)
+      .order("id")
+      .range(from, to));
     if (candidates.error) throw candidates.error;
 
     const questionIds = (candidates.data ?? []) as Array<{ id: string }>;

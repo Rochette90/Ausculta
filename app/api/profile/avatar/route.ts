@@ -7,6 +7,7 @@ import {
 } from "../../../lib/api-security";
 import { enforceRateLimit } from "../../../lib/rate-limit";
 import { createAdminClient } from "../../../../lib/supabase/server";
+import { isOwnAvatarPath } from "../../../../lib/profile/avatar-path";
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 const MIME_EXTENSIONS = {
@@ -39,8 +40,9 @@ async function currentAvatarPath(userId: string) {
     .single();
   if (error) throw error;
   const path = typeof data.avatar_url === "string" ? data.avatar_url : null;
-  return path?.startsWith(`${userId}/`) ? path : null;
+  return path && isOwnAvatarPath(userId, path) ? path : null;
 }
+
 
 export async function GET() {
   try {

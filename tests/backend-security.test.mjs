@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { calculateEcosCriteria, scoreEcosTranscript } from "../app/lib/ecos.ts";
+import { calculateEcosCriteria, scoreEcosTranscript } from "../lib/ecos/scoring.ts";
+import { getEcosScenario } from "../lib/ecos/stations/index.ts";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -472,6 +473,7 @@ test("all mutable product APIs enforce authenticated server identity", async () 
     "../app/api/ecos/session/route.ts",
     "../app/api/ecos/session/[id]/route.ts",
     "../app/api/ecos/chat/route.ts",
+    "../app/api/ecos/session/[id]/procedure/route.ts",
     "../app/api/billing/checkout/route.ts",
     "../app/api/billing/portal/route.ts",
     "../app/api/profile/route.ts",
@@ -485,9 +487,9 @@ test("all mutable product APIs enforce authenticated server identity", async () 
   }
 });
 
-test("every post-login redirect target rejects backslash-based open redirects", async () => {
-  // `new URL("/\\evil.com", origin)` resolves to an external origin under the
-  // WHATWG URL spec: `startsWith("//")` alone does not catch this variant.
+test("every post-login redirect target uses the shared same-origin guard", async () => {
+  // Prefix checks miss `/\\evil.com` and `/\t/evil.com`: both resolve to an
+  // external origin under the WHATWG URL spec. See tests/audit-fixes.test.mjs.
   const [callback, authPage, onboarding, connectedLayout] = await Promise.all([
     read("../app/auth/callback/route.ts"),
     read("../components/auth/AuthPage.tsx"),
@@ -495,7 +497,8 @@ test("every post-login redirect target rejects backslash-based open redirects", 
     read("../app/(app)/layout.tsx"),
   ]);
   for (const source of [callback, authPage, onboarding, connectedLayout]) {
-    assert.match(source, /startsWith\("\/\\\\"\)/);
+    assert.match(source, /safeRedirectPath\(/);
+    assert.doesNotMatch(source, /startsWith\("\/\/"\)/);
   }
 });
 
@@ -504,10 +507,11 @@ test("ECOS scoring is shared by the client and server", () => {
     { role: "student", content: "Depuis quand avez-vous mal et la douleur irradie-t-elle dans le bras ?" },
     { role: "patient", content: "Depuis ce matin." },
   ];
-  const criteria = calculateEcosCriteria(transcript);
-  const result = scoreEcosTranscript(transcript);
+  const { criteria: grid } = getEcosScenario("douleur-thoracique-aigue");
+  const criteria = calculateEcosCriteria(grid, transcript);
+  const result = scoreEcosTranscript(grid, transcript);
 
   assert.equal(result.score, criteria.reduce((total, criterion) => total + criterion.earned, 0));
-  assert.equal(result.maxScore, 18);
-  assert.equal(result.score, 3);
+  assert.equal(result.maxScore, 20);
+  assert.equal(result.score, 2);
 });

@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
+import { safeRedirectPath } from "../../../lib/auth/safe-redirect";
 import { createClient } from "../../../lib/supabase/server";
-
-function safeNext(value: string | null) {
-  return value?.startsWith("/") && !value.startsWith("//") && !value.startsWith("/\\") ? value : "/dashboard";
-}
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const nextPath = safeNext(url.searchParams.get("next"));
+  const nextPath = safeRedirectPath(url.searchParams.get("next"));
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);

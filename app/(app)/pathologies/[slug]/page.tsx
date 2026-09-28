@@ -169,7 +169,7 @@ export default async function PathologyPage({ params }: PageProps) {
           {isReviewed ? (
             <span className="is-reviewed">
               <BadgeCheck size={14} /> Validée et signée par {pathology.reviewer_name} le{" "}
-              {new Date(pathology.reviewed_at!).toLocaleDateString("fr-CH")}
+              {new Date(pathology.reviewed_at!).toLocaleDateString("fr-CH", { timeZone: "Europe/Zurich" })}
             </span>
           ) : (
             <span className="is-draft"><FileWarning size={14} /> En attente de validation médicale signée</span>

@@ -16,8 +16,9 @@ export function DeleteAccountButton() {
     try {
       const response = await fetch("/api/account", { method: "DELETE" });
       if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { message?: string } | null;
-        throw new Error(body?.message ?? "La suppression a échoué. Réessayez plus tard.");
+        const body = (await response.json().catch(() => null)) as { error?: string; code?: string } | null;
+        const readable = body?.code === "billing_cancellation_failed" || response.status === 429;
+        throw new Error(readable && body?.error ? body.error : "La suppression a échoué. Réessayez plus tard.");
       }
       router.push("/");
       router.refresh();

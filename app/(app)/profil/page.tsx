@@ -11,10 +11,13 @@ import { BRAND_PRO_PLAN, pageTitle } from "@/lib/brand";
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Profil") };
 
+type BadgeDetails = { id: string; name: string; description: string | null; icon: string | null };
+// `badges` est une relation plusieurs-à-un : PostgREST renvoie un objet, pas un tableau.
 type BadgeRelation = {
   awarded_at: string;
-  badges: Array<{ name: string; description: string | null; icon: string | null }> | null;
+  badges: BadgeDetails | BadgeDetails[] | null;
 };
+const badgeOf = (item: BadgeRelation) => (Array.isArray(item.badges) ? item.badges[0] : item.badges) ?? null;
 
 
 export default async function ProfilPage() {
@@ -37,7 +40,7 @@ export default async function ProfilPage() {
       .maybeSingle(),
     supabase
       .from("user_badges")
-      .select("awarded_at, badges(name, description, icon)")
+      .select("awarded_at, badges(id, name, description, icon)")
       .eq("user_id", user.id)
       .order("awarded_at", { ascending: false }),
     supabase
@@ -55,7 +58,7 @@ export default async function ProfilPage() {
   const avatarUrl = profileAvatarUrl(user.id, profile);
   const levelProgress = (profile?.xp ?? 0) % 100;
   const memberSince = profile?.created_at
-    ? new Intl.DateTimeFormat("fr-CH", { month: "long", year: "numeric" }).format(new Date(profile.created_at))
+    ? new Intl.DateTimeFormat("fr-CH", { month: "long", year: "numeric", timeZone: "Europe/Zurich" }).format(new Date(profile.created_at))
     : null;
 
   return (
@@ -124,10 +127,9 @@ export default async function ProfilPage() {
             <h2 className="mb-0 mt-1 !text-xl">Tes accomplissements</h2>
             {(badges as BadgeRelation[] | null)?.length ? (
               <div className="mt-5 grid gap-3">
-                {(badges as BadgeRelation[]).slice(0, 4).map((item) => {
-                  const badge = item.badges?.[0];
+                {(badges as BadgeRelation[]).map((item) => ({ item, badge: badgeOf(item) })).filter(({ badge }) => badge).slice(0, 4).map(({ item, badge }) => {
                   return (
-                    <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3" key={`${badge?.name}-${item.awarded_at}`}>
+                    <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3" key={badge?.id ?? item.awarded_at}>
                       <span className="grid size-9 place-items-center rounded-full bg-violet-100">{badge?.icon ?? "✦"}</span>
                       <div className="min-w-0"><strong className="block truncate text-sm">{badge?.name}</strong><span className="block truncate text-xs text-slate-500">{badge?.description}</span></div>
                     </div>
@@ -142,7 +144,7 @@ export default async function ProfilPage() {
             <h2 className="mb-0 mt-1 !text-xl">{isPro ? BRAND_PRO_PLAN : "Découverte"}</h2>
             <p className="mb-0 mt-3 text-sm leading-6 text-slate-500">
               {subscription?.current_period_end
-                ? `Prochaine échéance : ${new Date(subscription.current_period_end).toLocaleDateString("fr-CH")}`
+                ? `Prochaine échéance : ${new Date(subscription.current_period_end).toLocaleDateString("fr-CH", { timeZone: "Europe/Zurich" })}`
                 : "Passe à Pro pour débloquer l’entraînement complet."}
             </p>
             <BillingActions hasCustomer={Boolean(profile?.stripe_customer_id)} isPro={isPro} />

@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ConnectedNavigation } from "../../components/navigation/ConnectedNavigation";
 import { requireUser } from "../../lib/auth/require-user";
+import { safeRedirectPath } from "../../lib/auth/safe-redirect";
 import { getProfileSummary } from "../../lib/profile/queries";
 import { getOnboardingMetadata } from "../../lib/onboarding/metadata";
 import { PATHNAME_HEADER } from "@/lib/brand";
@@ -11,9 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ConnectedLayout({ children }: { children: React.ReactNode }) {
   const requestedPath = (await headers()).get(PATHNAME_HEADER);
-  const returnTo = requestedPath?.startsWith("/") && !requestedPath.startsWith("//") && !requestedPath.startsWith("/\\")
-    ? requestedPath
-    : "/dashboard";
+  const returnTo = safeRedirectPath(requestedPath);
   const user = await requireUser(returnTo);
   const profile = await getProfileSummary(user.id);
   const onboarding = getOnboardingMetadata(user);

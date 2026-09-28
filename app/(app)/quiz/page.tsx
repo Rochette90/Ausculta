@@ -25,12 +25,17 @@ export const metadata = { title: pageTitle("QCM") };
 
 export default async function QuizPage() {
   const user = await requireUser("/quiz");
+  // La question du jour peut être dépubliée en cours de journée : le reste du
+  // centre QCM doit rester accessible (même comportement que le tableau de bord).
   const [quiz, specialties] = await Promise.all([
-    getDailyQuiz(),
+    getDailyQuiz().catch((error: unknown) => {
+      console.error("Daily quiz unavailable", error);
+      return null;
+    }),
     getSpecialtyQuizCatalog(user.id),
   ]);
-  const initialAttempt = await getDailyQuizAttempt(user.id, quiz);
-  const specialtyName = specialties.find((specialty) => specialty.id === quiz.question.specialtyId)?.name ?? "Toutes spécialités";
+  const initialAttempt = quiz ? await getDailyQuizAttempt(user.id, quiz) : null;
+  const specialtyName = specialties.find((specialty) => specialty.id === quiz?.question.specialtyId)?.name ?? "Toutes spécialités";
   const availableCount = specialties.filter((specialty) => specialty.questionCount > 0).length;
   const totalQuestions = specialties.reduce((total, specialty) => total + specialty.questionCount, 0);
   const totalMastered = specialties.reduce((total, specialty) => total + specialty.masteredCount, 0);
@@ -95,7 +100,15 @@ export default async function QuizPage() {
           </div>
           <p className="m-0 inline-flex items-center gap-2 text-sm font-medium text-[var(--muted)]"><Clock3 size={16} /> Environ 2 minutes</p>
         </div>
-        <DailyQuizCard initialAttempt={initialAttempt} quiz={quiz} specialtyName={specialtyName} />
+        {quiz ? (
+          <DailyQuizCard initialAttempt={initialAttempt} quiz={quiz} specialtyName={specialtyName} />
+        ) : (
+          <div className="rounded-[22px] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow-sm)]" role="status">
+            <p className="m-0 font-bold text-[var(--ink)]">La question du jour est momentanément indisponible.</p>
+            <p className="mb-0 mt-2 text-sm leading-6 text-[var(--muted)]">Tes séries par spécialité restent accessibles juste en dessous.</p>
+            <Link className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[var(--primary)] no-underline" href="#quiz-par-specialite">Choisir une spécialité <ArrowRight size={16} /></Link>
+          </div>
+        )}
       </section>
 
       <section className="scroll-mt-24 pt-14" id="quiz-par-specialite">

@@ -66,4 +66,8 @@ Importer le projet, ajouter toutes les variables de `.env.example`, puis déploy
 
 Le module `/anatomie` propose six parcours avec repères, rappel actif, mini-cas et liens vers les fiches. Le catalogue `/specialties` offre une recherche et un filtre de lecture ; `/cas` distingue ECOS et raisonnement anatomique.
 
-Pour activer l’historique d’anatomie, appliquer `supabase/migrations/20260928100000_anatomy_attempts.sql`. Les corrections restent disponibles avec un message de non-sauvegarde tant que cette table manque. Voir [la documentation fonctionnelle et technique](docs/anatomie-et-parcours.md) pour les changements ECOS, les protections backend et les limites de validation.
+Pour activer l’historique d’anatomie, appliquer `supabase/migrations/20260928100000_anatomy_attempts.sql`. Les corrections restent disponibles avec un message de non-sauvegarde tant que cette table manque. Voir [la documentation fonctionnelle et technique](docs/anatomie-et-parcours.md) pour les protections backend et les limites de validation.
+
+## Stations ECOS
+
+Les 12 stations de `/cas` se déroulent en trois temps — anamnèse avec un patient simulé (moteur local, Groq optionnel), examen clinique où chaque geste choisi débloque son résultat, puis synthèse (diagnostic parmi quatre propositions et prise en charge) — et sont notées sur 22 points avec un débriefing sourcé révélé après la correction serveur. L’entraînement est sans chronomètre ; le mode examen dure 13 minutes pour toute la station. Les adresses utilisent un code neutre (`/cas/station-04`) pour ne pas donner le diagnostic. Pour les activer et appliquer les correctifs de sécurité, appliquer `20260928110000_security_and_streak_fixes.sql` puis `20260928120000_publish_ecos_stations.sql`, en déployant le code en même temps. Détails, ajout d’une station et vérifications : [Stations ECOS et correctifs](docs/ecos-stations-et-correctifs.md).

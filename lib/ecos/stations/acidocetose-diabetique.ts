@@ -1,0 +1,155 @@
+import type { EcosScenario } from "../types.ts";
+import { communicationCriterion, FEVER, INTENSITY, LOCATION, NAUSEA, ONSET, planReaction, presentationCriterion, VITALS } from "./shared.ts";
+
+const THIRST = ["soif", "boire beaucoup", "buvez beaucoup", "polydips", "bouche seche", "combien buvez", "quantite d eau", "litres"];
+const URINE = ["urin", "pipi", "polyur", "toilettes", "levez la nuit", "nocturne"];
+const WEIGHT = ["poids", "maigri", "kilos", "perdu du poids"];
+const FATIGUE = ["fatigue", "fatigu", "epuise", "asthen", "force"];
+const GLUCOSE = ["glycemie", "sucre", "glucose", "dextro"];
+const KETONES = ["cetone", "cetonemie", "cetonurie", "corps cetoniques", "gazometrie", "gaz du sang", "le ph", "ph sanguin", "bicarbonate", "trou anionique", "lactate"];
+
+export const acidocetoseDiabetique: EcosScenario = {
+  slug: "acidocetose-diabetique",
+  version: 1,
+  setting: "urgences",
+  patient: { name: "M. Rossi", age: 19, sex: "M" },
+  painful: true,
+  persona: "Jeune homme épuisé, respire vite et profondément, a la bouche sèche et parle lentement. Sa mère l’a amené.",
+  brief: [
+    "Vous êtes médecin assistant·e au service des urgences.",
+    "M. Rossi, 19 ans, est amené par sa mère pour des douleurs abdominales et des vomissements.",
+    "Menez une anamnèse ciblée, décrivez l’examen et les examens urgents, puis proposez la prise en charge initiale.",
+  ],
+  opening: "Bonjour… j’ai mal au ventre et je vomis depuis hier. Je suis complètement épuisé.",
+  history: {
+    identity: "Nicola Rossi, j’ai 19 ans.",
+    occupation: "Je suis au gymnase, en dernière année.",
+    medications: "Aucun traitement.",
+    allergies: "Pas d’allergie.",
+    personalHistory: "Rien du tout, je n’ai jamais été malade. On ne m’a jamais parlé de diabète.",
+    familyHistory: "Ma tante a un diabète de type 1 depuis l’enfance. Ma mère a une thyroïde qui fonctionne mal.",
+    tobacco: "Non, je ne fume pas.",
+    alcohol: "Presque jamais.",
+    drugs: "Non, rien.",
+    concerns: "Est-ce que c’est grave ? J’ai un examen la semaine prochaine.",
+  },
+  rules: [
+    { topic: "soif", keywords: THIRST, reply: "J’ai tout le temps soif depuis trois semaines. Je bois au moins quatre ou cinq litres par jour." },
+    { topic: "urines", keywords: URINE, reply: "Je vais aux toilettes sans arrêt, même la nuit : je me lève trois ou quatre fois." },
+    { topic: "poids", keywords: WEIGHT, reply: "J’ai perdu six kilos en un mois sans faire de régime." },
+    { topic: "fatigue", keywords: FATIGUE, reply: "Je suis épuisé depuis plusieurs semaines, et depuis hier je tiens à peine debout." },
+    { topic: "douleur abdominale", keywords: [...LOCATION, ...INTENSITY, "irrad", "ventre", "abdo", "douleur", "mal au ventre"], reply: "Mal partout dans le ventre, surtout au milieu, environ cinq sur dix. Ça ne va nulle part ailleurs et ça a commencé en même temps que les vomissements." },
+    { topic: "vomissements", keywords: NAUSEA, reply: "J’ai vomi cinq ou six fois depuis hier, je n’arrive plus à rien garder." },
+    { topic: "respiration", keywords: ["essouffl", "respir", "souffle", "haleine"], reply: "J’ai l’impression de devoir respirer très fort. Ma mère dit que mon haleine sent bizarre, comme du vernis." },
+    { topic: "infection", keywords: [...FEVER, "toux", "tousse", "gorge", "brulure", "infection", "grippe"], reply: "J’ai eu une grippe il y a dix jours, avec de la fièvre. Là, je n’ai plus de fièvre." },
+    { topic: "vision", keywords: ["vision", "voir", "flou", "yeux"], reply: "Je vois un peu flou depuis quelques jours." },
+    { topic: "conscience", keywords: ["confus", "somnol", "endormi", "quel jour", "orientation", "malaise"], reply: "Je suis très fatigué, j’ai envie de dormir, mais je sais où je suis." },
+    { topic: "diabète (question directe)", keywords: ["diabet"], reply: "Non, on ne m’a jamais dit que j’étais diabétique. Ma tante l’est." },
+    { topic: "début", keywords: ONSET, reply: "La soif et les urines, depuis environ trois semaines. Le mal de ventre et les vomissements, depuis hier matin." },
+    { topic: "constantes", examiner: true, keywords: VITALS, reply: "FC 118/min, TA 106/64 mmHg, FR 28/min (respiration ample et profonde), SpO₂ 98 % à l’air ambiant, T 37,1 °C. Glasgow 15." },
+    { topic: "glycémie capillaire", examiner: true, keywords: GLUCOSE, reply: "Glycémie capillaire : 28,4 mmol/L." },
+    { topic: "cétones et gazométrie", examiner: true, keywords: KETONES, reply: "Cétonémie capillaire 5,8 mmol/L. Gazométrie veineuse : pH 7,18, bicarbonates 8 mmol/L, pCO₂ 2,8 kPa, trou anionique 27 mmol/L." },
+    { topic: "examen", examiner: true, keywords: ["examen clinique", "j examine", "je vous examine", "examen physique", "palp", "examen abdominal", "deshydrat", "pli cutane", "muqueuse", "kussmaul", "auscult"], reply: "Muqueuses sèches, pli cutané persistant, temps de recoloration 3 secondes. Respiration de Kussmaul, haleine cétonique. Abdomen diffusément sensible, souple, sans défense. Auscultation cardio-pulmonaire normale." },
+    { topic: "biologie", examiner: true, keywords: ["prise de sang", "bilan sanguin", "biologie", "laboratoire", "ionogramme", "electrolytes", "potassium", "kaliemie", "sodium", "natremie", "creatinine", "fonction renale", "formule sanguine", "crp", "lipase", "hba1c", "osmolalite"], reply: "K⁺ 5,6 mmol/L, Na⁺ 131 mmol/L, Cl⁻ 96 mmol/L, créatinine 128 µmol/L, urée augmentée. Leucocytes 16 G/L, CRP 12 mg/L, lipase normale. HbA1c 12,4 %." },
+    { topic: "ECG", examiner: true, keywords: ["ecg", "electrocardiogramme"], reply: "ECG : tachycardie sinusale, ondes T un peu amples, pas d’autre anomalie." },
+    { topic: "urines (examen)", examiner: true, keywords: ["bandelette", "stix", "analyse d urine", "sediment"], reply: "Bandelette urinaire : glucose +++, cétones +++, pas de leucocytes ni de nitrites." },
+    planReaction("D’accord… donc j’ai du diabète ? Je vais devoir faire des piqûres toute ma vie ?", ["insuline", "perfusion", "hydrat", "soins intensifs", "surveillance continue"]),
+  ],
+  examination: [
+    { id: "constantes", label: "Constantes vitales", category: "constantes", pertinent: true, topic: "constantes" },
+    { id: "glycemie", label: "Glycémie capillaire", category: "constantes", pertinent: true, topic: "glycémie capillaire" },
+    { id: "hydratation", label: "Hydratation et respiration", category: "examen", pertinent: true, result: "Muqueuses sèches, pli cutané persistant, temps de recoloration 3 secondes. Respiration ample et profonde (Kussmaul), haleine cétonique." },
+    { id: "palpation", label: "Palpation abdominale", category: "examen", pertinent: true, result: "Abdomen diffusément sensible, souple, sans défense ni contracture." },
+    { id: "auscultation", label: "Auscultation cardio-pulmonaire", category: "examen", pertinent: false, result: "Tachycardie régulière, murmure vésiculaire symétrique, pas de foyer." },
+    { id: "cetones-gaz", label: "Cétonémie et gazométrie veineuse", category: "complementaire", pertinent: true, topic: "cétones et gazométrie" },
+    { id: "biologie", label: "Biologie : électrolytes, potassium, créatinine, FSC", category: "complementaire", pertinent: true, topic: "biologie" },
+    { id: "ecg", label: "ECG 12 dérivations", category: "complementaire", pertinent: true, topic: "ECG" },
+    { id: "bandelette", label: "Bandelette urinaire", category: "complementaire", pertinent: false, topic: "urines (examen)" },
+    { id: "ct-abdominal", label: "CT abdominal", category: "complementaire", pertinent: false, result: "Non indiqué : les douleurs abdominales de l’acidocétose régressent avec son traitement." },
+    { id: "radiographie", label: "Radiographie du thorax", category: "complementaire", pertinent: false, result: "Normale." },
+  ],
+  diagnosisChoice: { correct: "Acidocétose diabétique inaugurale", distractors: ["Gastro-entérite aiguë", "Appendicite aiguë", "État hyperglycémique hyperosmolaire"] },
+  criteria: [
+    presentationCriterion,
+    {
+      id: "presentation-symptoms",
+      label: "Caractérise le motif",
+      hint: "Début, douleur abdominale, vomissements",
+      points: 3,
+      groups: [ONSET, ["ventre", "abdo", "douleur", "localis", "ou avez vous"], NAUSEA],
+    },
+    {
+      id: "cardinal",
+      label: "Recherche le syndrome cardinal",
+      hint: "Soif, urines abondantes, perte de poids, fatigue",
+      points: 4,
+      groups: [THIRST, URINE, WEIGHT, FATIGUE],
+    },
+    {
+      id: "context",
+      label: "Recherche déclencheur et terrain",
+      hint: "Infection récente, antécédents familiaux, médicaments ou substances",
+      points: 3,
+      groups: [[...FEVER, "infection", "grippe", "toux", "brulure"], ["famille", "familia", "hereditaire", "diabet"], ["medicament", "traitement", "drogue", "alcool", "cortico"]],
+    },
+    {
+      id: "allergies",
+      label: "Vérifie les allergies",
+      hint: "Allergies médicamenteuses",
+      points: 1,
+      groups: [["allerg"]],
+    },
+    {
+      id: "exam",
+      label: "Examen et examens urgents",
+      hint: "Constantes (FR), glycémie capillaire, cétonémie ou gazométrie",
+      points: 3,
+      groups: [VITALS, GLUCOSE, KETONES],
+    },
+    {
+      id: "management",
+      label: "Traite selon les priorités",
+      hint: "Remplissage, insuline i.v. à débit fixe, potassium, surveillance rapprochée",
+      points: 4,
+      groups: [
+        ["perfusion", "hydrat", "remplissage", "nacl", "liquide", "cristallo", "ringer"],
+        ["insuline"],
+        ["potassium", "kaliemie"],
+        ["soins intensifs", "surveillance", "monitor", "diabetolog", "endocrinolog", "horaire"],
+      ],
+    },
+    communicationCriterion,
+  ],
+  debrief: {
+    diagnosis: "Acidocétose diabétique inaugurale d’un diabète de type 1",
+    summary: "Syndrome polyuro-polydipsique, amaigrissement et fatigue depuis trois semaines chez un jeune de 19 ans, puis douleurs abdominales, vomissements et polypnée de Kussmaul après une infection virale. Glycémie 28 mmol/L, cétonémie 5,8 mmol/L et acidose métabolique à trou anionique élevé (pH 7,18, bicarbonates 8 mmol/L) : acidocétose sévère.",
+    keyFindings: [
+      "Syndrome cardinal : soif, polyurie nocturne, perte de 6 kg, asthénie.",
+      "Déshydratation, respiration de Kussmaul, haleine cétonique.",
+      "Triade biologique : hyperglycémie, cétonémie ≥ 3 mmol/L, pH < 7,3 ou bicarbonates < 18 mmol/L ; bicarbonates < 10 mmol/L : forme sévère.",
+      "Kaliémie normale à haute malgré un déficit potassique total : risque d’hypokaliémie sous insuline.",
+    ],
+    redFlags: [
+      "Forme sévère : pH < 7,0, bicarbonates < 10 mmol/L, cétonémie > 6 mmol/L ou stupeur : insuline intraveineuse et surveillance en soins continus ou intensifs.",
+      "Kaliémie < 3,5 mmol/L : corriger avant de débuter l’insuline.",
+      "Céphalées ou baisse de vigilance sous traitement : œdème cérébral (sujet jeune).",
+    ],
+    management: [
+      "Remplissage par cristalloïdes dès l’arrivée : 500 à 1 000 mL/h pendant les 2 à 4 premières heures en l’absence d’atteinte cardiaque ou rénale, puis selon la clinique.",
+      "Insuline intraveineuse à débit fixe (0,1 U/kg/h) une fois la kaliémie connue et ≥ 3,5 mmol/L.",
+      "Supplémentation potassique dès que la kaliémie passe sous 5,0 mmol/L (cible 4–5 mmol/L) ; ajouter du glucose 5–10 % quand la glycémie descend sous 14 mmol/L.",
+      "Surveillance horaire de la glycémie et de la cétonémie, électrolytes et gazométrie toutes les 2 à 4 h ; rechercher et traiter le facteur déclenchant.",
+      "Relais par insuline sous-cutanée une fois l’acidocétose résolue (cétonémie < 0,6 mmol/L et pH > 7,3), avec chevauchement de 1 à 2 h ; anticorps anti-GAD, IA-2 et ZnT8 pour confirmer le type 1 ; éducation thérapeutique et suivi diabétologique.",
+    ],
+    differentials: [
+      "Gastro-entérite ou appendicite (douleurs abdominales et vomissements).",
+      "État hyperglycémique hyperosmolaire (patient plus âgé, peu de cétose).",
+      "Acidocétose alcoolique ou de jeûne.",
+      "Intoxication (salicylés, méthanol, éthylène glycol) : autre cause d’acidose à trou anionique élevé.",
+    ],
+    sources: [
+      { label: "ADA/EASD/JBDS/AACE/DTS 2024 — Hyperglycemic crises in adults with diabetes: consensus report", url: "https://doi.org/10.2337/dci24-0032" },
+    ],
+    pathologySlugs: ["acidocetose-diabetique", "diabete-type-1"],
+  },
+};

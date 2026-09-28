@@ -1,17 +1,18 @@
 import { redirect } from "next/navigation";
 import { OnboardingFlow } from "../../components/onboarding/OnboardingFlow";
 import { requireUser } from "../../lib/auth/require-user";
+import { DEFAULT_AFTER_LOGIN_PATH, safeRedirectPath } from "../../lib/auth/safe-redirect";
 import { createClient } from "../../lib/supabase/server";
 import { getOnboardingMetadata } from "../../lib/onboarding/metadata";
 import { pageTitle } from "@/lib/brand";
+import { zurichDate } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Personnaliser votre espace") };
 
 function safeNext(value?: string) {
-  return value?.startsWith("/") && !value.startsWith("//") && !value.startsWith("/\\") && !value.startsWith("/onboarding")
-    ? value
-    : "/dashboard";
+  const path = safeRedirectPath(value);
+  return path.startsWith("/onboarding") ? DEFAULT_AFTER_LOGIN_PATH : path;
 }
 
 export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
@@ -34,5 +35,5 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
   if (profile?.onboarding_completed_at || profile?.onboarding_skipped_at || onboarding.completedAt || onboarding.skippedAt) redirect(nextPath);
   if (specialtiesError) throw new Error("Les spécialités sont momentanément indisponibles.");
 
-  return <OnboardingFlow minimumExamDate={new Date().toISOString().slice(0, 10)} nextPath={nextPath} specialties={specialties ?? []} />;
+  return <OnboardingFlow minimumExamDate={zurichDate()} nextPath={nextPath} specialties={specialties ?? []} />;
 }

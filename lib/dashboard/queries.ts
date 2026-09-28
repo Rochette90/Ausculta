@@ -6,7 +6,9 @@ import { getDailyQuiz, getDailyQuizAttempt, type DailyQuiz } from "../quiz/daily
 import { featuredStudySession } from "../study-sessions/catalog";
 import { getStudySessionProgress } from "../study-sessions/progress";
 import { createClient } from "../supabase/server";
+import { selectAllPages } from "../supabase/select-all";
 import { getOnboardingMetadata } from "../onboarding/metadata";
+import { activeStreak } from "../progress/streak";
 import { BRAND_NAME } from "@/lib/brand";
 
 type SpecialtyRow = {
@@ -47,13 +49,14 @@ type ProfileRow = {
   xp: number;
   level: number;
   streak: number;
+  last_activity_date?: string | null;
   plan: "free" | "pro";
   learning_priority: "fiches" | "qcm" | "cas_cliniques" | "seances" | null;
   priority_specialty_ids: string[];
 };
 
 const dashboardProfileColumns =
-  "full_name, xp, level, streak, plan";
+  "full_name, xp, level, streak, last_activity_date, plan";
 
 function getDashboardProfile(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -137,15 +140,19 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       .select("id, specialty_id, title, slug, difficulty")
       .eq("is_published", true)
       .order("title", { ascending: true }),
-    supabase
+    selectAllPages((from, to) => supabase
       .from("questions")
       .select("id, specialty_id")
-      .eq("is_published", true),
-    supabase
+      .eq("is_published", true)
+      .order("id")
+      .range(from, to)),
+    selectAllPages((from, to) => supabase
       .from("user_progress")
       .select("pathology_id, question_id, resource_type, resource_id, status, is_completed, is_correct, xp_earned, last_activity_at")
       .eq("user_id", userId)
-      .order("last_activity_at", { ascending: false }),
+      .order("last_activity_at", { ascending: false })
+      .order("id")
+      .range(from, to)),
     supabase
       .from("activity_events")
       .select("completed_on, xp")
@@ -176,6 +183,7 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
 
   const profile = {
     ...profileResult.data,
+    streak: activeStreak(profileResult.data?.streak, profileResult.data?.last_activity_date, zurichDate()),
     learning_priority: onboarding?.learningPriority ?? null,
     priority_specialty_ids: onboarding?.prioritySpecialtyIds ?? [],
   } as ProfileRow;

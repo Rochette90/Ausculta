@@ -2,6 +2,7 @@ import "server-only";
 
 import { randomInt } from "node:crypto";
 import { createAdminClient } from "../supabase/server";
+import { selectAllPages } from "../supabase/select-all";
 import { isMissingQuestionImageColumns } from "./question-images";
 
 export type SpecialtyQuizCatalogItem = {
@@ -60,24 +61,28 @@ function shuffled<T>(values: T[]): T[] {
   return result;
 }
 
-function balancedByDifficulty(questions: QuestionRow[], masteredIds: Set<string>): QuestionRow[] {
-  const difficultyOrder: QuestionRow["difficulty"][] = ["facile", "difficile", "moyen"];
-  const unmastered = questions.filter((question) => !masteredIds.has(question.id));
-  const mastered = questions.filter((question) => masteredIds.has(question.id));
-  const groups = new Map(difficultyOrder.map((difficulty) => {
-    return [difficulty, [
-      ...shuffled(unmastered.filter((question) => question.difficulty === difficulty)),
-      ...shuffled(mastered.filter((question) => question.difficulty === difficulty)),
-    ]];
-  }));
-  const balanced: QuestionRow[] = [];
-  while (balanced.length < questions.length) {
-    for (const difficulty of difficultyOrder) {
-      const question = groups.get(difficulty)?.shift();
-      if (question) balanced.push(question);
+const DIFFICULTY_ROTATION: QuestionRow["difficulty"][] = ["facile", "difficile", "moyen"];
+
+function interleavedByDifficulty(questions: QuestionRow[]): QuestionRow[] {
+  const groups = DIFFICULTY_ROTATION.map((difficulty) => shuffled(questions.filter((question) => question.difficulty === difficulty)));
+  // Une difficulté inattendue ne doit ni disparaître ni bloquer la boucle.
+  const others = shuffled(questions.filter((question) => !DIFFICULTY_ROTATION.includes(question.difficulty)));
+  const interleaved: QuestionRow[] = [];
+  while (groups.some((group) => group.length > 0)) {
+    for (const group of groups) {
+      const question = group.shift();
+      if (question) interleaved.push(question);
     }
   }
-  return balanced;
+  return [...interleaved, ...others];
+}
+
+/** Every unmastered question comes first, each block alternating difficulties. */
+function balancedByDifficulty(questions: QuestionRow[], masteredIds: Set<string>): QuestionRow[] {
+  return [
+    ...interleavedByDifficulty(questions.filter((question) => !masteredIds.has(question.id))),
+    ...interleavedByDifficulty(questions.filter((question) => masteredIds.has(question.id))),
+  ];
 }
 
 export async function getSpecialtyQuizCatalog(userId: string): Promise<SpecialtyQuizCatalogItem[]> {
@@ -87,13 +92,20 @@ export async function getSpecialtyQuizCatalog(userId: string): Promise<Specialty
       .from("specialties")
       .select("id, name, slug, description, icon, color")
       .order("order_index", { ascending: true }),
-    admin.from("questions").select("id, specialty_id").eq("is_published", true),
-    admin
+    selectAllPages((from, to) => admin
+      .from("questions")
+      .select("id, specialty_id")
+      .eq("is_published", true)
+      .order("id")
+      .range(from, to)),
+    selectAllPages((from, to) => admin
       .from("user_progress")
       .select("question_id")
       .eq("user_id", userId)
       .eq("is_correct", true)
-      .not("question_id", "is", null),
+      .not("question_id", "is", null)
+      .order("id")
+      .range(from, to)),
   ]);
   if (specialtiesResult.error) throw specialtiesResult.error;
   if (questionsResult.error) throw questionsResult.error;

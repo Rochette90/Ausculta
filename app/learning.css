@@ -144,6 +144,74 @@
   html { scroll-behavior: auto !important; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
-@media (min-width: 1001px) { .consultation-grid.ecos-exam { grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); } }
+@media (min-width: 981px) { .consultation-grid.ecos-exam { grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); } }
 
 .topbar .avatar { background: var(--mint); color: var(--mint-dark); }
+
+/* ECOS : résultats de l'examinateur, actions rapides et débriefing */
+.quick-actions { flex-wrap: wrap; }
+.message.examiner { max-width: 88%; }
+.message.examiner > span { color: var(--primary); }
+.message.examiner p { background: var(--surface-subtle); border-style: dashed; border-radius: 12px; font-size: 14px; }
+.ecos-debrief { margin-top: 24px; padding: clamp(22px, 4vw, 36px); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-sm); }
+.ecos-debrief h2 { margin: 6px 0 10px; }
+.ecos-debrief .lead { margin: 0 0 22px; color: var(--ink-secondary); }
+.ecos-debrief-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.ecos-debrief-block { padding: 18px 20px; border-radius: var(--radius-md); background: var(--surface-subtle); }
+.ecos-debrief h3 { margin: 0 0 10px; font-size: 15px; }
+.ecos-debrief ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.55; color: var(--ink-secondary); }
+.ecos-debrief-links, .ecos-debrief-sources { margin-top: 22px; }
+.ecos-debrief-links > div { display: flex; flex-wrap: wrap; gap: 10px 20px; }
+.ecos-debrief-sources a { color: var(--primary); overflow-wrap: anywhere; }
+.ecos-debrief-sources p { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+@media (max-width: 760px) { .ecos-debrief-grid { grid-template-columns: 1fr; } }
+
+/* ECOS : déroulé en trois temps (anamnèse, examen clinique, synthèse) */
+.ecos-brief-steps { margin: 12px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; }
+.ecos-free-time { display: flex; flex-direction: column; align-items: center; padding: 6px 20px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface-subtle); }
+.ecos-free-time span { color: var(--muted); font-size: 10px; font-weight: 600; text-transform: uppercase; }
+.ecos-free-time strong { color: var(--primary); font-size: 15px; font-weight: 700; }
+.ecos-phases { padding: 14px clamp(20px, 4vw, 60px) 0; }
+.ecos-phases ol { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ecos-phases button { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink-secondary); font-size: 13px; font-weight: 600; cursor: pointer; }
+.ecos-phases button span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--surface-subtle); font-size: 12px; }
+.ecos-phases button.active { border-color: var(--primary); color: var(--primary); }
+.ecos-phases button.active span { background: var(--primary); color: #fff; }
+.ecos-phases button.done span { background: var(--mint); color: var(--mint-dark); }
+.ecos-phases button[aria-disabled="true"] { cursor: not-allowed; }
+.ecos-phases button[aria-disabled="true"]:not(.active) { opacity: .7; }
+.message.student.procedure p { background: var(--surface-subtle); color: var(--ink); border: 1px solid var(--line); font-weight: 600; }
+.ecos-phase-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 0 clamp(20px, 4vw, 60px) 14px; }
+.ecos-phase-actions p { margin: 0; color: var(--muted); font-size: 13px; }
+.ecos-procedures { display: grid; gap: 12px; margin: 0 0 4px; }
+.ecos-procedures fieldset { margin: 0 clamp(20px, 4vw, 60px); padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.ecos-procedures legend { padding: 0 6px; font-size: 14px; font-weight: 700; color: var(--ink); }
+.ecos-procedures fieldset > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.ecos-procedures button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 7px 13px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--primary); font-size: 13px; font-weight: 600; text-align: left; cursor: pointer; }
+.ecos-procedures button:hover:not(:disabled) { border-color: var(--primary); }
+.ecos-procedures button.done { border-color: transparent; background: var(--mint); color: var(--mint-dark); }
+.ecos-procedures button[aria-disabled="true"] { cursor: default; }
+.ecos-procedures button[aria-disabled="true"]:not(.done) { opacity: .6; }
+.ecos-procedures > h2:focus { outline: none; }
+.ecos-last-result { margin: 0 clamp(20px, 4vw, 60px); padding: 12px 16px; border: 1px dashed var(--line); border-radius: var(--radius-md); background: var(--surface-subtle); font-size: 14px; line-height: 1.55; }
+.ecos-last-result p { margin: 0; color: var(--ink-secondary); }
+.ecos-confirm { display: grid; gap: 10px; margin: 0 clamp(20px, 4vw, 60px) 14px; padding: 14px 16px; border: 1px solid var(--amber); border-radius: var(--radius-md); background: var(--amber-light); color: var(--amber-dark); }
+.ecos-confirm p { margin: 0; font-size: 14px; }
+.ecos-confirm > div { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.ecos-synthesis h2 { margin: 0; font-size: 18px; }
+.ecos-synthesis h2:focus { outline: none; }
+.ecos-synthesis button[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+.ecos-synthesis { display: grid; gap: 14px; margin: 0 clamp(20px, 4vw, 60px) 16px; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); }
+.ecos-synthesis fieldset { margin: 0; padding: 0; border: 0; }
+.ecos-synthesis legend, .ecos-synthesis-plan > span { margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--ink); }
+.ecos-synthesis-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ecos-synthesis-options label { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 14px; }
+.ecos-synthesis-options label:has(input:checked) { border-color: var(--primary); background: var(--primary-subtle); }
+.ecos-synthesis-plan { display: grid; }
+.ecos-synthesis-plan textarea { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; resize: vertical; }
+.ecos-synthesis .ecos-phase-actions { margin: 0; }
+@media (max-width: 760px) {
+  .ecos-synthesis-options { grid-template-columns: 1fr; }
+  .station-header { grid-template-columns: 1fr auto; gap: 10px; }
+  .station-header > div:first-child { grid-column: 1 / -1; }
+}

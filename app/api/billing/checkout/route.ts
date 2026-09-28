@@ -1,4 +1,5 @@
 import { ApiError, apiJson, assertSameOrigin, handleApiError, requireAuthenticatedUser } from "../../../lib/api-security";
+import { blocksNewCheckout } from "../../../lib/billing";
 import { enforceRateLimit } from "../../../lib/rate-limit";
 import { appOrigin, getStripe } from "../../../lib/stripe";
 import { createAdminClient } from "../../../../lib/supabase/server";
@@ -23,7 +24,19 @@ export async function POST(request: Request) {
 
     const stripe = getStripe();
     let customerId = profile.stripe_customer_id as string | null;
-    if (!customerId) {
+    if (customerId) {
+      // Retour sur /profil avant le webhook, double clic ou second onglet :
+      // ne jamais ouvrir un second abonnement pour le même client.
+      const existing = await stripe.subscriptions.list({ customer: customerId, status: "all", limit: 20 });
+      if (existing.data.some((subscription) => blocksNewCheckout(subscription.status))) {
+        throw new ApiError(409, "subscription_exists", "Un abonnement est déjà en cours. Gérez-le depuis « Gérer l’abonnement ».");
+      }
+      // En mode abonnement, Stripe ne crée l'abonnement qu'au paiement : une
+      // session ouverte dans un autre onglet pourrait encore être payée. Seule
+      // la dernière session reste valable.
+      const openSessions = await stripe.checkout.sessions.list({ customer: customerId, status: "open", limit: 10 });
+      await Promise.all(openSessions.data.map((openSession) => stripe.checkout.sessions.expire(openSession.id)));
+    } else {
       const customer = await stripe.customers.create({
         email: user.email,
         name: typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : undefined,
