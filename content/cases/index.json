@@ -2,6 +2,8 @@
   {
     "slug": "douleur-thoracique-aigue",
     "title": "Douleur thoracique aigue",
+    "candidateTitle": "Douleur thoracique d’apparition aiguë",
+    "diagnosis": "Syndrome coronarien aigu avec sus-décalage du segment ST",
     "specialty": "Cardiologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -18,6 +20,8 @@
   {
     "slug": "fibrillation-auriculaire",
     "title": "Palpitations d'apparition brutale chez un sexagenaire",
+    "candidateTitle": "Palpitations d’apparition brutale",
+    "diagnosis": "Fibrillation auriculaire paroxystique",
     "specialty": "Cardiologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -34,6 +38,8 @@
   {
     "slug": "avc-ischemique-sylvien-gauche",
     "title": "AVC ischemique sylvien gauche",
+    "candidateTitle": "Déficit neurologique focal d’apparition brutale",
+    "diagnosis": "AVC ischémique sylvien gauche",
     "specialty": "Neurologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -50,6 +56,8 @@
   {
     "slug": "meningite-aigue",
     "title": "Cephalee febrile avec raideur de nuque",
+    "candidateTitle": "Céphalées fébriles avec raideur de nuque",
+    "diagnosis": "Méningite aiguë",
     "specialty": "Neurologie",
     "difficulty": "Difficile",
     "setting": "urgences",
@@ -66,6 +74,8 @@
   {
     "slug": "pneumonie-communautaire",
     "title": "Pneumonie communautaire",
+    "candidateTitle": "Fièvre, toux et dyspnée chez un patient âgé",
+    "diagnosis": "Pneumonie communautaire",
     "specialty": "Pneumologie",
     "difficulty": "Facile",
     "setting": "cabinet",
@@ -82,6 +92,8 @@
   {
     "slug": "pneumothorax-spontane",
     "title": "Douleur thoracique brutale chez un homme jeune",
+    "candidateTitle": "Douleur thoracique brutale chez un homme jeune",
+    "diagnosis": "Pneumothorax spontané",
     "specialty": "Pneumologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -98,6 +110,8 @@
   {
     "slug": "embolie-pulmonaire-post-voyage",
     "title": "Embolie pulmonaire post-voyage",
+    "candidateTitle": "Dyspnée aiguë après un long voyage",
+    "diagnosis": "Embolie pulmonaire",
     "specialty": "Pneumologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -114,6 +128,8 @@
   {
     "slug": "appendicite-aigue",
     "title": "Douleur de la fosse iliaque droite chez un jeune adulte",
+    "candidateTitle": "Douleur de la fosse iliaque droite chez un jeune adulte",
+    "diagnosis": "Appendicite aiguë",
     "specialty": "Gastro-entérologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -130,6 +146,8 @@
   {
     "slug": "pancreatite-aigue",
     "title": "Douleur épigastrique transfixiante après un repas",
+    "candidateTitle": "Douleur épigastrique transfixiante après un repas",
+    "diagnosis": "Pancréatite aiguë",
     "specialty": "Gastro-entérologie",
     "difficulty": "Intermédiaire",
     "setting": "urgences",
@@ -146,6 +164,8 @@
   {
     "slug": "acidocetose-diabetique",
     "title": "Syndrome polyuro-polydipsique et douleurs abdominales chez un jeune",
+    "candidateTitle": "Polyuro-polydipsie et douleurs abdominales chez un jeune patient",
+    "diagnosis": "Acidocétose diabétique",
     "specialty": "Endocrinologie",
     "difficulty": "Difficile",
     "setting": "urgences",
@@ -162,6 +182,8 @@
   {
     "slug": "endocardite-infectieuse",
     "title": "Endocardite infectieuse a staphylococcus aureus",
+    "candidateTitle": "Fièvre prolongée et altération de l’état général",
+    "diagnosis": "Endocardite infectieuse à Staphylococcus aureus",
     "specialty": "Cardiologie",
     "difficulty": "Difficile",
     "setting": "urgences",
@@ -178,6 +200,8 @@
   {
     "slug": "crise-asthme",
     "title": "Crise d'asthme",
+    "candidateTitle": "Dyspnée sifflante aiguë chez une jeune adulte",
+    "diagnosis": "Exacerbation aiguë d’asthme",
     "specialty": "Pneumologie",
     "difficulty": "Facile",
     "setting": "urgences",

@@ -3,7 +3,7 @@
 import { CheckCircle2, Flag, LoaderCircle, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { createPathologyReport } from "../../app/actions/reports";
-import type { PathologySectionKey } from "../../types/medtrain";
+import type { PathologySectionKey } from "../../types/content";
 import { Button } from "../ui/button";
 
 type SelectedPassage = {
@@ -139,7 +139,7 @@ export function ReportableText({ pathologyId, sectionKey, text, className }: Rep
 
             {!sent && (
               <label>
-                <span className="mb-2 block text-sm font-bold text-slate-800">Votre commentaire</span>
+                <span className="mb-2 block text-sm font-bold text-slate-800">Ton commentaire</span>
                 <textarea
                   className="min-h-32 w-full resize-y rounded-2xl border border-slate-200 p-4 leading-6 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
                   maxLength={2000}

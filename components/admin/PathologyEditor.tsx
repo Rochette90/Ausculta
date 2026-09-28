@@ -7,7 +7,7 @@ import { useMemo, useState, useTransition } from "react";
 import { reviewAdminPathology, updateAdminPathology, type AdminPathologyUpdateInput } from "../../app/actions/admin-pathologies";
 import { MarkdownBlocks, parseMarkdown } from "../../app/markdown";
 import type { AdminPathologyDetails } from "../../lib/admin/queries";
-import type { PathologyReviewStatus } from "../../types/medtrain";
+import type { PathologyReviewStatus } from "../../types/content";
 import { Button, buttonVariants } from "../ui/button";
 
 type EditorMode = "edit" | "preview";
@@ -93,7 +93,7 @@ export function PathologyEditor({ pathology }: { pathology: AdminPathologyDetail
               <p className="mb-0 mt-1 text-sm leading-6 text-slate-700">
                 {reviewed
                   ? <>Signée par <strong>{review.reviewerName}</strong> le {new Date(review.reviewedAt!).toLocaleString("fr-CH")}.</>
-                  : "Relisez le contenu, enregistrez vos corrections, puis signez la version finale avec votre compte."}
+                  : "Relis le contenu, enregistre tes corrections, puis signe la version finale avec ton compte."}
               </p>
               {dirty && <p className="mb-0 mt-2 text-xs font-bold text-amber-800">Modifications non enregistrées — la signature est bloquée.</p>}
             </div>

@@ -8,16 +8,22 @@ import { cn } from "../../lib/utils";
 import { Button, buttonVariants } from "./button";
 import { MenuToggleIcon } from "./menu-toggle-icon";
 import { useScroll } from "./use-scroll";
+import { BrandLogo } from "../brand/BrandLogo";
+import { BRAND_NAME } from "@/lib/brand";
 
 const links = [
-  { label: "Méthode", href: "/#methode" },
+  { label: "Méthode", href: "/methode" },
+  { label: "Catalogue", href: "/catalogue" },
   { label: "Tarifs", href: "/pricing" },
+  { label: "FAQ", href: "/faq" },
 ];
 
 export function Header({ signedIn }: { signedIn: boolean }) {
   const [open, setOpen] = useState(false);
   const scrolled = useScroll(12);
+  // « Mon espace » suppose un compte : réservé à une session authentifiée.
   const accountHref = signedIn ? "/dashboard" : "/login";
+  const accountLabel = signedIn ? "Mon espace" : "Se connecter";
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -49,16 +55,15 @@ export function Header({ signedIn }: { signedIn: boolean }) {
       )}
     >
       <nav className={cn("mx-auto flex h-[72px] w-full max-w-[1280px] items-center justify-between px-4 transition-all sm:px-6", scrolled && !open && "h-16 max-w-[1040px]")} aria-label="Navigation principale">
-        <Link className="logo no-underline" href="/" aria-label="Accueil MedTrain" onClick={closeMenu}>
-          <span className="logo-mark">M</span>
-          <span>MedTrain</span>
+        <Link className="logo no-underline" href="/" aria-label={`Accueil ${BRAND_NAME}`} onClick={closeMenu}>
+          <BrandLogo priority />
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-0.5 lg:flex">
           {links.map((link) => (
             <Link
               key={link.label}
-              className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-[var(--muted)] no-underline hover:bg-[var(--surface-subtle)] hover:text-[var(--ink)]")}
+              className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "px-2.5 text-[var(--muted)] no-underline hover:bg-[var(--surface-subtle)] hover:text-[var(--ink)]")}
               href={link.href}
             >
               {link.label}
@@ -66,11 +71,11 @@ export function Header({ signedIn }: { signedIn: boolean }) {
           ))}
           <ThemeToggle />
           <Link className={cn(buttonVariants({ size: "sm" }), "ml-1 min-h-10 bg-[var(--primary)] px-4 text-white no-underline hover:bg-[var(--primary-hover)]")} href={accountHref}>
-            Mon espace <ArrowRight aria-hidden="true" size={15} />
+            {accountLabel} <ArrowRight aria-hidden="true" size={15} />
           </Link>
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
           <Button
             aria-controls="marketing-mobile-menu"
@@ -89,7 +94,7 @@ export function Header({ signedIn }: { signedIn: boolean }) {
 
       <div
         className={cn(
-          "absolute inset-x-0 top-full z-50 h-[calc(100dvh-72px)] border-t border-[var(--line)] bg-[var(--surface)] md:hidden",
+          "absolute inset-x-0 top-full z-50 h-[calc(100dvh-72px)] border-t border-[var(--line)] bg-[var(--surface)] lg:hidden",
           open ? "block" : "hidden",
         )}
         id="marketing-mobile-menu"
@@ -108,7 +113,7 @@ export function Header({ signedIn }: { signedIn: boolean }) {
             ))}
           </div>
           <Link className="mb-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 font-bold text-white no-underline" href={accountHref} onClick={closeMenu}>
-            Mon espace <ArrowRight aria-hidden="true" size={16} />
+            {accountLabel} <ArrowRight aria-hidden="true" size={16} />
           </Link>
         </div>
       </div>

@@ -1,13 +1,14 @@
 "use server";
 
+import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
-import type { Difficulty, QuestionReviewStatus, QuestionType } from "../../types/medtrain";
+import type { Difficulty, QuestionReviewStatus, QuestionType } from "../../types/content";
 import { AdminAccessError, assertAdminUser } from "../../lib/auth/admin";
 import { csvRecords } from "../../lib/admin/question-csv";
 import { createAdminClient } from "../../lib/supabase/server";
 import { enforceRateLimit } from "../lib/rate-limit";
+import { BRAND_NAME } from "@/lib/brand";
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const difficulties: Difficulty[] = ["facile", "moyen", "difficile"];
 const reviewStatuses: QuestionReviewStatus[] = ["draft", "in_review", "approved", "rejected"];
 const questionTypes: QuestionType[] = ["single_best_answer", "multiple_choice", "long_menu"];
@@ -18,7 +19,7 @@ export type AdminQuestionInput = {
   difficulty: Difficulty; xpReward: number; questionType: QuestionType;
   reviewStatus: QuestionReviewStatus; isPublished: boolean; examDomain: string;
   sourceTitle: string; sourceUrl: string; sourceYear?: number | null;
-  estimatedSeconds: number; topicIds: string[];
+  estimatedSeconds: number; topicIds: string[]; imageUrl: string; imageAlt: string;
   options: Array<{ text: string; isCorrect: boolean; orderIndex: number; explanation: string }>;
 };
 
@@ -34,6 +35,8 @@ function validate(input: AdminQuestionInput): string | null {
     || !Number.isInteger(input.xpReward) || input.xpReward < 0 || input.xpReward > 100
     || !Number.isInteger(input.estimatedSeconds) || input.estimatedSeconds < 15 || input.estimatedSeconds > 900
     || (input.sourceYear != null && (!Number.isInteger(input.sourceYear) || input.sourceYear < 1900 || input.sourceYear > 2100))
+    || (input.imageUrl.trim().length > 0 && (input.imageUrl.length > 2048 || !/^https?:\/\//.test(input.imageUrl)))
+    || input.imageAlt.length > 500
     || input.options.length < 2 || input.options.length > 12
     || input.options.some((option) => !option.text.trim() || option.text.length > 2000)
     || input.options.filter((option) => option.isCorrect).length !== 1) return "Contenu de question invalide";
@@ -54,6 +57,7 @@ async function upsertWithAdmin(admin: ReturnType<typeof createAdminClient>, user
     p_source_title: input.sourceTitle, p_source_url: input.sourceUrl,
     p_source_year: input.sourceYear ?? null, p_estimated_seconds: input.estimatedSeconds,
     p_topic_ids: input.topicIds, p_options: input.options,
+    p_image_url: input.imageUrl || null, p_image_alt: input.imageAlt || null,
   });
 }
 
@@ -72,7 +76,7 @@ export async function saveAdminQuestion(input: AdminQuestionInput): Promise<Admi
     return { success: true, questionId: data };
   } catch (error) {
     if (error instanceof AdminAccessError) return { success: false, error: error.message };
-    console.error("MedTrain admin question save error", error);
+    console.error(`${BRAND_NAME} admin question save error`, error);
     return { success: false, error: "Impossible d’enregistrer la question" };
   }
 }
@@ -121,6 +125,7 @@ export async function importAdminQuestionsCsv(csv: string, filename?: string): P
           sourceTitle: record.source_title ?? "", sourceUrl: record.source_url ?? "",
           sourceYear: record.source_year ? Number(record.source_year) : null,
           estimatedSeconds: Number(record.estimated_seconds || 90), topicIds: [], options,
+          imageUrl: record.image_url ?? "", imageAlt: record.image_alt ?? "",
         };
         const validationError = validate(input);
         if (validationError) throw new Error(validationError);
@@ -145,7 +150,7 @@ export async function importAdminQuestionsCsv(csv: string, filename?: string): P
     return { success: true, batchId: batch.id, imported, failed };
   } catch (error) {
     if (error instanceof AdminAccessError) return { success: false, imported: 0, failed: 0, error: error.message };
-    console.error("MedTrain question CSV import error", error);
+    console.error(`${BRAND_NAME} question CSV import error`, error);
     return { success: false, imported: 0, failed: 0, error: "Import impossible" };
   }
 }

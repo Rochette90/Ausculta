@@ -29,6 +29,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // Nécessaire pour `forbidden()` : les pages /admin doivent répondre 403 à un
+  // compte authentifié sans le rôle admin, pas rediriger silencieusement.
+  experimental: { authInterrupts: true },
   turbopack: { root: process.cwd() },
   outputFileTracingIncludes: {
     "/api/pathologies/[slug]": ["./content/pathologies/*.md"],

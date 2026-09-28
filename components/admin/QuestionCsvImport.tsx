@@ -11,7 +11,7 @@ export function QuestionCsvImport() {
   const [pending, startTransition] = useTransition();
   function upload() {
     const file = inputRef.current?.files?.[0];
-    if (!file) { setMessage("Choisissez un fichier CSV."); return; }
+    if (!file) { setMessage("Choisis un fichier CSV."); return; }
     startTransition(async () => {
       const result = await importAdminQuestionsCsv(await file.text(), file.name);
       setMessage(result.success ? `${result.imported} importée(s), ${result.failed} rejetée(s).` : result.error ?? "Import impossible");

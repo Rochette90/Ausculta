@@ -1,200 +1,161 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
+import Link from "next/link";
+import { AlertOctagon, AlertTriangle, BookMarked, CheckCircle2, Info, Lightbulb, PenLine, Quote, Sparkles } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import pathologyCatalog from "../content/pathologies/index.json";
+import { SOFT_BREAK, type Block, type CalloutTone, type ListItem } from "./markdown-parser";
 
-type NavigateHandler = (slug: string) => void;
+export { parseMarkdown, parseFrontmatter, type Block } from "./markdown-parser";
+
 const catalogBySlug = new Map(pathologyCatalog.map((entry) => [entry.slug, entry]));
 
-type ListItem = { text: string; children: ListItem[] };
-export type Block =
-  | { kind: "h2"; text: string; id: string }
-  | { kind: "h3"; text: string; id: string }
-  | { kind: "label"; text: string }
-  | { kind: "hr" }
-  | { kind: "p"; text: string }
-  | { kind: "callout"; tone: string; title: string; paragraphs: string[] }
-  | { kind: "table"; header: string[]; rows: string[][] }
-  | { kind: "list"; ordered: boolean; items: ListItem[] };
+const INLINE_PATTERN = new RegExp(
+  [
+    /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/, // lien externe
+    /==([^=]+?)==/, // point à retenir (surlignage rouge du vault)
+    /\*\*(.+?)\*\*|__(.+?)__/, // gras
+    /`([^`]+?)`/, // code
+    /\*([^*\n]+?)\*/, // italique
+    /(?<![\w])_([^_\n]+?)_(?![\w])/, // italique souligné
+    /\[\[([a-z0-9-]+)\]\]/, // renvoi interne
+  ].map((part) => part.source).join("|"),
+  "g",
+);
 
-function slugify(value: string) {
-  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+function withSoftBreaks(text: string, key: number): ReactNode {
+  if (!text.includes(SOFT_BREAK)) return text;
+  const segments = text.split(SOFT_BREAK);
+  return (
+    <Fragment key={`br-${key}`}>
+      {segments.map((segment, index) => (
+        <Fragment key={index}>
+          {index > 0 && <br />}
+          {segment}
+        </Fragment>
+      ))}
+    </Fragment>
+  );
 }
 
-function stripFrontmatter(source: string) {
-  if (!source.startsWith("---")) return source;
-  const end = source.indexOf("\n---", 3);
-  return end === -1 ? source : source.slice(source.indexOf("\n", end + 1) + 1);
-}
-
-export function parseMarkdown(source: string): Block[] {
-  const lines = stripFrontmatter(source).split(/\r?\n/);
-  const blocks: Block[] = [];
-  const usedIds = new Set<string>();
-  let paragraph: string[] = [];
-
-  const flushParagraph = () => {
-    if (!paragraph.length) return;
-    const text = paragraph.join(" ").trim();
-    paragraph = [];
-    if (!text) return;
-    const label = text.match(/^\*\*([^*]+)\*\*$/);
-    if (label) blocks.push({ kind: "label", text: label[1] });
-    else blocks.push({ kind: "p", text });
-  };
-
-  for (let index = 0; index < lines.length; index += 1) {
-    const line = lines[index];
-    const trimmed = line.trim();
-
-    if (!trimmed) { flushParagraph(); continue; }
-
-    if (/^#{2,6}\s+/.test(trimmed)) {
-      flushParagraph();
-      const level = trimmed.match(/^(#{2,6})\s+/)?.[1].length ?? 2;
-      const text = trimmed.replace(/^#{2,6}\s+/, "");
-      let id = slugify(text) || "section";
-      while (usedIds.has(id)) id = `${id}-x`;
-      usedIds.add(id);
-      blocks.push({ kind: level === 2 ? "h2" : "h3", text, id });
-      continue;
-    }
-
-    if (/^-{3,}$/.test(trimmed) || /^\*{3,}$/.test(trimmed)) { flushParagraph(); blocks.push({ kind: "hr" }); continue; }
-
-    if (trimmed.startsWith(">")) {
-      flushParagraph();
-      const quoteLines: string[] = [];
-      while (index < lines.length && lines[index].trim().startsWith(">")) {
-        quoteLines.push(lines[index].trim().replace(/^>\s?/, ""));
-        index += 1;
-      }
-      index -= 1;
-      const tag = quoteLines[0]?.match(/^\[!(\w+)\]\s*(.*)$/);
-      const body = tag ? quoteLines.slice(1) : quoteLines;
-      const paragraphs: string[] = [];
-      let current: string[] = [];
-      for (const quoteLine of body) {
-        if (!quoteLine.trim()) { if (current.length) { paragraphs.push(current.join(" ")); current = []; } }
-        else current.push(quoteLine.trim());
-      }
-      if (current.length) paragraphs.push(current.join(" "));
-      blocks.push({ kind: "callout", tone: tag?.[1]?.toLowerCase() ?? "info", title: tag?.[2] ?? "", paragraphs });
-      continue;
-    }
-
-    if (trimmed.startsWith("|")) {
-      flushParagraph();
-      const tableLines: string[] = [];
-      while (index < lines.length && lines[index].trim().startsWith("|")) {
-        tableLines.push(lines[index].trim());
-        index += 1;
-      }
-      index -= 1;
-      const cells = (row: string) => row.replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
-      const rows = tableLines.filter((row) => !/^\|[\s:|-]+\|$/.test(row)).map(cells);
-      if (rows.length) blocks.push({ kind: "table", header: rows[0], rows: rows.slice(1) });
-      continue;
-    }
-
-    const listMatch = line.match(/^(\s*)(?:[-*]|(\d+)\.)\s+(.*)$/);
-    if (listMatch) {
-      flushParagraph();
-      const ordered = listMatch[2] !== undefined;
-      const items: ListItem[] = [];
-      while (index < lines.length) {
-        const itemMatch = lines[index].match(/^(\s*)(?:[-*]|\d+\.)\s+(.*)$/);
-        if (!itemMatch) break;
-        const item: ListItem = { text: itemMatch[2].trim(), children: [] };
-        if (itemMatch[1].length > 0 && items.length) items[items.length - 1].children.push(item);
-        else items.push(item);
-        index += 1;
-      }
-      index -= 1;
-      blocks.push({ kind: "list", ordered, items });
-      continue;
-    }
-
-    paragraph.push(trimmed);
-  }
-  flushParagraph();
-
-  // Les fiches séparent chaque section par `---` suivi d'un titre : le filet du titre suffit.
-  return blocks.filter((block, position) => !(block.kind === "hr" && blocks[position + 1]?.kind === "h2"));
-}
-
-function renderInline(text: string, onNavigate?: NavigateHandler): ReactNode[] {
+function renderInline(text: string): ReactNode[] {
   const nodes: ReactNode[] = [];
-  const pattern = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[\[([a-z0-9-]+)\]\]/g;
   let cursor = 0;
-  let match: RegExpExecArray | null;
   let key = 0;
-  while ((match = pattern.exec(text)) !== null) {
-    if (match.index > cursor) nodes.push(text.slice(cursor, match.index));
-    if (match[1] !== undefined) nodes.push(<a href={match[2]} key={key} rel="noreferrer" target="_blank">{match[1]}</a>);
-    else if (match[3] !== undefined) nodes.push(<strong key={key}>{renderInline(match[3], onNavigate)}</strong>);
-    else if (match[4] !== undefined) nodes.push(<em key={key}>{match[4]}</em>);
-    else if (match[5] !== undefined) nodes.push(<code key={key}>{match[5]}</code>);
-    else {
-      const slug = match[6];
+
+  // `matchAll` travaille sur une copie du motif : indispensable ici, car le
+  // rendu est récursif (gras dans un surlignage, par exemple) et un `lastIndex`
+  // partagé ferait repartir la boucle parente à zéro.
+  for (const match of text.matchAll(INLINE_PATTERN)) {
+    const index = match.index ?? 0;
+    if (index > cursor) nodes.push(withSoftBreaks(text.slice(cursor, index), key));
+    const [, linkLabel, linkHref, highlight, strongStar, strongScore, code, emStar, emScore, wikiSlug] = match;
+
+    if (linkLabel !== undefined) {
+      nodes.push(<a href={linkHref} key={key} rel="noreferrer" target="_blank">{linkLabel}</a>);
+    } else if (highlight !== undefined) {
+      nodes.push(<mark className="fiche-highlight" key={key}>{renderInline(highlight)}</mark>);
+    } else if (strongStar !== undefined || strongScore !== undefined) {
+      nodes.push(<strong key={key}>{renderInline(strongStar ?? strongScore ?? "")}</strong>);
+    } else if (code !== undefined) {
+      nodes.push(<code key={key}>{code}</code>);
+    } else if (emStar !== undefined || emScore !== undefined) {
+      nodes.push(<em key={key}>{renderInline(emStar ?? emScore ?? "")}</em>);
+    } else {
+      const slug = wikiSlug ?? "";
       const target = catalogBySlug.get(slug);
       const label = target?.title ?? slug.replaceAll("-", " ");
-      if (target?.status === "ready" && onNavigate) nodes.push(<button key={key} type="button" className="wiki-ref" onClick={() => onNavigate(slug)}>{label}</button>);
-      else nodes.push(<span key={key} className="wiki-ref inert">{label}</span>);
+      nodes.push(
+        target?.status === "ready"
+          ? <Link className="wiki-ref" href={`/pathologies/${slug}`} key={key}>{label}</Link>
+          : <span className="wiki-ref inert" key={key}>{label}</span>,
+      );
     }
-    cursor = match.index + match[0].length;
+    cursor = index + match[0].length;
     key += 1;
   }
-  if (cursor < text.length) nodes.push(text.slice(cursor));
+  if (cursor < text.length) nodes.push(withSoftBreaks(text.slice(cursor), key));
   return nodes;
 }
 
-function renderItems(items: ListItem[], onNavigate?: NavigateHandler) {
+function renderItems(items: ListItem[]) {
   return items.map((item, index) => (
-    <li key={index}>
-      {renderInline(item.text, onNavigate)}
-      {item.children.length > 0 && <ul>{renderItems(item.children, onNavigate)}</ul>}
+    <li className={item.checked === null ? undefined : "fiche-task"} key={index}>
+      {item.checked !== null && (
+        <input aria-hidden="true" checked={item.checked} disabled readOnly tabIndex={-1} type="checkbox" />
+      )}
+      {renderInline(item.text)}
+      {item.children.length > 0 && (item.childrenOrdered
+        ? <ol>{renderItems(item.children)}</ol>
+        : <ul>{renderItems(item.children)}</ul>)}
     </li>
   ));
 }
 
-const calloutMeta: Record<string, { icon: string; fallbackTitle: string }> = {
-  info: { icon: "ℹ", fallbackTitle: "À savoir" },
-  note: { icon: "✎", fallbackTitle: "Note clinique" },
-  tip: { icon: "✓", fallbackTitle: "Réflexe pratique" },
-  success: { icon: "✓", fallbackTitle: "À retenir" },
-  warning: { icon: "△", fallbackTitle: "Attention" },
-  danger: { icon: "⚠", fallbackTitle: "Ne pas manquer" },
+const calloutMeta: Record<CalloutTone, { icon: LucideIcon; fallbackTitle: string }> = {
+  info: { icon: Info, fallbackTitle: "À savoir" },
+  note: { icon: PenLine, fallbackTitle: "Note clinique" },
+  tip: { icon: Lightbulb, fallbackTitle: "Réflexe pratique" },
+  success: { icon: CheckCircle2, fallbackTitle: "À retenir" },
+  warning: { icon: AlertTriangle, fallbackTitle: "Attention" },
+  danger: { icon: AlertOctagon, fallbackTitle: "Ne pas manquer" },
+  important: { icon: Sparkles, fallbackTitle: "Point clé" },
+  example: { icon: BookMarked, fallbackTitle: "Exemple" },
+  quote: { icon: Quote, fallbackTitle: "Extrait" },
 };
 
-export function MarkdownBlocks({ blocks, onNavigate }: { blocks: Block[]; onNavigate?: NavigateHandler }) {
+export function MarkdownBlocks({ blocks }: { blocks: Block[] }) {
   return (
     <>
       {blocks.map((block, index) => {
-        if (block.kind === "h2") return <h2 key={index} id={block.id}>{block.text}</h2>;
-        if (block.kind === "h3") return <h3 key={index} id={block.id}>{block.text}</h3>;
-        if (block.kind === "label") return <h3 key={index}>{block.text}</h3>;
-        if (block.kind === "hr") return <hr key={index} />;
-        if (block.kind === "p") return <p key={index}>{renderInline(block.text, onNavigate)}</p>;
-        if (block.kind === "callout") {
-          const meta = calloutMeta[block.tone] ?? calloutMeta.info;
-          return (
-            <aside key={index} className={`callout callout-${block.tone in calloutMeta ? block.tone : "info"}`}>
-              <strong><span aria-hidden="true">{meta.icon}</span>{block.title || meta.fallbackTitle}</strong>
-              {block.paragraphs.map((paragraphText, paragraphIndex) => <p key={paragraphIndex}>{renderInline(paragraphText, onNavigate)}</p>)}
-            </aside>
-          );
+        switch (block.kind) {
+          case "h2":
+            return <h2 id={block.id} key={index}>{renderInline(block.text)}</h2>;
+          case "h3":
+            return <h3 id={block.id} key={index}>{renderInline(block.text)}</h3>;
+          case "h4":
+            return <h4 id={block.id} key={index}>{renderInline(block.text)}</h4>;
+          case "label":
+            return <h3 key={index}>{renderInline(block.text)}</h3>;
+          case "hr":
+            return <hr key={index} />;
+          case "p":
+            return <p key={index}>{renderInline(block.text)}</p>;
+          case "callout": {
+            const meta = calloutMeta[block.tone] ?? calloutMeta.info;
+            const Icon = meta.icon;
+            return (
+              <aside className={`callout callout-${block.tone}`} key={index}>
+                <p className="callout-title"><Icon aria-hidden="true" size={16} />{block.title || meta.fallbackTitle}</p>
+                <div className="callout-body"><MarkdownBlocks blocks={block.blocks} /></div>
+              </aside>
+            );
+          }
+          case "table":
+            return (
+              // Un tableau à défilement horizontal doit rester atteignable au clavier (WCAG 2.1.1).
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+              <div aria-label="Tableau — défilement horizontal" className="table-scroll" key={index} role="region" tabIndex={0}>
+                <table>
+                  <thead>
+                    <tr>{block.header.map((cell, cellIndex) => (
+                      <th key={cellIndex} style={{ textAlign: block.align[cellIndex] ?? "left" }}>{renderInline(cell)}</th>
+                    ))}</tr>
+                  </thead>
+                  <tbody>
+                    {block.rows.map((row, rowIndex) => (
+                      <tr key={rowIndex}>{row.map((cell, cellIndex) => (
+                        <td key={cellIndex} style={{ textAlign: block.align[cellIndex] ?? "left" }}>{renderInline(cell)}</td>
+                      ))}</tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          default: {
+            const items = renderItems(block.items);
+            return block.ordered ? <ol key={index}>{items}</ol> : <ul key={index}>{items}</ul>;
+          }
         }
-        if (block.kind === "table") {
-          return (
-            <div key={index} className="table-scroll">
-              <table>
-                <thead><tr>{block.header.map((cell, cellIndex) => <th key={cellIndex}>{renderInline(cell, onNavigate)}</th>)}</tr></thead>
-                <tbody>{block.rows.map((row, rowIndex) => <tr key={rowIndex}>{row.map((cell, cellIndex) => <td key={cellIndex}>{renderInline(cell, onNavigate)}</td>)}</tr>)}</tbody>
-              </table>
-            </div>
-          );
-        }
-        const items = renderItems(block.items, onNavigate);
-        return block.ordered ? <ol key={index}>{items}</ol> : <ul key={index}>{items}</ul>;
       })}
     </>
   );

@@ -7,22 +7,6 @@ import { createAdminPathology, type CreateAdminPathologyInput } from "../../app/
 import type { AdminSpecialtyOption } from "../../lib/admin/queries";
 import { Button } from "../ui/button";
 
-type SectionKey = keyof Pick<CreateAdminPathologyInput,
-  "definition" | "pathophysiology" | "symptoms" | "riskFactors" | "complementaryExams" |
-  "differentialDiagnosis" | "treatments" | "complications" | "monitoring">;
-
-const sections: Array<{ key: SectionKey; label: string; hint: string }> = [
-  { key: "definition", label: "Définition", hint: "Définition concise et directement mémorisable." },
-  { key: "pathophysiology", label: "Physiopathologie", hint: "Mécanismes principaux et chaîne causale." },
-  { key: "symptoms", label: "Signes et symptômes", hint: "Présentation typique, signes d’alarme et variations." },
-  { key: "riskFactors", label: "Facteurs de risque", hint: "Facteurs modifiables, non modifiables et contexte." },
-  { key: "complementaryExams", label: "Examens complémentaires", hint: "Examens prioritaires et résultats attendus." },
-  { key: "differentialDiagnosis", label: "Diagnostics différentiels", hint: "Principaux diagnostics à exclure." },
-  { key: "treatments", label: "Traitements", hint: "Prise en charge initiale et traitement de fond." },
-  { key: "complications", label: "Complications", hint: "Complications précoces et tardives." },
-  { key: "monitoring", label: "Surveillance", hint: "Paramètres, examens et suivi clinique." },
-];
-
 function slugify(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 180);
@@ -32,9 +16,8 @@ export function NewPathologyForm({ specialties }: { specialties: AdminSpecialtyO
   const router = useRouter();
   const [slugEdited, setSlugEdited] = useState(false);
   const [form, setForm] = useState<CreateAdminPathologyInput>({
-    specialtyId: specialties[0]?.id ?? "", title: "", slug: "", definition: "", pathophysiology: "",
-    symptoms: "", riskFactors: "", complementaryExams: "", differentialDiagnosis: "", treatments: "",
-    complications: "", monitoring: "", difficulty: "moyen", isPublished: false,
+    specialtyId: specialties[0]?.id ?? "", title: "", slug: "", summary: "", content: "",
+    difficulty: "moyen", isPublished: false,
   });
   const [message, setMessage] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
@@ -77,7 +60,16 @@ export function NewPathologyForm({ specialties }: { specialties: AdminSpecialtyO
       </div>
 
       <div className="mt-5 grid gap-4">
-        {sections.map((section) => <label className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" key={section.key}><span className="block text-lg font-bold text-slate-900">{section.label}</span><small className="mt-1 block text-slate-500">{section.hint}</small><textarea className="mt-4 min-h-36 w-full resize-y rounded-2xl border border-slate-200 bg-slate-50/60 p-4 leading-7 outline-none focus:border-teal-600 focus:bg-white focus:ring-2 focus:ring-teal-100" maxLength={30000} onChange={(event) => update(section.key, event.target.value)} value={form[section.key]} /></label>)}
+        <label className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <span className="block text-lg font-bold text-slate-900">Résumé</span>
+          <small className="mt-1 block text-slate-500">Deux ou trois phrases affichées dans le catalogue et en tête de fiche.</small>
+          <textarea className="mt-4 min-h-24 w-full resize-y rounded-2xl border border-slate-200 bg-slate-50/60 p-4 leading-7 outline-none focus:border-teal-600 focus:bg-white focus:ring-2 focus:ring-teal-100" maxLength={2000} onChange={(event) => update("summary", event.target.value)} value={form.summary} />
+        </label>
+        <label className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <span className="block text-lg font-bold text-slate-900">Contenu Markdown</span>
+          <small className="mt-1 block text-slate-500">Document complet de la fiche : sections `##`, listes, tableaux et callouts.</small>
+          <textarea className="mt-4 min-h-96 w-full resize-y rounded-2xl border border-slate-200 bg-slate-50/60 p-4 font-mono text-sm leading-7 outline-none focus:border-teal-600 focus:bg-white focus:ring-2 focus:ring-teal-100" maxLength={100000} onChange={(event) => update("content", event.target.value)} value={form.content} />
+        </label>
       </div>
 
       <div className="fixed inset-x-0 bottom-16 z-30 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-10px_30px_rgba(15,23,42,.08)] backdrop-blur md:bottom-0"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3"><div aria-live="polite">{message && <span className={created ? "inline-flex items-center gap-2 text-sm font-semibold text-emerald-700" : "text-sm font-semibold text-rose-700"}>{created && <CheckCircle2 size={17} />}{message}</span>}</div><Button disabled={pending || specialties.length === 0} onClick={create}>{pending ? <LoaderCircle className="animate-spin" size={17} /> : <Save size={17} />}{pending ? "Création…" : "Créer la fiche"}</Button></div></div>

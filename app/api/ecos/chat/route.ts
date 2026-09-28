@@ -1,3 +1,5 @@
+import { ECOS_DURATION_SECONDS, SUPPORTED_ECOS_SLUG } from "@/lib/ecos/timing";
+import { UUID_PATTERN } from "@/lib/validation";
 import {
   ApiError,
   apiJson,
@@ -11,7 +13,6 @@ import { createAdminClient } from "../../../../lib/supabase/server";
 
 type StoredMessage = { role: "patient" | "student" | "system"; content: string };
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const patientFacts = `
 Tu joues exclusivement Monsieur Martin, patient francophone de 58 ans aux urgences.
 Tu as une douleur rétrosternale constrictive 8/10 depuis 45 minutes, apparue en montant des escaliers.
@@ -31,7 +32,7 @@ Réponds en français naturel, en 1 à 3 phrases, sans conseil pédagogique ni d
 function fallbackReply(message: string): string {
   const text = message.toLowerCase();
   if (/ecg|électrocard/.test(text)) return "L’ECG montre un sus-décalage du segment ST en DII, DIII et aVF.";
-  if (/constante|tension|saturation|pouls|fréquence/.test(text)) return "Ma tension est à 168 sur 96, mon pouls à 104 par minute et ma saturation à 96 %. Je n’ai pas de fièvre.";
+  if (/constante|saturation|pouls|fréquence|mesur.*tension/.test(text)) return "Ma tension est à 168 sur 96, mon pouls à 104 par minute et ma saturation à 96 %. Je n’ai pas de fièvre.";
   if (/auscult|examen card|examen pulmon/.test(text)) return "À l’auscultation, les bruits du cœur sont réguliers sans souffle et les champs pulmonaires sont libres.";
   if (/depuis|commenc|début|appar/.test(text)) return "Ça a commencé brutalement il y a environ trois quarts d’heure, en montant les escaliers.";
   if (/où|localis|endroit/.test(text)) return "C’est surtout derrière le sternum, au milieu de la poitrine.";
@@ -105,14 +106,19 @@ export async function POST(request: Request) {
     await enforceRateLimit(admin, user.id, "ecos-chat", 30, 60);
     const { data: session, error: sessionError } = await admin
       .from("ecos_sessions")
-      .select("id, status")
+      .select("id, status, station_slug, started_at")
       .eq("id", sessionId)
       .eq("user_id", user.id)
       .maybeSingle();
     if (sessionError) throw sessionError;
     if (!session) throw new ApiError(404, "session_not_found", "Session introuvable");
+    if (session.station_slug !== SUPPORTED_ECOS_SLUG) throw new ApiError(409, "unsupported_station", "Scénario non disponible.");
     if (session.status !== "active") {
       throw new ApiError(409, "session_not_active", "Session déjà clôturée");
+    }
+
+    if (Date.now() >= Date.parse(session.started_at) + ECOS_DURATION_SECONDS * 1_000) {
+      throw new ApiError(409, "station_expired", "Le temps est écoulé. Termine la station pour enregistrer le bilan.");
     }
 
     const { error: studentError } = await admin.rpc("append_ecos_message", {

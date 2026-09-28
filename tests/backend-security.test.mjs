@@ -39,34 +39,48 @@ test("sensitive tables have RLS and backend-only mutation functions", async () =
   assert.match(sql, /grant execute on function public\.admin_create_pathology[\s\S]+to service_role/i);
 });
 
-test("the learning platform supports editorial workflows, durable quiz sessions and error review", async () => {
-  const [sql, sessionActions, sessionQueries, questionActions, questionQueries, questionForm, csv] = await Promise.all([
+test("the editorial platform tracks question mastery and drops the unused quiz-session infrastructure", async () => {
+  const [sql, cleanup, questionActions, questionQueries, questionForm, csv] = await Promise.all([
     read("../supabase/migrations/20260811020000_learning_platform_infrastructure.sql"),
-    read("../app/actions/quiz-sessions.ts"),
-    read("../lib/quiz/sessions.ts"),
+    read("../supabase/migrations/20260830120000_schema_cleanup.sql"),
     read("../app/actions/admin-questions.ts"),
     read("../lib/admin/questions.ts"),
     read("../components/admin/AdminQuestionForm.tsx"),
     read("../lib/admin/question-csv.ts"),
   ]);
-  for (const table of ["question_topics", "question_revisions", "user_question_stats", "quiz_sessions", "quiz_session_questions", "quiz_session_answers", "question_import_batches", "clinical_case_attempts", "user_learning_goals"]) {
+  for (const table of ["question_topics", "question_revisions", "user_question_stats", "question_import_batches", "clinical_case_attempts", "user_learning_goals"]) {
     assert.match(sql, new RegExp(`create table if not exists public\\.${table}`, "i"));
     assert.match(sql, new RegExp(`alter table public\\.${table} enable row level security`, "i"));
   }
   assert.match(sql, /create trigger quiz_attempts_sync_user_question_stats/i);
   assert.match(sql, /needs_review = case[\s\S]+consecutive_correct \+ 1 >= 2 then false/i);
-  assert.match(sql, /create or replace function public\.start_quiz_session/i);
-  assert.match(sql, /p_mode = 'errors'[\s\S]+uqs\.needs_review/i);
-  assert.match(sql, /v_mode = 'exam' then null else v_answer\.answer_explanation/i);
-  assert.match(sql, /revoke all on function public\.answer_quiz_session_question[\s\S]+from public, anon, authenticated/i);
-  assert.match(sessionActions, /enforceRateLimit\(admin, user\.id, "quiz-session-answer"/);
-  assert.match(sessionActions, /row\.reveal_feedback \? row\.answer_is_correct : undefined/);
-  assert.match(sessionQueries, /answeredQuestionIds/);
+  // L'infrastructure de sessions de quiz n'a jamais été branchée : supprimée.
+  assert.match(cleanup, /drop function if exists public\.answer_quiz_session_question/i);
+  assert.match(cleanup, /drop function if exists public\.start_quiz_session/i);
+  assert.match(cleanup, /drop table if exists public\.quiz_session_answers/i);
+  assert.match(cleanup, /drop table if exists public\.quiz_session_questions/i);
+  assert.match(cleanup, /drop table if exists public\.quiz_sessions/i);
   assert.match(questionActions, /admin\.rpc\("admin_upsert_question"/);
   assert.match(questionActions, /admin-question-import/);
   assert.match(questionQueries, /getAdminQuestionFormOptions/);
   assert.match(questionForm, /Explication pédagogique/);
   assert.match(csv, /export function parseCsv/);
+});
+
+test("the schema cleanup removes duplicated legacy columns and keeps published reads working", async () => {
+  const cleanup = await read("../supabase/migrations/20260830120000_schema_cleanup.sql");
+  assert.match(cleanup, /create policy "pathologies_read_published"[\s\S]+using \(is_published = true\)/i);
+  assert.match(cleanup, /create policy "questions_read_published"[\s\S]+using \(is_published = true\)/i);
+  assert.match(cleanup, /drop trigger if exists pathologies_sync_phase2_columns/i);
+  assert.match(cleanup, /drop trigger if exists profiles_sync_activity_dates/i);
+  assert.match(cleanup, /alter table public\.questions\s+drop column if exists prompt/i);
+  assert.match(cleanup, /drop column if exists label/i);
+  assert.match(cleanup, /drop column if exists last_activity_on/i);
+  assert.match(cleanup, /drop column if exists pathophysiology/i);
+  assert.match(cleanup, /criticality in \('standard', 'frequent', 'important', 'urgent'\)/i);
+  // Les signalements restent vérifiés côté serveur, contre le document unifié.
+  assert.match(cleanup, /concat_ws\(' ', p\.summary, p\.content\)/i);
+  assert.match(cleanup, /position\(v_selected_normalized in v_source_normalized\) = 0/i);
 });
 
 test("admins can create a categorized pathology through a role-gated RPC", async () => {
@@ -114,38 +128,82 @@ test("pathology reviews are explicit, invalidated by edits and signed by the rev
 });
 
 test("the connected app exposes a persistent accessible dark theme", async () => {
-  const [layout, navigation, toggle, styles] = await Promise.all([
+  const [layout, initializer, navigation, toggle, styles] = await Promise.all([
     read("../app/layout.tsx"),
+    read("../components/theme/ThemeInitializer.tsx"),
     read("../components/navigation/ConnectedNavigation.tsx"),
     read("../components/theme/ThemeToggle.tsx"),
     read("../app/globals.css"),
   ]);
-  assert.match(layout, /medtrain-theme/);
-  assert.match(layout, /prefers-color-scheme: dark/);
+  assert.match(layout, /ThemeInitializer/);
+  assert.doesNotMatch(layout, /<script|next\/script|dangerouslySetInnerHTML/);
+  assert.match(initializer, /THEME_STORAGE_KEY/);
+  assert.match(initializer, /prefers-color-scheme: dark/);
+  assert.match(initializer, /useEffect/);
   assert.match(navigation, /ThemeToggle/);
-  assert.match(toggle, /localStorage\.setItem\(STORAGE_KEY/);
+  assert.match(toggle, /localStorage\.setItem\(THEME_STORAGE_KEY/);
   assert.match(toggle, /Basculer entre le mode clair et le mode nuit/);
   assert.match(styles, /html\[data-theme="dark"\]/);
   assert.match(styles, /\.bg-slate-950 :is\(h1, h2, h3, h4\)/);
 });
 
 test("the marketing homepage reflects live product data and the current product pillars", async () => {
-  const [page, landing, wrapper, stats] = await Promise.all([
+  const [page, landing, stats] = await Promise.all([
     read("../app/(marketing)/page.tsx"),
-    read("../app/MedTrainApp.tsx"),
-    read("../components/marketing/MarketingLanding.tsx"),
+    read("../components/marketing/LandingPage.tsx"),
     read("../lib/marketing/stats.ts"),
   ]);
   assert.match(page, /getMarketingStats\(\)/);
-  assert.match(wrapper, /stats=\{stats\}/);
+  assert.match(page, /stats=\{stats\}/);
   assert.match(stats, /\.eq\("is_published", true\)/);
   assert.match(landing, /Pathologies claires et structurées/);
   assert.match(landing, /Questions avec correction détaillée/);
   assert.match(landing, /Cas cliniques/);
   assert.match(landing, /XP, niveaux, série quotidienne/);
-  assert.match(landing, /Pensé pour le cursus suisse/);
+  assert.match(landing, /Réviser moins au hasard/);
+  assert.match(landing, /Conçu pour les étudiants en médecine en Suisse/);
   assert.match(landing, /stats\.questionCount/);
   assert.doesNotMatch(landing, /Six spécialités/);
+});
+
+test("public marketing pages explain the method and provide FAQ and contact routes", async () => {
+  const [method, faq, contact, catalogue, quality, about, news, tutorials, ecgTutorial, xrayTutorial, header, footer, landing] = await Promise.all([
+    read("../app/(marketing)/methode/page.tsx"),
+    read("../app/(marketing)/faq/page.tsx"),
+    read("../app/(marketing)/contact/page.tsx"),
+    read("../app/(marketing)/catalogue/page.tsx"),
+    read("../app/(marketing)/qualite/page.tsx"),
+    read("../app/(marketing)/a-propos/page.tsx"),
+    read("../app/(marketing)/nouveautes/page.tsx"),
+    read("../app/(marketing)/tutoriels/page.tsx"),
+    read("../app/(marketing)/tutoriels/ecg/page.tsx"),
+    read("../app/(marketing)/tutoriels/radiographie-thorax/page.tsx"),
+    read("../components/ui/header-2.tsx"),
+    read("../components/marketing/MarketingFooter.tsx"),
+    read("../components/marketing/LandingPage.tsx"),
+  ]);
+  for (const pillar of ["fiches", "qcm", "cas-cliniques", "progression"]) assert.match(method, new RegExp(`id: "${pillar}"`));
+  assert.match(method, /UNE ROUTINE DE 20 MINUTES/);
+  assert.match(faq, /<details/);
+  assert.match(faq, /Comment les fiches sont-elles validées/);
+  assert.match(contact, /ContactForm/);
+  assert.match(contact, /BRAND_EMAIL_FROM/);
+  assert.match(catalogue, /CatalogueExplorer/);
+  assert.match(tutorials, /Lire un ECG en 6 étapes/);
+  assert.match(ecgTutorial, /InteractiveTutorial/);
+  assert.match(xrayTutorial, /InteractiveTutorial/);
+  assert.match(quality, /Révision signée/);
+  assert.match(quality, /À réviser/);
+  assert.match(about, /NOS PRINCIPES/);
+  assert.match(news, /JOURNAL DU PRODUIT|NOUVEAUTÉS/);
+  for (const route of ["catalogue", "methode", "pricing", "faq"]) {
+    assert.match(header, new RegExp(`href: "/${route}"`));
+  }
+  for (const route of ["catalogue", "tutoriels", "methode", "qualite", "pricing", "faq", "contact"]) {
+    assert.match(footer, new RegExp(`href: "/${route}"`));
+  }
+  for (const route of ["tutoriels", "qualite", "contact"]) assert.doesNotMatch(header, new RegExp(`href: "/${route}"`));
+  for (const route of ["catalogue", "tutoriels", "qualite", "nouveautes", "pricing"]) assert.match(landing, new RegExp(`href="/${route}"`));
 });
 
 test("admin content workflow is role-gated and reports verify the selected source text", async () => {
@@ -162,7 +220,8 @@ test("admin content workflow is role-gated and reports verify the selected sourc
   assert.match(sql, /where id = p_admin_user_id and role = 'admin'/i);
   assert.match(sql, /position\(v_selected_normalized in v_source_normalized\) = 0/i);
   assert.match(sql, /for select to authenticated using \(user_id = auth\.uid\(\)\)/i);
-  assert.match(adminGuard, /data\?\.role === "admin"/);
+  assert.match(adminGuard, /select\("role"\)\.eq\("id", user\.id\)/);
+  assert.match(adminGuard, /isAdminRole\(data\?\.role\)/);
   assert.match(adminLayout, /requireAdminUser\("\/admin"\)/);
   assert.match(updateAction, /assertAdminUser\(\)/);
   assert.match(updateAction, /admin\.rpc\("admin_update_pathology"/);
@@ -174,12 +233,10 @@ test("admin content workflow is role-gated and reports verify the selected sourc
 });
 
 test("backend foundations centralize XP and idempotent learning progress", async () => {
-  const [sql, pathologyAction, dailyQuiz, dailyRoute, specialtyProgress, quizAction, progressRoute] = await Promise.all([
+  const [sql, pathologyAction, dailyQuiz, quizAction, progressRoute] = await Promise.all([
     read("../supabase/migrations/20260810220000_backend_foundations.sql"),
     read("../app/actions/pathologies.ts"),
     read("../lib/quiz/daily.ts"),
-    read("../app/api/quiz/daily/route.ts"),
-    read("../lib/progress/specialties.ts"),
     read("../app/actions/quiz.ts"),
     read("../app/api/progress/route.ts"),
   ]);
@@ -195,9 +252,6 @@ test("backend foundations centralize XP and idempotent learning progress", async
   assert.match(dailyQuiz, /randomInt\(questionIds\.length\)/);
   assert.match(dailyQuiz, /select\("id, option_text, order_index"\)/);
   assert.doesNotMatch(dailyQuiz, /options: options\.map[\s\S]+is_correct/);
-  assert.match(dailyRoute, /requireAuthenticatedUser\(\)/);
-  assert.match(specialtyProgress, /user\.id !== userId/);
-  assert.match(specialtyProgress, /progressPercentage/);
   assert.match(quizAction, /isDailyQuiz: true/);
   assert.match(progressRoute, /Math\.floor\(totalXp \/ 100\) \+ 1/);
 });
@@ -242,6 +296,8 @@ test("the App Router is split into marketing, auth and connected product routes"
     "../app/(auth)/login/page.tsx",
     "../app/(auth)/signup/page.tsx",
     "../app/(app)/dashboard/page.tsx",
+    "../app/(app)/sessions/page.tsx",
+    "../app/(app)/sessions/[slug]/page.tsx",
     "../app/(app)/fiches/page.tsx",
     "../app/(app)/quiz/page.tsx",
     "../app/(app)/quiz/[specialtySlug]/page.tsx",
@@ -299,10 +355,40 @@ test("the user dashboard is server-rendered from authenticated Supabase data", a
   assert.match(dashboard, /Progression par spécialité/);
   assert.match(dashboard, /Quiz du jour/);
   assert.match(dashboard, /Objectif du jour/);
-  assert.match(dashboard, /Vos premiers réflexes/);
+  assert.match(dashboard, /Tes premiers réflexes/);
+  assert.match(dashboard, /StudySessionSpotlight/);
+  assert.match(query, /getStudySessionProgress/);
   assert.match(loading, /animate-pulse/);
   assert.match(error, /reset/);
   assert.doesNotMatch(dashboard, /useEffect|fetch\("\/api\/progress"/);
+});
+
+test("guided 30-minute study sessions persist ordered per-user progress", async () => {
+  const [catalog, hub, route, player, action, migration, navigation] = await Promise.all([
+    read("../lib/study-sessions/catalog.ts"),
+    read("../app/(app)/sessions/page.tsx"),
+    read("../app/(app)/sessions/[slug]/page.tsx"),
+    read("../components/study-sessions/StudySessionPlayer.tsx"),
+    read("../app/actions/study-sessions.ts"),
+    read("../supabase/migrations/20260812000000_study_sessions.sql"),
+    read("../components/navigation/ConnectedNavigation.tsx"),
+  ]);
+  assert.match(catalog, /slug: "douleur-thoracique-sca"/);
+  assert.match(catalog, /Fiche · Syndrome coronarien aigu/);
+  assert.match(catalog, /Tutoriel · Lecture systématique ECG/);
+  assert.match(catalog, /QCM · Douleur thoracique/);
+  assert.match(catalog, /Cas clinique · Douleur thoracique aiguë/);
+  assert.match(hub, /Sessions guidées · 30 minutes/);
+  assert.match(route, /requireUser\(`\/sessions\/\$\{encodeURIComponent\(slug\)\}`\)/);
+  assert.match(player, /setStudySessionStepCompletion/);
+  assert.match(player, /J'ai terminé cette étape/);
+  assert.match(action, /requireUser\(`\/sessions\/\$\{encodeURIComponent\(sessionSlug\)\}`\)/);
+  assert.match(action, /Terminez les étapes précédentes/);
+  assert.match(migration, /create table if not exists public\.study_session_progress/i);
+  assert.match(migration, /primary key\(user_id, session_slug, step_id\)/i);
+  assert.match(migration, /using \(user_id = auth\.uid\(\)\)/i);
+  assert.doesNotMatch(migration, /grant (insert|update|delete|all).*authenticated/i);
+  assert.match(navigation, /href: "\/sessions"/);
 });
 
 test("dashboard actions complete the pathology and daily quiz feedback loops", async () => {
@@ -322,6 +408,33 @@ test("dashboard actions complete the pathology and daily quiz feedback loops", a
   assert.match(quizCard, /initialAttempt\?\.isCorrect/);
   assert.match(quizCard, /Quiz du jour réussi/);
   assert.match(quizAction, /eq\("is_correct", true\)/);
+});
+
+test("new accounts receive a short, skippable and personalized onboarding", async () => {
+  const [migration, authPage, page, flow, route, dashboardQuery, dashboard] = await Promise.all([
+    read("../supabase/migrations/20260821090000_user_onboarding.sql"),
+    read("../components/auth/AuthPage.tsx"),
+    read("../app/onboarding/page.tsx"),
+    read("../components/onboarding/OnboardingFlow.tsx"),
+    read("../app/api/onboarding/route.ts"),
+    read("../lib/dashboard/queries.ts"),
+    read("../components/dashboard/UserDashboard.tsx"),
+  ]);
+  for (const column of ["university", "study_year", "exam_date", "learning_priority", "priority_specialty_ids", "onboarding_completed_at", "onboarding_skipped_at"]) {
+    assert.match(migration, new RegExp(`add column if not exists ${column}`, "i"));
+  }
+  assert.match(authPage, /mode === "signup"[\s\S]+\/onboarding\?next=/);
+  assert.match(page, /requireUser\(`\/onboarding\?next=/);
+  assert.match(page, /onboarding_completed_at \|\| profile\?\.onboarding_skipped_at/);
+  assert.match(flow, /Étape \{step\} sur 3/);
+  assert.match(flow, /Passer pour le moment/);
+  assert.match(flow, /Choisis deux ou trois spécialités/);
+  assert.match(route, /requireAuthenticatedUser\(\)/);
+  assert.match(route, /assertSameOrigin\(request\)/);
+  assert.match(route, /specialtyIds\.length < 2 \|\| specialtyIds\.length > 3/);
+  assert.match(route, /onboarding_completed_at: now/);
+  assert.match(dashboardQuery, /priority_specialty_ids/);
+  assert.match(dashboard, /profile\.learning_priority/);
 });
 
 test("phase 1 includes shadcn primitives, email/Google auth and mobile navigation", async () => {
@@ -361,11 +474,28 @@ test("all mutable product APIs enforce authenticated server identity", async () 
     "../app/api/ecos/chat/route.ts",
     "../app/api/billing/checkout/route.ts",
     "../app/api/billing/portal/route.ts",
+    "../app/api/profile/route.ts",
+    "../app/api/profile/avatar/route.ts",
+    "../app/api/onboarding/route.ts",
   ];
   for (const route of routes) {
     const source = await read(route);
     assert.match(source, /requireAuthenticatedUser\(\)/, route);
     assert.match(source, /assertSameOrigin\(request\)/, route);
+  }
+});
+
+test("every post-login redirect target rejects backslash-based open redirects", async () => {
+  // `new URL("/\\evil.com", origin)` resolves to an external origin under the
+  // WHATWG URL spec: `startsWith("//")` alone does not catch this variant.
+  const [callback, authPage, onboarding, connectedLayout] = await Promise.all([
+    read("../app/auth/callback/route.ts"),
+    read("../components/auth/AuthPage.tsx"),
+    read("../app/onboarding/page.tsx"),
+    read("../app/(app)/layout.tsx"),
+  ]);
+  for (const source of [callback, authPage, onboarding, connectedLayout]) {
+    assert.match(source, /startsWith\("\/\\\\"\)/);
   }
 });
 

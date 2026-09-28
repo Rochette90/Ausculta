@@ -1,11 +1,13 @@
 "use server";
 
+import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
-import type { PathologySectionKey } from "../../types/medtrain";
+import type { PathologySectionKey } from "../../types/content";
 import { AdminAccessError, assertAdminUser } from "../../lib/auth/admin";
 import { getCurrentUser } from "../../lib/auth/require-user";
 import { createAdminClient } from "../../lib/supabase/server";
 import { enforceRateLimit } from "../lib/rate-limit";
+import { BRAND_NAME } from "@/lib/brand";
 
 type ActionResult = { success: boolean; error?: string; reportId?: string };
 
@@ -24,7 +26,6 @@ export type ReviewPathologyReportInput = {
   adminNote: string;
 };
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SECTION_KEYS = new Set<PathologySectionKey>([
   "definition", "pathophysiology", "symptoms", "risk_factors",
   "complementary_exams", "differential_diagnosis", "treatments",
@@ -55,12 +56,12 @@ export async function createPathologyReport(input: CreatePathologyReportInput): 
       p_comment: comment,
     });
     if (error) {
-      console.error("MedTrain create pathology report error", error);
+      console.error(`${BRAND_NAME} create pathology report error`, error);
       return { success: false, error: error.message.includes("selected text mismatch") ? "Le passage sélectionné n’est plus à jour" : "Impossible d’envoyer le signalement" };
     }
     return { success: true, reportId: typeof data === "string" ? data : undefined };
   } catch (error) {
-    console.error("MedTrain pathology report action error", error);
+    console.error(`${BRAND_NAME} pathology report action error`, error);
     return { success: false, error: "Service momentanément indisponible" };
   }
 }
@@ -85,7 +86,7 @@ export async function reviewPathologyReport(input: ReviewPathologyReportInput): 
     return { success: true };
   } catch (error) {
     if (error instanceof AdminAccessError) return { success: false, error: error.message };
-    console.error("MedTrain review pathology report error", error);
+    console.error(`${BRAND_NAME} review pathology report error`, error);
     return { success: false, error: "Impossible de mettre à jour le signalement" };
   }
 }

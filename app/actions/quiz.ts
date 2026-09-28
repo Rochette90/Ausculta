@@ -1,9 +1,11 @@
 "use server";
 
+import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 import { ApiError } from "../lib/api-security";
 import { enforceRateLimit } from "../lib/rate-limit";
 import { createAdminClient, createClient } from "../../lib/supabase/server";
+import { BRAND_NAME } from "@/lib/brand";
 
 export type AnswerQuestionParams = {
   questionId: string;
@@ -32,7 +34,6 @@ type AnswerQuestionRow = {
   current_streak: number;
 };
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function failure(error: string): AnswerQuestionResult {
   return {
@@ -78,7 +79,7 @@ export async function answerQuestion({
       if (error.message.includes("daily question mismatch")) {
         return failure("Cette question ne fait pas partie du quiz du jour");
       }
-      console.error("MedTrain answerQuestion RPC error", error);
+      console.error(`${BRAND_NAME} answerQuestion RPC error`, error);
       return failure("Erreur lors de l’enregistrement");
     }
 
@@ -92,13 +93,12 @@ export async function answerQuestion({
       .eq("is_correct", true)
       .single();
     if (correctOptionError) {
-      console.error("MedTrain answerQuestion correct option error", correctOptionError);
+      console.error(`${BRAND_NAME} answerQuestion correct option error`, correctOptionError);
       return failure("Correction indisponible");
     }
 
     revalidatePath("/dashboard");
     revalidatePath("/quiz");
-    revalidatePath("/quiz", "layout");
     revalidatePath("/profil");
 
     return {
@@ -113,7 +113,7 @@ export async function answerQuestion({
     };
   } catch (error) {
     if (error instanceof ApiError) return failure(error.message);
-    console.error("MedTrain answerQuestion error", error);
+    console.error(`${BRAND_NAME} answerQuestion error`, error);
     return failure("Service momentanément indisponible");
   }
 }

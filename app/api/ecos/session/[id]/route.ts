@@ -1,3 +1,4 @@
+import { UUID_PATTERN } from "@/lib/validation";
 import {
   ApiError,
   apiJson,
@@ -6,10 +7,9 @@ import {
   requireAuthenticatedUser,
 } from "../../../../lib/api-security";
 import { enforceRateLimit } from "../../../../lib/rate-limit";
-import { EcosMessage, scoreEcosTranscript } from "../../../../lib/ecos";
+import { EcosMessage, calculateEcosCriteria, scoreEcosTranscript } from "../../../../lib/ecos";
 import { createAdminClient } from "../../../../../lib/supabase/server";
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(
   request: Request,
@@ -28,7 +28,7 @@ export async function POST(
 
     const { data: session, error: sessionError } = await admin
       .from("ecos_sessions")
-      .select("status, score, max_score")
+      .select("status, score, max_score, transcript")
       .eq("id", id)
       .eq("user_id", user.id)
       .maybeSingle();
@@ -39,6 +39,7 @@ export async function POST(
       const score = Number(session.score ?? 0);
       return apiJson({
         saved: true,
+        criteria: calculateEcosCriteria((session.transcript ?? []) as EcosMessage[]),
         score,
         maxScore: Number(session.max_score ?? 18),
         xp: Math.max(20, score * 3),
@@ -69,7 +70,7 @@ export async function POST(
     });
     if (completeError) throw completeError;
 
-    return apiJson({ saved: true, score, maxScore, xp });
+    return apiJson({ saved: true, score, maxScore, xp, criteria: calculateEcosCriteria(transcript) });
   } catch (error) {
     return handleApiError(error);
   }

@@ -1,15 +1,14 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-
-const STORAGE_KEY = "medtrain-theme";
+import { THEME_STORAGE_KEY } from "@/lib/brand";
 
 export function ThemeToggle() {
   function toggleTheme() {
     const root = document.documentElement;
     const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
     root.dataset.theme = nextTheme;
-    localStorage.setItem(STORAGE_KEY, nextTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
   }
 
   return (

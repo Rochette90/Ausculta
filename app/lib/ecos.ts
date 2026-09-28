@@ -80,6 +80,8 @@ export function calculateActivityReward(activityType: string, score: number) {
       return { score: safeScore, xp: safeScore >= 100 ? 25 : 15 };
     case "rci":
       return { score: safeScore, xp: safeScore >= 100 ? 45 : 20 };
+    case "tutorial":
+      return { score: safeScore, xp: safeScore >= 80 ? 20 : 12 };
     default:
       return null;
   }

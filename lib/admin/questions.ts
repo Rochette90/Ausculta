@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Difficulty, QuestionReviewStatus, QuestionType } from "../../types/medtrain";
+import type { Difficulty, QuestionReviewStatus, QuestionType } from "../../types/content";
 import { createAdminClient } from "../supabase/server";
 
 export type AdminQuestionListItem = {
@@ -15,6 +15,7 @@ export type AdminQuestionDetails = {
   difficulty: Difficulty; xpReward: number; questionType: QuestionType;
   reviewStatus: QuestionReviewStatus; isPublished: boolean; examDomain: string | null;
   sourceTitle: string | null; sourceUrl: string | null; sourceYear: number | null;
+  imageUrl: string | null; imageAlt: string | null;
   estimatedSeconds: number; topicIds: string[]; version: number; updatedAt: string;
   options: Array<{ id: string; text: string; isCorrect: boolean; orderIndex: number; explanation: string | null }>;
 };
@@ -52,7 +53,7 @@ export async function getAdminQuestions(): Promise<AdminQuestionListItem[]> {
 
 export async function getAdminQuestion(id: string): Promise<AdminQuestionDetails | null> {
   const admin = createAdminClient();
-  const { data, error } = await admin.from("questions").select("id, specialty_id, pathology_id, question_text, clinical_vignette, learning_objective, explanation, difficulty, xp_reward, question_type, review_status, is_published, exam_domain, source_title, source_url, source_year, estimated_seconds, version, updated_at").eq("id", id).maybeSingle();
+  const { data, error } = await admin.from("questions").select("id, specialty_id, pathology_id, question_text, clinical_vignette, learning_objective, explanation, difficulty, xp_reward, question_type, review_status, is_published, exam_domain, source_title, source_url, source_year, estimated_seconds, image_url, image_alt, version, updated_at").eq("id", id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   const [optionsResult, topicsResult] = await Promise.all([
@@ -68,6 +69,7 @@ export async function getAdminQuestion(id: string): Promise<AdminQuestionDetails
     difficulty: data.difficulty, xpReward: data.xp_reward, questionType: data.question_type,
     reviewStatus: data.review_status, isPublished: data.is_published, examDomain: data.exam_domain,
     sourceTitle: data.source_title, sourceUrl: data.source_url, sourceYear: data.source_year,
+    imageUrl: data.image_url, imageAlt: data.image_alt,
     estimatedSeconds: data.estimated_seconds, version: data.version, updatedAt: data.updated_at,
     topicIds: (topicsResult.data ?? []).map((row) => row.topic_id),
     options: (optionsResult.data ?? []).map((option) => ({

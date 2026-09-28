@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Pricing, type PricingPlan } from "../../../components/ui/pricing";
-import { Header } from "../../../components/ui/header-2";
 import { getCurrentUser } from "../../../lib/auth/require-user";
+import { BRAND_NAME, BRAND_PRO_PLAN, pageTitle } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Tarifs — MedTrain",
-  description: "Découvrez les offres MedTrain pour progresser avec des fiches, des QCM expliqués et des cas cliniques.",
+  title: pageTitle("Tarifs"),
+  description: `Découvrez les offres ${BRAND_NAME} pour progresser avec des fiches, des QCM expliqués et des cas cliniques.`,
 };
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ export default async function PricingPage() {
       eyebrow: "POUR COMMENCER",
       monthlyPrice: 0,
       yearlyPrice: 0,
-      description: "L’essentiel pour découvrir la méthode MedTrain et installer une routine régulière.",
+      description: `L’essentiel pour découvrir la méthode ${BRAND_NAME} et installer une routine régulière.`,
       features: [
         "Accès aux fiches médicales publiées",
         "Quiz du jour avec correction expliquée",
@@ -32,7 +32,7 @@ export default async function PricingPage() {
       href: startHref,
     },
     {
-      name: "MedTrain Pro",
+      name: BRAND_PRO_PLAN,
       eyebrow: "ENTRAÎNEMENT COMPLET",
       monthlyPrice: 14.9,
       yearlyPrice: 119,
@@ -44,18 +44,17 @@ export default async function PricingPage() {
         "Statistiques détaillées par spécialité",
         "Accès prioritaire aux futurs modules ECOS",
       ],
-      buttonText: user ? "Passer à MedTrain Pro" : "Commencer avec Pro",
+      buttonText: "Bientôt disponible",
       href: proHref,
-      isPopular: true,
+      isPopular: false,
+      isAvailable: false,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
-      <Header signedIn={Boolean(user)} />
-
+    <>
       <main>
-        <Pricing plans={plans} />
+        <Pricing plans={plans} description={`${BRAND_NAME} est aujourd’hui 100% gratuit. La formule Pro arrive bientôt.`} />
         <section className="mx-auto mb-20 w-[calc(100%-2rem)] max-w-[1180px] overflow-hidden rounded-[32px] bg-[var(--surface-dark)] px-6 py-10 text-center sm:px-10 sm:py-14">
           <p className="m-0 text-xs font-bold tracking-[0.14em] text-teal-300">UNE QUESTION AVANT DE COMMENCER ?</p>
           <h2 className="mx-auto mb-0 mt-3 max-w-2xl text-balance text-3xl text-white sm:text-4xl">Commencez gratuitement, choisissez Pro quand vous en avez besoin.</h2>
@@ -65,6 +64,6 @@ export default async function PricingPage() {
           </Link>
         </section>
       </main>
-    </div>
+    </>
   );
 }

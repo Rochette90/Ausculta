@@ -1,9 +1,9 @@
+import { SLUG_PATTERN } from "@/lib/validation";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 import pathologyCatalog from "../../../../content/pathologies/index.json";
 
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const publishedSlugs = new Set(
   pathologyCatalog.filter((item) => item.status === "ready").map((item) => item.slug),
 );

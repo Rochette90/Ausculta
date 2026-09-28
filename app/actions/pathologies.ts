@@ -1,9 +1,11 @@
 "use server";
 
+import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 import { ApiError } from "../lib/api-security";
 import { enforceRateLimit } from "../lib/rate-limit";
 import { createAdminClient, createClient } from "../../lib/supabase/server";
+import { BRAND_NAME } from "@/lib/brand";
 
 export type MarkPathologyAsReadResult = {
   success: boolean;
@@ -23,7 +25,6 @@ type MarkPathologyRow = {
   already_completed: boolean;
 };
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function failure(error: string): MarkPathologyAsReadResult {
   return { success: false, xpEarned: 0, error };
@@ -51,7 +52,7 @@ export async function markPathologyAsRead(
       if (error.message.includes("pathology not found")) {
         return failure("Fiche introuvable");
       }
-      console.error("MedTrain markPathologyAsRead RPC error", error);
+      console.error(`${BRAND_NAME} markPathologyAsRead RPC error`, error);
       return failure("Erreur lors de l’enregistrement");
     }
 
@@ -73,7 +74,7 @@ export async function markPathologyAsRead(
     };
   } catch (error) {
     if (error instanceof ApiError) return failure(error.message);
-    console.error("MedTrain markPathologyAsRead error", error);
+    console.error(`${BRAND_NAME} markPathologyAsRead error`, error);
     return failure("Service momentanément indisponible");
   }
 }

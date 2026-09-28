@@ -1,9 +1,8 @@
 "use client";
 
 import NumberFlow from "@number-flow/react";
-import confetti from "canvas-confetti";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Check, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Check, Clock, ShieldCheck, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useMediaQuery } from "../../hooks/use-media-query";
@@ -39,27 +38,33 @@ export function Pricing({
   const isDesktop = useMediaQuery("(min-width: 900px)");
   const reduceMotion = useReducedMotion();
   const switchRef = useRef<HTMLButtonElement>(null);
+  const hasAvailablePaidPlan = plans.some((plan) => plan.isAvailable !== false && (plan.monthlyPrice ?? 0) > 0);
 
-  function handleToggle(checked: boolean) {
+  async function handleToggle(checked: boolean) {
     setIsAnnual(checked);
     if (!checked || reduceMotion || !switchRef.current) return;
 
     const rect = switchRef.current.getBoundingClientRect();
-    confetti({
-      particleCount: 44,
-      spread: 55,
-      origin: {
-        x: (rect.left + rect.width / 2) / window.innerWidth,
-        y: (rect.top + rect.height / 2) / window.innerHeight,
-      },
-      colors: ["#0d9488", "#2dd4bf", "#99f6e4", "#fbbf24"],
-      ticks: 170,
-      gravity: 1.1,
-      decay: 0.94,
-      startVelocity: 28,
-      shapes: ["circle"],
-      disableForReducedMotion: true,
-    });
+    try {
+      const confetti = (await import("canvas-confetti")).default;
+      confetti({
+        particleCount: 44,
+        spread: 55,
+        origin: {
+          x: (rect.left + rect.width / 2) / window.innerWidth,
+          y: (rect.top + rect.height / 2) / window.innerHeight,
+        },
+        colors: ["#0d9488", "#2dd4bf", "#99f6e4", "#fbbf24"],
+        ticks: 170,
+        gravity: 1.1,
+        decay: 0.94,
+        startVelocity: 28,
+        shapes: ["circle"],
+        disableForReducedMotion: true,
+      });
+    } catch {
+      // Ignorer silencieusement si confetti ne peut pas être chargé
+    }
   }
 
   return (
@@ -85,7 +90,7 @@ export function Pricing({
           </Label>
           <span className={cn("text-sm font-semibold transition-colors", isAnnual ? "text-[var(--ink)]" : "text-[var(--muted)]")}>Annuel</span>
         </div>
-        <span className="rounded-full bg-[var(--mint)] px-3 py-1.5 text-xs font-bold text-[var(--mint-dark)]">Économisez CHF 59.80</span>
+        {hasAvailablePaidPlan && <span className="rounded-full bg-[var(--mint)] px-3 py-1.5 text-xs font-bold text-[var(--mint-dark)]">Économisez CHF 59.80</span>}
       </div>
 
       <div className={cn(
@@ -116,11 +121,15 @@ export function Pricing({
                   : "z-0 border-[var(--line)]",
               )}
             >
-              {plan.isPopular && (
+              {isUnavailable ? (
+                <div className="absolute right-0 top-0 flex items-center gap-1.5 rounded-bl-2xl bg-amber-500 px-4 py-2 text-xs font-bold text-white">
+                  <Clock aria-hidden="true" size={14} /> Bientôt disponible
+                </div>
+              ) : plan.isPopular ? (
                 <div className="absolute right-0 top-0 flex items-center gap-1.5 rounded-bl-2xl bg-[var(--primary)] px-4 py-2 text-xs font-bold text-white">
                   <Star aria-hidden="true" className="fill-current" size={14} /> Le plus choisi
                 </div>
-              )}
+              ) : null}
 
               <p className="m-0 text-xs font-bold tracking-[0.14em] text-[var(--primary)]">{plan.eyebrow}</p>
               <h2 className="mb-0 mt-3 text-3xl text-[var(--ink)]">{plan.name}</h2>
@@ -129,6 +138,14 @@ export function Pricing({
               <div className="mt-8 min-h-[82px]">
                 {price === null ? (
                   <div className="text-[2.55rem] font-extrabold leading-none tracking-[-0.04em] text-[var(--ink)]">Sur devis</div>
+                ) : isUnavailable ? (
+                  <div className="flex items-end gap-2 opacity-50">
+                    <span className="pb-1 text-base font-bold text-[var(--muted)] line-through">CHF</span>
+                    <span className="text-[3.5rem] font-extrabold leading-none tracking-[-0.055em] text-[var(--ink)] tabular-nums line-through decoration-2">
+                      {Number.isInteger(price) ? price : price.toFixed(2)}
+                    </span>
+                    {price > 0 && <span className="pb-1.5 text-sm font-semibold text-[var(--muted)] line-through">/ {isAnnual ? "an" : "mois"}</span>}
+                  </div>
                 ) : (
                   <div className="flex items-end gap-2">
                     <span className="pb-1 text-base font-bold text-[var(--muted)]">CHF</span>
@@ -142,7 +159,7 @@ export function Pricing({
                   </div>
                 )}
                 <p className="mb-0 mt-2 text-xs font-medium text-[var(--muted)]">
-                  {price === null ? "Pour une faculté, une association ou une promotion" : price === 0 ? "Gratuit, sans carte bancaire" : isAnnual ? `Facturé une fois par an · soit CHF ${(price / 12).toFixed(2)} / mois` : "Facturation mensuelle, résiliable à tout moment"}
+                  {isUnavailable ? "Formule en préparation — reste gratuite pour le moment" : price === null ? "Pour une faculté, une association ou une promotion" : price === 0 ? "Gratuit, sans carte bancaire" : isAnnual ? `Facturé une fois par an · soit CHF ${(price / 12).toFixed(2)} / mois` : "Facturation mensuelle, résiliable à tout moment"}
                 </p>
               </div>
 

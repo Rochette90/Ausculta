@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { markPathologyAsRead } from "../../app/actions/pathologies";
 import { Button } from "../ui/button";
+import { PROGRESS_EVENT_NAME } from "@/lib/brand";
 
 export function MarkAsReadButton({ pathologyId, initiallyCompleted }: { pathologyId: string; initiallyCompleted: boolean }) {
   const router = useRouter();
@@ -21,7 +22,7 @@ export function MarkAsReadButton({ pathologyId, initiallyCompleted }: { patholog
       }
       setCompleted(true);
       setMessage(result.xpEarned > 0 ? `+${result.xpEarned} XP · niveau ${result.newLevel}` : "Cette fiche était déjà terminée");
-      window.dispatchEvent(new Event("medtrain:progress"));
+      window.dispatchEvent(new Event(PROGRESS_EVENT_NAME));
       router.refresh();
     });
   }

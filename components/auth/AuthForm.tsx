@@ -2,13 +2,16 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase/client";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { BrandLogo } from "../brand/BrandLogo";
 
-export function AuthForm({ nextPath, mode }: { nextPath: string; mode: "login" | "signup" }) {
+export function AuthForm({ nextPath, switchNextPath = nextPath, mode }: { nextPath: string; switchNextPath?: string; mode: "login" | "signup" }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -27,8 +30,10 @@ export function AuthForm({ nextPath, mode }: { nextPath: string; mode: "login" |
         : await supabase.auth.signInWithPassword({ email, password });
       const { error } = result;
       if (error) throw error;
-      if (!isSignup || result.data.session) window.location.assign(nextPath);
-      else setStatus("Compte créé. Confirmez votre adresse e-mail pour continuer.");
+      if (!isSignup || result.data.session) {
+        router.push(nextPath);
+        router.refresh();
+      } else setStatus("Compte créé. Confirmez votre adresse e-mail pour continuer.");
     } catch {
       setStatus(isSignup ? "L’inscription est momentanément indisponible." : "Compte introuvable ou connexion indisponible.");
     } finally {
@@ -52,7 +57,7 @@ export function AuthForm({ nextPath, mode }: { nextPath: string; mode: "login" |
 
   return (
     <Card className="auth-card">
-      <div className="logo auth-logo"><span className="logo-mark">M</span><span>MedTrain</span></div>
+      <div className="logo auth-logo"><BrandLogo priority /></div>
       <p className="eyebrow">{isSignup ? "CRÉER VOTRE COMPTE" : "ESPACE ÉTUDIANT SÉCURISÉ"}</p>
       <h1>{isSignup ? "Commencez à pratiquer." : "Retrouvez votre progression."}</h1>
       <p>{isSignup ? "Créez gratuitement votre espace de révision clinique." : "Connectez-vous pour retrouver vos stations, quiz et statistiques."}</p>
@@ -63,10 +68,10 @@ export function AuthForm({ nextPath, mode }: { nextPath: string; mode: "login" |
         <Input id="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="prenom.nom@unil.ch" />
         <Label htmlFor="password">Mot de passe</Label>
         <Input id="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="8 caractères minimum" />
-        <Button className="full" disabled={loading}>{loading ? "Connexion…" : isSignup ? "Créer mon compte" : "Se connecter"}</Button>
+        <Button className="full" disabled={loading}>{loading ? isSignup ? "Création…" : "Connexion…" : isSignup ? "Créer mon compte" : "Se connecter"}</Button>
       </form>
       {status && <p className="auth-status" role="status">{status}</p>}
-      <p className="auth-switch">{isSignup ? "Déjà inscrit·e ?" : "Pas encore de compte ?"} <Link href={`${isSignup ? "/login" : "/signup"}?next=${encodeURIComponent(nextPath)}`}>{isSignup ? "Se connecter" : "S’inscrire"}</Link></p>
+      <p className="auth-switch">{isSignup ? "Déjà inscrit·e ?" : "Pas encore de compte ?"} <Link href={`${isSignup ? "/login" : "/signup"}?next=${encodeURIComponent(switchNextPath)}`}>{isSignup ? "Se connecter" : "S’inscrire"}</Link></p>
       <Link className="auth-back" href="/">← Retour à l’accueil</Link>
     </Card>
   );

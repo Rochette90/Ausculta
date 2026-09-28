@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Difficulty, PathologyReviewStatus, PathologySectionKey } from "../../types/medtrain";
+import type { Difficulty, PathologyReviewStatus, PathologySectionKey } from "../../types/content";
 import { createAdminClient } from "../supabase/server";
 
 export type AdminPathologyListItem = {
@@ -20,15 +20,6 @@ export type AdminPathologyListItem = {
 
 export type AdminPathologyDetails = AdminPathologyListItem & {
   content: string;
-  definition: string | null;
-  pathophysiology: string | null;
-  symptoms: string | null;
-  riskFactors: string | null;
-  complementaryExams: string | null;
-  differentialDiagnosis: string | null;
-  treatments: string | null;
-  complications: string | null;
-  monitoring: string | null;
 };
 
 export type AdminPathologyReport = {
@@ -88,32 +79,15 @@ export async function getAdminPathologies(): Promise<AdminPathologyListItem[]> {
 
 export async function getAdminPathology(id: string): Promise<AdminPathologyDetails | null> {
   const admin = createAdminClient();
-  const { data, error } = await admin.from("pathologies").select("id, specialty_id, title, slug, difficulty, is_published, review_status, reviewer_name, reviewed_at, version, updated_at, content, definition, pathophysiology, symptoms, risk_factors, complementary_exams, differential_diagnosis, treatments, complications, monitoring").eq("id", id).maybeSingle();
+  const { data, error } = await admin.from("pathologies").select("id, specialty_id, title, slug, difficulty, is_published, review_status, reviewer_name, reviewed_at, version, updated_at, content").eq("id", id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   const { data: specialty } = await admin.from("specialties").select("name").eq("id", data.specialty_id).maybeSingle();
-  const legacySections: Array<[string, string | null]> = [
-    ["Définition", data.definition],
-    ["Physiopathologie", data.pathophysiology],
-    ["Signes et symptômes", data.symptoms],
-    ["Facteurs de risque", data.risk_factors],
-    ["Examens complémentaires", data.complementary_exams],
-    ["Diagnostics différentiels", data.differential_diagnosis],
-    ["Traitements", data.treatments],
-    ["Complications", data.complications],
-    ["Surveillance", data.monitoring],
-  ];
-  const legacyContent = legacySections.filter((section): section is [string, string] => Boolean(section[1]))
-    .map(([heading, value]) => `## ${heading}\n\n${value}`)
-    .join("\n\n---\n\n");
   return {
     id: data.id, specialtyId: data.specialty_id, specialtyName: specialty?.name ?? "Médecine",
     title: data.title, slug: data.slug, difficulty: data.difficulty, isPublished: data.is_published,
     reviewStatus: data.review_status, reviewerName: data.reviewer_name, reviewedAt: data.reviewed_at,
-    version: data.version, updatedAt: data.updated_at, content: data.content ?? legacyContent, definition: data.definition,
-    pathophysiology: data.pathophysiology, symptoms: data.symptoms, riskFactors: data.risk_factors,
-    complementaryExams: data.complementary_exams, differentialDiagnosis: data.differential_diagnosis,
-    treatments: data.treatments, complications: data.complications, monitoring: data.monitoring,
+    version: data.version, updatedAt: data.updated_at, content: data.content ?? "",
   } as AdminPathologyDetails;
 }
 
@@ -142,4 +116,44 @@ export async function getAdminPathologyReports(): Promise<AdminPathologyReport[]
       status: row.status, adminNote: row.admin_note, createdAt: row.created_at,
     };
   });
+}
+
+export type AdminContactMessage = {
+  id: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  status: "open" | "resolved";
+  createdAt: string;
+};
+
+type ContactMessageRow = {
+  id: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  status: AdminContactMessage["status"];
+  created_at: string;
+};
+
+export async function getAdminContactMessages(): Promise<AdminContactMessage[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("contact_messages")
+    .select("id, name, email, topic, message, status, created_at")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  return ((data ?? []) as ContactMessageRow[]).map((row) => ({
+    id: row.id, name: row.name, email: row.email, topic: row.topic,
+    message: row.message, status: row.status, createdAt: row.created_at,
+  }));
+}
+
+export async function resolveAdminContactMessage(id: string): Promise<void> {
+  const admin = createAdminClient();
+  const { error } = await admin.from("contact_messages").update({ status: "resolved" }).eq("id", id);
+  if (error) throw error;
 }

@@ -4,11 +4,15 @@ import { notFound } from "next/navigation";
 import { AdminQuestionForm } from "../../../../../components/admin/AdminQuestionForm";
 import { AdminSectionNav } from "../../../../../components/admin/AdminSectionNav";
 import { getAdminQuestion, getAdminQuestionFormOptions } from "../../../../../lib/admin/questions";
+import { requireAdminUser } from "../../../../../lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 type PageProps = { params: Promise<{ id: string }> };
 
 export default async function AdminQuestionPage({ params }: PageProps) {
+  // La garde précède toute lecture : un compte non-admin n'exécute
+  // aucune requête et son payload ne contient aucune donnée d'administration.
+  await requireAdminUser("/admin/questions");
   const id = (await params).id;
   const [question, metadata] = await Promise.all([getAdminQuestion(id), getAdminQuestionFormOptions()]);
   if (!question) notFound();

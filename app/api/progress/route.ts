@@ -6,6 +6,7 @@ import {
   readJsonObject,
   requireAuthenticatedUser,
 } from "../../lib/api-security";
+import { gradeTutorial } from "@/lib/tutorials/questions";
 import { calculateActivityReward } from "../../lib/ecos";
 import { enforceRateLimit } from "../../lib/rate-limit";
 import { createAdminClient } from "../../../lib/supabase/server";
@@ -77,8 +78,10 @@ export async function POST(request: Request) {
       throw new ApiError(400, "invalid_activity", "Activité invalide");
     }
 
-    const reward = calculateActivityReward(activityType, Number(body.score));
-    if (!reward) throw new ApiError(400, "unsupported_activity", "Activité non reconnue");
+    // Other product activities have their own server-validated actions.
+    const verifiedScore = activityType === "tutorial" ? gradeTutorial(activityId, body.answers) : null;
+    if (verifiedScore === null) throw new ApiError(400, "unsupported_activity", "Activité ou réponses invalides");
+    const reward = calculateActivityReward("tutorial", verifiedScore)!;
 
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "progress-write", 60, 60);

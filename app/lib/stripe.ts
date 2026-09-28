@@ -1,13 +1,14 @@
 import "server-only";
 
 import Stripe from "stripe";
+import { BRAND_NAME } from "@/lib/brand";
 
 let stripe: Stripe | null = null;
 
 export function getStripe() {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) throw new Error("Stripe secret key is missing");
-  stripe ??= new Stripe(secretKey, { appInfo: { name: "MedTrain", version: "0.1.0" } });
+  stripe ??= new Stripe(secretKey, { appInfo: { name: BRAND_NAME, version: "0.1.0" } });
   return stripe;
 }
 

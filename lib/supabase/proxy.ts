@@ -1,11 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { PATHNAME_HEADER } from "@/lib/brand";
 
 export async function updateSession(request: NextRequest) {
   const createResponse = () => {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set(
-      "x-medtrain-pathname",
+      PATHNAME_HEADER,
       `${request.nextUrl.pathname}${request.nextUrl.search}`,
     );
     return NextResponse.next({ request: { headers: requestHeaders } });

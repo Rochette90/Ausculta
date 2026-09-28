@@ -11,6 +11,7 @@ import {
   Stethoscope,
   Sparkles,
   Star,
+  TimerReset,
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
@@ -19,6 +20,8 @@ import { buttonVariants } from "../ui/button";
 import { Card } from "../ui/card";
 import { SpecialtyIcon } from "../content/SpecialtyIcon";
 import { cn } from "../../lib/utils";
+import { featuredStudySession } from "../../lib/study-sessions/catalog";
+import { StudySessionSpotlight } from "../study-sessions/StudySessionSpotlight";
 
 const toneByColor: Record<string, string> = {
   amber: "bg-amber-50 text-amber-700",
@@ -37,8 +40,29 @@ function formatActivityDate(value: string) {
   }).format(new Date(value));
 }
 
+/**
+ * Le message d'accueil est dérivé d'une donnée réelle de l'utilisateur :
+ * séance en cours, point le plus fragile, ou séance à venir. Jamais un
+ * encouragement sans information.
+ */
+function dashboardGreeting({
+  sessionInProgress,
+  remainingMinutes,
+  sessionSubject,
+  weakestSpecialty,
+}: {
+  sessionInProgress: boolean;
+  remainingMinutes: number;
+  sessionSubject: string;
+  weakestSpecialty: { name: string; progressPercentage: number } | null;
+}) {
+  if (sessionInProgress) return `Il te reste ${remainingMinutes} min sur ${sessionSubject}.`;
+  if (weakestSpecialty) return `Ton point le plus fragile : ${weakestSpecialty.name} (${weakestSpecialty.progressPercentage} %).`;
+  return `Ta prochaine séance porte sur ${sessionSubject}.`;
+}
+
 export function UserDashboard({ data, firstName }: { data: DashboardData; firstName: string | null }) {
-  const { profile, stats, specialties, dailyQuiz, dailyQuizCompleted, recommendedPathology, recentActivity, weeklyActivity, todayGoal } = data;
+  const { profile, stats, specialties, dailyQuiz, dailyQuizCompleted, recommendedPathology, recentActivity, weeklyActivity, todayGoal, featuredStudySessionCompletedStepIds } = data;
   const displayName = firstName
     ? `${firstName.charAt(0).toLocaleUpperCase("fr-CH")}${firstName.slice(1)}`
     : null;
@@ -48,12 +72,53 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
     day: "numeric",
     month: "long",
   }).format(new Date());
+  const completedSessionSteps = new Set(featuredStudySessionCompletedStepIds);
+  const sessionStepCount = featuredStudySession.steps.length;
+  const sessionCompletedCount = featuredStudySession.steps.filter((step) => completedSessionSteps.has(step.id)).length;
+  const sessionInProgress = sessionCompletedCount > 0 && sessionCompletedCount < sessionStepCount;
+  const sessionRemainingMinutes = featuredStudySession.steps
+    .reduce((sum, step) => sum + (completedSessionSteps.has(step.id) ? 0 : step.durationMinutes), 0);
+  const sessionHref = `/sessions/${featuredStudySession.slug}`;
+  // Le « point fragile » n'a de sens qu'une fois la spécialité entamée.
+  const weakestSpecialty = specialties
+    .filter((specialty) => specialty.totalItems > 0 && specialty.progressPercentage > 0 && specialty.progressPercentage < 100)
+    .sort((a, b) => a.progressPercentage - b.progressPercentage)[0] ?? null;
+  const greeting = dashboardGreeting({
+    sessionInProgress,
+    remainingMinutes: sessionRemainingMinutes,
+    sessionSubject: featuredStudySession.subject,
+    weakestSpecialty,
+  });
   const onboarding = [
     { label: "Lire une première fiche", detail: "+5 XP", href: recommendedPathology ? `/pathologies/${recommendedPathology.slug}` : "/specialties", complete: stats.completedPathologies > 0 },
     { label: "Répondre à une question", detail: "Quiz du jour", href: "/quiz?mode=daily", complete: stats.successfulQuestions > 0 },
     { label: "Terminer une station ECOS", detail: "Cas clinique", href: "/cas", complete: stats.completedClinicalCases > 0 },
   ];
   const onboardingComplete = onboarding.filter((item) => item.complete).length;
+  const primaryAction = (() => {
+    switch (profile.learning_priority) {
+      case "fiches":
+        return {
+          href: recommendedPathology ? `/pathologies/${recommendedPathology.slug}` : "/specialties",
+          label: recommendedPathology ? "Fiche recommandée" : "Explorer les fiches",
+          description: "Une notion prioritaire dans l’une de tes spécialités.",
+          icon: BookOpenCheck,
+        };
+      case "cas_cliniques":
+        return { href: "/cas", label: "Commencer un cas clinique", description: "Ton raisonnement clinique mis en pratique immédiatement.", icon: Stethoscope };
+      case "seances":
+        return { href: "/sessions", label: "Choisir une séance", description: "Une séance guidée de 30 minutes, fiche puis QCM puis cas.", icon: TimerReset };
+      case "qcm":
+      default:
+        return { href: "/quiz?mode=daily", label: dailyQuizCompleted ? "Revoir le quiz" : "Quiz du jour", description: "Une décision clinique par jour, corrigée et expliquée.", icon: ClipboardCheck };
+    }
+  })();
+  const PrimaryActionIcon = primaryAction.icon;
+  // CTA secondaire : uniquement si une séance est réellement en cours, et
+  // jamais vers la même route que le CTA principal.
+  const secondaryAction = sessionInProgress && primaryAction.href !== sessionHref
+    ? { href: sessionHref, label: "Reprendre ma séance" }
+    : null;
 
   return (
     <main className="page-enter mx-auto w-full max-w-7xl px-4 pb-28 pt-8 sm:px-6 lg:px-8 lg:pt-10">
@@ -64,19 +129,19 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-teal-300">{today}</p>
             <h1 className="m-0 max-w-3xl !text-4xl !leading-[1.05] !text-white sm:!text-5xl">
-              Bonjour{displayName ? ` ${displayName}` : ""},<br />
-              <em className="text-teal-300">on progresse aujourd’hui.</em>
+              Bonjour{displayName ? ` ${displayName}` : ""}.<br />
+              <em className="text-teal-300">{greeting}</em>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-              Un quiz ciblé, une fiche essentielle ou une station clinique : choisissez votre prochaine étape.
+              {primaryAction.description}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link className={cn(buttonVariants({ size: "lg" }), "bg-teal-400 text-slate-950 hover:bg-teal-300")} href="/quiz?mode=daily">
-                {dailyQuizCompleted ? <CheckCircle2 size={18} /> : <ClipboardCheck size={18} />} {dailyQuizCompleted ? "Quiz terminé" : "Quiz du jour"}
+              <Link className={cn(buttonVariants({ size: "lg" }), "bg-teal-400 text-slate-950 hover:bg-teal-300")} href={primaryAction.href}>
+                <PrimaryActionIcon size={18} /> {primaryAction.label}
               </Link>
-              {recommendedPathology && (
-                <Link className={cn(buttonVariants({ variant: "outline", size: "lg" }), "border-white/20 bg-white/5 text-white hover:border-teal-300 hover:bg-white/10 hover:text-white")} href={`/pathologies/${recommendedPathology.slug}`}>
-                  <BookOpenCheck size={18} /> Continuer une fiche
+              {secondaryAction && (
+                <Link className={cn(buttonVariants({ variant: "outline", size: "lg" }), "border-white/20 bg-white/5 text-white hover:border-teal-300 hover:bg-white/10 hover:text-white")} href={secondaryAction.href}>
+                  <TimerReset size={18} /> {secondaryAction.label}
                 </Link>
               )}
             </div>
@@ -97,6 +162,11 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
         </div>
       </section>
 
+      <Link href="/anatomie" className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 text-[var(--ink)] no-underline">
+        <div><p className="learning-eyebrow">ANATOMIE CLINIQUE</p><h2 className="m-0 text-xl">Relie les structures aux symptômes.</h2><p className="mb-0 mt-2 text-sm text-[var(--muted)]">6 modules · 18 repères · rappel actif et mini-cas.</p></div><span className="inline-flex items-center gap-2 font-semibold text-[var(--primary)]">Explorer l’atlas <ArrowRight size={18} /></span>
+      </Link>
+      <StudySessionSpotlight completedStepIds={featuredStudySessionCompletedStepIds} session={featuredStudySession} streak={profile.streak} />
+
       <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Statistiques personnelles">
         <Card className="p-4 sm:p-5"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-amber-50 text-amber-700"><Star size={19} /></span><div><strong className="block text-xl sm:text-2xl">{profile.xp.toLocaleString("fr-CH")}</strong><span className="text-xs text-slate-500 sm:text-sm">XP total</span></div></div></Card>
         <Card className="p-4 sm:p-5"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-orange-50 text-orange-700"><Flame size={19} /></span><div><strong className="block text-xl sm:text-2xl">{profile.streak}</strong><span className="text-xs text-slate-500 sm:text-sm">jours de série</span></div></div></Card>
@@ -109,7 +179,7 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
           <div className="grid gap-5 lg:grid-cols-[auto_1fr] lg:items-center">
             <div className="lg:max-w-64">
               <p className="mb-1 text-xs font-bold uppercase tracking-[0.15em] text-teal-700">Bien démarrer</p>
-              <h2 className="m-0 !text-2xl">Vos premiers réflexes</h2>
+              <h2 className="m-0 !text-2xl">Tes premiers réflexes</h2>
               <p className="mb-0 mt-2 text-sm text-slate-600">{onboardingComplete}/3 étapes terminées</p>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
@@ -127,7 +197,7 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.45fr_.75fr]">
         <Card className="overflow-hidden p-5 sm:p-7">
           <header className="flex items-end justify-between gap-4">
-            <div><p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-teal-700">Votre parcours</p><h2 className="m-0 text-2xl sm:text-3xl">Progression par spécialité</h2></div>
+            <div><p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-teal-700">Ton parcours</p><h2 className="m-0 text-2xl sm:text-3xl">Progression par spécialité</h2></div>
             <Link className="hidden items-center gap-1 text-sm font-semibold text-teal-700 no-underline sm:flex" href="/specialties">Tout voir <ArrowRight size={16} /></Link>
           </header>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -151,7 +221,7 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-teal-300">{dailyQuizCompleted ? "Objectif quotidien validé" : "Quiz du jour"}</p>
             <h2 className="m-0 max-w-xs !text-2xl !text-white">{dailyQuizCompleted ? "Réponse enregistrée. Beau travail." : "Une décision clinique pour garder le rythme."}</h2>
             <p className="mt-4 text-sm leading-6 text-teal-100/80">
-              {dailyQuizCompleted ? "La correction reste accessible jusqu’au prochain quiz." : dailyQuiz ? `${dailyQuiz.question.options.length} options · ${dailyQuiz.question.xpReward} XP à gagner` : "Votre nouvelle question quotidienne vous attend."}
+              {dailyQuizCompleted ? "La correction reste accessible jusqu’au prochain quiz." : dailyQuiz ? `${dailyQuiz.question.options.length} options · ${dailyQuiz.question.xpReward} XP à gagner` : "Ta nouvelle question quotidienne t’attend."}
             </p>
             <Link className={cn(buttonVariants(), "mt-5 w-full bg-white text-teal-950 hover:bg-teal-100")} href="/quiz?mode=daily">{dailyQuizCompleted ? "Revoir la correction" : "Répondre maintenant"} <ArrowRight size={17} /></Link>
           </Card>
@@ -166,7 +236,7 @@ export function UserDashboard({ data, firstName }: { data: DashboardData; firstN
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
         <Card className="p-5 sm:p-7">
           <header className="flex items-center justify-between"><div><p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Historique</p><h2 className="m-0 text-2xl">Activité récente</h2></div><Trophy className="text-amber-500" size={24} /></header>
-          {recentActivity.length > 0 ? <div className="mt-5 divide-y divide-slate-100">{recentActivity.map((activity) => <Link className="flex items-center gap-4 py-3 text-slate-900 no-underline first:pt-0 last:pb-0" href={activity.href} key={activity.id}><span className={cn("grid size-9 shrink-0 place-items-center rounded-xl", activity.kind === "pathology" ? "bg-teal-50 text-teal-700" : activity.kind === "clinical_case" ? "bg-violet-50 text-violet-700" : "bg-sky-50 text-sky-700")}>{activity.kind === "pathology" ? <BookOpenCheck size={17} /> : activity.kind === "clinical_case" ? <Stethoscope size={17} /> : <ClipboardCheck size={17} />}</span><span className="min-w-0 flex-1"><strong className="block truncate text-sm">{activity.label}</strong><small className="text-slate-500">{activity.detail}</small></span><time className="text-xs text-slate-400" dateTime={activity.completedAt}>{formatActivityDate(activity.completedAt)}</time></Link>)}</div> : <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-center"><p className="m-0 text-sm text-slate-500">Votre activité apparaîtra ici après votre première fiche, question ou station.</p></div>}
+          {recentActivity.length > 0 ? <div className="mt-5 divide-y divide-slate-100">{recentActivity.map((activity) => <Link className="flex items-center gap-4 py-3 text-slate-900 no-underline first:pt-0 last:pb-0" href={activity.href} key={activity.id}><span className={cn("grid size-9 shrink-0 place-items-center rounded-xl", activity.kind === "pathology" ? "bg-teal-50 text-teal-700" : activity.kind === "clinical_case" ? "bg-violet-50 text-violet-700" : "bg-sky-50 text-sky-700")}>{activity.kind === "pathology" ? <BookOpenCheck size={17} /> : activity.kind === "clinical_case" ? <Stethoscope size={17} /> : <ClipboardCheck size={17} />}</span><span className="min-w-0 flex-1"><strong className="block truncate text-sm">{activity.label}</strong><small className="text-slate-500">{activity.detail}</small></span><time className="text-xs text-slate-400" dateTime={activity.completedAt}>{formatActivityDate(activity.completedAt)}</time></Link>)}</div> : <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-center"><p className="m-0 text-sm text-slate-500">Ton activité apparaîtra ici après ta première fiche, question ou station.</p></div>}
         </Card>
         <Card className="p-5 sm:p-7">
           <header className="flex items-start justify-between gap-4"><div><p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-teal-700">Régularité</p><h2 className="m-0 !text-2xl">Les 7 derniers jours</h2></div><span className="grid size-10 place-items-center rounded-xl bg-teal-50 text-teal-700"><Clock3 size={19} /></span></header>

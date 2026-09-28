@@ -1,7 +1,9 @@
+import { zurichDate } from "@/lib/dates";
 import "server-only";
 
 import { randomInt } from "node:crypto";
 import { createAdminClient } from "../supabase/server";
+import { isMissingQuestionImageColumns } from "./question-images";
 
 export type DailyQuiz = {
   id: string;
@@ -13,6 +15,8 @@ export type DailyQuiz = {
     text: string;
     difficulty: "facile" | "moyen" | "difficile";
     xpReward: number;
+    imageUrl: string | null;
+    imageAlt: string | null;
     options: Array<{
       id: string;
       text: string;
@@ -38,20 +42,11 @@ type QuestionRow = {
   question_text: string;
   difficulty: "facile" | "moyen" | "difficile";
   xp_reward: number;
+  image_url: string | null;
+  image_alt: string | null;
 };
 type OptionRow = { id: string; option_text: string; order_index: number };
 
-export function zurichDate(date = new Date()): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Zurich",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const value = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value;
-  return `${value("year")}-${value("month")}-${value("day")}`;
-}
 
 export async function getDailyQuizAttempt(
   userId: string,
@@ -141,23 +136,34 @@ export async function getDailyQuiz(): Promise<DailyQuiz> {
     }
   }
 
-  const [questionResult, optionsResult] = await Promise.all([
-    admin
-      .from("questions")
-      .select("id, specialty_id, pathology_id, question_text, difficulty, xp_reward")
-      .eq("id", daily.question_id)
-      .eq("is_published", true)
-      .single(),
+  const [question, optionsResult] = await Promise.all([
+    (async (): Promise<QuestionRow> => {
+      const enrichedQuestion = await admin
+        .from("questions")
+        .select("id, specialty_id, pathology_id, question_text, difficulty, xp_reward, image_url, image_alt")
+        .eq("id", daily.question_id)
+        .eq("is_published", true)
+        .single();
+      if (!enrichedQuestion.error) return enrichedQuestion.data as QuestionRow;
+      if (!isMissingQuestionImageColumns(enrichedQuestion.error)) throw enrichedQuestion.error;
+
+      const fallbackQuestion = await admin
+        .from("questions")
+        .select("id, specialty_id, pathology_id, question_text, difficulty, xp_reward")
+        .eq("id", daily.question_id)
+        .eq("is_published", true)
+        .single();
+      if (fallbackQuestion.error) throw fallbackQuestion.error;
+      return { ...fallbackQuestion.data, image_url: null, image_alt: null } as QuestionRow;
+    })(),
     admin
       .from("question_options")
       .select("id, option_text, order_index")
       .eq("question_id", daily.question_id)
       .order("order_index", { ascending: true }),
   ]);
-  if (questionResult.error) throw questionResult.error;
   if (optionsResult.error) throw optionsResult.error;
 
-  const question = questionResult.data as QuestionRow;
   const options = (optionsResult.data ?? []) as OptionRow[];
   if (options.length < 2) throw new Error("Options du quiz indisponibles");
 
@@ -171,6 +177,8 @@ export async function getDailyQuiz(): Promise<DailyQuiz> {
       text: question.question_text,
       difficulty: question.difficulty,
       xpReward: question.xp_reward,
+      imageUrl: question.image_url,
+      imageAlt: question.image_alt,
       options: options.map((option) => ({
         id: option.id,
         text: option.option_text,

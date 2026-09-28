@@ -2,6 +2,7 @@ import "server-only";
 
 import { randomInt } from "node:crypto";
 import { createAdminClient } from "../supabase/server";
+import { isMissingQuestionImageColumns } from "./question-images";
 
 export type SpecialtyQuizCatalogItem = {
   id: string;
@@ -19,6 +20,8 @@ export type SpecialtyQuizQuestion = {
   text: string;
   difficulty: "facile" | "moyen" | "difficile";
   xpReward: number;
+  imageUrl: string | null;
+  imageAlt: string | null;
   options: Array<{ id: string; text: string; orderIndex: number }>;
 };
 
@@ -42,6 +45,8 @@ type QuestionRow = {
   question_text: string;
   difficulty: "facile" | "moyen" | "difficile";
   xp_reward: number;
+  image_url: string | null;
+  image_alt: string | null;
 };
 
 type OptionRow = { id: string; question_id: string; option_text: string; order_index: number };
@@ -53,6 +58,26 @@ function shuffled<T>(values: T[]): T[] {
     [result[index], result[target]] = [result[target], result[index]];
   }
   return result;
+}
+
+function balancedByDifficulty(questions: QuestionRow[], masteredIds: Set<string>): QuestionRow[] {
+  const difficultyOrder: QuestionRow["difficulty"][] = ["facile", "difficile", "moyen"];
+  const unmastered = questions.filter((question) => !masteredIds.has(question.id));
+  const mastered = questions.filter((question) => masteredIds.has(question.id));
+  const groups = new Map(difficultyOrder.map((difficulty) => {
+    return [difficulty, [
+      ...shuffled(unmastered.filter((question) => question.difficulty === difficulty)),
+      ...shuffled(mastered.filter((question) => question.difficulty === difficulty)),
+    ]];
+  }));
+  const balanced: QuestionRow[] = [];
+  while (balanced.length < questions.length) {
+    for (const difficulty of difficultyOrder) {
+      const question = groups.get(difficulty)?.shift();
+      if (question) balanced.push(question);
+    }
+  }
+  return balanced;
 }
 
 export async function getSpecialtyQuizCatalog(userId: string): Promise<SpecialtyQuizCatalogItem[]> {
@@ -100,14 +125,29 @@ export async function getSpecialtyQuiz(userId: string, specialtySlug: string, li
   if (!specialtyResult.data) return null;
 
   const specialty = specialtyResult.data as SpecialtyRow;
-  const questionsResult = await admin
+  const enrichedQuestions = await admin
     .from("questions")
-    .select("id, specialty_id, question_text, difficulty, xp_reward")
+    .select("id, specialty_id, question_text, difficulty, xp_reward, image_url, image_alt")
     .eq("specialty_id", specialty.id)
     .eq("is_published", true);
-  if (questionsResult.error) throw questionsResult.error;
-
-  const questions = (questionsResult.data ?? []) as QuestionRow[];
+  let questions: QuestionRow[];
+  if (!enrichedQuestions.error) {
+    questions = (enrichedQuestions.data ?? []) as QuestionRow[];
+  } else if (isMissingQuestionImageColumns(enrichedQuestions.error)) {
+    const fallbackQuestions = await admin
+      .from("questions")
+      .select("id, specialty_id, question_text, difficulty, xp_reward")
+      .eq("specialty_id", specialty.id)
+      .eq("is_published", true);
+    if (fallbackQuestions.error) throw fallbackQuestions.error;
+    questions = (fallbackQuestions.data ?? []).map((question) => ({
+      ...question,
+      image_url: null,
+      image_alt: null,
+    })) as QuestionRow[];
+  } else {
+    throw enrichedQuestions.error;
+  }
   if (questions.length === 0) return { specialty, questions: [] };
 
   const progressResult = await admin
@@ -120,10 +160,8 @@ export async function getSpecialtyQuiz(userId: string, specialtySlug: string, li
   const masteredIds = new Set(
     (progressResult.data ?? []).flatMap((row) => row.is_correct && row.question_id ? [row.question_id] : []),
   );
-  const selectedQuestions = [
-    ...shuffled(questions.filter((question) => !masteredIds.has(question.id))),
-    ...shuffled(questions.filter((question) => masteredIds.has(question.id))),
-  ].slice(0, Math.max(1, Math.min(limit, 20)));
+  const selectedQuestions = balancedByDifficulty(questions, masteredIds)
+    .slice(0, Math.max(1, Math.min(limit, 20)));
 
   const optionsResult = await admin
     .from("question_options")
@@ -143,6 +181,8 @@ export async function getSpecialtyQuiz(userId: string, specialtySlug: string, li
         text: question.question_text,
         difficulty: question.difficulty,
         xpReward: question.xp_reward,
+        imageUrl: question.image_url,
+        imageAlt: question.image_alt,
         options: questionOptions.map((option) => ({
           id: option.id,
           text: option.option_text,

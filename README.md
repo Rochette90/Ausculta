@@ -29,7 +29,7 @@ Le catalogue Supabase comprend `profiles`, `specialties`, `pathologies`, `questi
 1. Copier `.env.example` vers `.env.local` et renseigner les valeurs.
 2. Créer ou lier un projet Supabase dans une région européenne proche (Frankfurt recommandé).
 3. Appliquer les migrations Supabase avec `npm run db:push` ou depuis le SQL Editor Supabase.
-4. Importer le catalogue local (90 fiches, 12 questions et 12 cas) avec `npm run db:seed`.
+4. Importer le catalogue local (156 fiches, 12 questions et 12 cas) avec `npm run db:seed`.
 5. Ajouter `http://localhost:3000/auth/callback` aux Redirect URLs de Supabase Auth.
 6. Lancer `npm run dev`.
 
@@ -61,3 +61,9 @@ Importer le projet, ajouter toutes les variables de `.env.example`, puis déploy
 - `npm test`
 - `npm run build`
 - `npm run verify` pour tout exécuter dans l’ordre
+
+## Anatomie clinique et parcours de révision
+
+Le module `/anatomie` propose six parcours avec repères, rappel actif, mini-cas et liens vers les fiches. Le catalogue `/specialties` offre une recherche et un filtre de lecture ; `/cas` distingue ECOS et raisonnement anatomique.
+
+Pour activer l’historique d’anatomie, appliquer `supabase/migrations/20260928100000_anatomy_attempts.sql`. Les corrections restent disponibles avec un message de non-sauvegarde tant que cette table manque. Voir [la documentation fonctionnelle et technique](docs/anatomie-et-parcours.md) pour les changements ECOS, les protections backend et les limites de validation.

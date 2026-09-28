@@ -1,8 +1,13 @@
+import { zurichDate } from "@/lib/dates";
 import "server-only";
 
 import { cache } from "react";
 import { getDailyQuiz, getDailyQuizAttempt, type DailyQuiz } from "../quiz/daily";
+import { featuredStudySession } from "../study-sessions/catalog";
+import { getStudySessionProgress } from "../study-sessions/progress";
 import { createClient } from "../supabase/server";
+import { getOnboardingMetadata } from "../onboarding/metadata";
+import { BRAND_NAME } from "@/lib/brand";
 
 type SpecialtyRow = {
   id: string;
@@ -43,7 +48,23 @@ type ProfileRow = {
   level: number;
   streak: number;
   plan: "free" | "pro";
+  learning_priority: "fiches" | "qcm" | "cas_cliniques" | "seances" | null;
+  priority_specialty_ids: string[];
 };
+
+const dashboardProfileColumns =
+  "full_name, xp, level, streak, plan";
+
+function getDashboardProfile(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+) {
+  return supabase
+    .from("profiles")
+    .select(dashboardProfileColumns)
+    .eq("id", userId)
+    .single();
+}
 
 export type DashboardSpecialty = SpecialtyRow & {
   totalItems: number;
@@ -86,19 +107,9 @@ export type DashboardData = {
   recentActivity: DashboardActivity[];
   weeklyActivity: DashboardWeekDay[];
   todayGoal: { earnedXp: number; targetXp: number; percentage: number };
+  featuredStudySessionCompletedStepIds: string[];
 };
 
-function zurichDate(value: Date): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Zurich",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(value);
-  const part = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((item) => item.type === type)?.value;
-  return `${part("year")}-${part("month")}-${part("day")}`;
-}
 
 function lastSevenDates() {
   const today = zurichDate(new Date());
@@ -111,14 +122,12 @@ function lastSevenDates() {
 
 export const getDashboardData = cache(async (userId: string): Promise<DashboardData> => {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const onboarding = user ? getOnboardingMetadata(user) : null;
   const weekDates = lastSevenDates();
   const eventsSince = new Date(Date.now() - 8 * 86_400_000).toISOString();
-  const [profileResult, specialtiesResult, pathologiesResult, questionsResult, progressResult, activityResult, ecosXpResult, dailyQuiz] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("full_name, xp, level, streak, plan")
-      .eq("id", userId)
-      .single(),
+  const [profileResult, specialtiesResult, pathologiesResult, questionsResult, progressResult, activityResult, ecosXpResult, dailyQuiz, featuredSessionProgress] = await Promise.all([
+    getDashboardProfile(supabase, userId),
     supabase
       .from("specialties")
       .select("id, name, slug, icon, color")
@@ -148,6 +157,7 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       .eq("user_id", userId)
       .gte("created_at", eventsSince),
     getDailyQuiz().catch(() => null),
+    getStudySessionProgress(userId, featuredStudySession.slug).catch(() => []),
   ]);
 
   const firstError = [
@@ -160,11 +170,15 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
     ecosXpResult.error,
   ].find(Boolean);
   if (firstError) {
-    console.error("MedTrain dashboard query error", firstError);
+    console.error(`${BRAND_NAME} dashboard query error`, firstError);
     throw new Error("Le tableau de bord est momentanément indisponible.");
   }
 
-  const profile = profileResult.data as ProfileRow;
+  const profile = {
+    ...profileResult.data,
+    learning_priority: onboarding?.learningPriority ?? null,
+    priority_specialty_ids: onboarding?.prioritySpecialtyIds ?? [],
+  } as ProfileRow;
   const specialties = (specialtiesResult.data ?? []) as SpecialtyRow[];
   const pathologies = (pathologiesResult.data ?? []) as PathologyRow[];
   const questions = (questionsResult.data ?? []) as QuestionRow[];
@@ -192,6 +206,7 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
     progress.filter((row) => row.question_id).map((row) => [row.question_id as string, row]),
   );
 
+  const priorityOrder = new Map((profile.priority_specialty_ids ?? []).map((id, index) => [id, index]));
   const specialtyProgress = specialties.map((specialty) => {
     const specialtyPathologies = pathologies.filter((item) => item.specialty_id === specialty.id);
     const specialtyQuestions = questions.filter((item) => item.specialty_id === specialty.id);
@@ -213,6 +228,13 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       progressPercentage: totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100),
       xpEarned,
     } satisfies DashboardSpecialty;
+  }).sort((left, right) => {
+    const leftPriority = priorityOrder.get(left.id);
+    const rightPriority = priorityOrder.get(right.id);
+    if (leftPriority === undefined && rightPriority === undefined) return 0;
+    if (leftPriority === undefined) return 1;
+    if (rightPriority === undefined) return -1;
+    return leftPriority - rightPriority;
   });
 
   const pathologyById = new Map(pathologies.map((pathology) => [pathology.id, pathology]));
@@ -278,6 +300,11 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
   }));
   const todayXp = xpByDate.get(today) ?? 0;
   const dailyTargetXp = 30;
+  const prioritizedPathologies = (profile.priority_specialty_ids ?? [])
+    .flatMap((specialtyId) => pathologies.filter((pathology) => pathology.specialty_id === specialtyId));
+  const recommendedPathology = [...prioritizedPathologies, ...pathologies]
+    .find((pathology, index, candidates) => candidates.findIndex((candidate) => candidate.id === pathology.id) === index
+      && !completedPathologyIds.has(pathology.id)) ?? null;
 
   return {
     profile,
@@ -293,7 +320,7 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       overallProgress: totalContent === 0 ? 0 : Math.round((completedContent / totalContent) * 100),
     },
     specialties: specialtyProgress,
-    recommendedPathology: pathologies.find((pathology) => !completedPathologyIds.has(pathology.id)) ?? null,
+    recommendedPathology,
     recentActivity,
     weeklyActivity,
     todayGoal: {
@@ -301,5 +328,6 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       targetXp: dailyTargetXp,
       percentage: Math.min(100, Math.round((todayXp / dailyTargetXp) * 100)),
     },
+    featuredStudySessionCompletedStepIds: featuredSessionProgress.map((item) => item.stepId),
   };
 });

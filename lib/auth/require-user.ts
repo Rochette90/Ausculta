@@ -1,3 +1,4 @@
+import { initialsFrom } from "@/lib/profile/presentation";
 import type { User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { cache } from "react";
@@ -24,6 +25,6 @@ export async function requireUser(returnTo: string): Promise<User> {
 export function userPresentation(user: User) {
   const fullName = typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null;
   const identity = fullName ?? user.email?.split("@")[0] ?? "Étudiant";
-  const initials = identity.split(/[\s._-]+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
+  const initials = initialsFrom(identity);
   return { firstName: fullName?.split(/\s+/)[0] ?? null, initials };
 }

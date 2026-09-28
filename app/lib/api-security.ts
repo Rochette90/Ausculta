@@ -1,6 +1,8 @@
+import { BodyTooLargeError, readLimitedBody } from "@/lib/http/body";
 import { NextResponse } from "next/server";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "../../lib/supabase/server";
+import { BRAND_NAME } from "@/lib/brand";
 
 export class ApiError extends Error {
   constructor(
@@ -55,9 +57,11 @@ export async function readJsonObject(
     throw new ApiError(413, "payload_too_large", "Requête trop volumineuse");
   }
 
-  const text = await request.text();
-  if (new TextEncoder().encode(text).byteLength > maxBytes) {
-    throw new ApiError(413, "payload_too_large", "Requête trop volumineuse");
+  let text: string;
+  try { text = await readLimitedBody(request, maxBytes); }
+  catch (error) {
+    if (error instanceof BodyTooLargeError) throw new ApiError(413, "payload_too_large", "Requête trop volumineuse");
+    throw error;
   }
 
   let value: unknown;
@@ -87,7 +91,7 @@ export function handleApiError(error: unknown) {
     );
   }
 
-  console.error("MedTrain API error", error);
+  console.error(`${BRAND_NAME} API error`, error);
   return apiJson(
     { error: "Service momentanément indisponible", code: "internal_error" },
     { status: 500 },

@@ -5,66 +5,80 @@ import {
   BadgeCheck,
   BookOpenText,
   ClipboardPlus,
+  Clock3,
+  Eye,
+  FileWarning,
   FlaskConical,
   HeartPulse,
-  ListTree,
+  Layers,
+  Link2,
   Microscope,
+  Pill,
+  Quote,
   RotateCcw,
-  ShieldAlert,
+  Route,
+  Siren,
+  Sparkles,
+  Split,
   Stethoscope,
+  Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FicheAnchor } from "../../../../components/content/FicheAnchor";
+import { FicheReader, type TocGroup } from "../../../../components/content/FicheReader";
+import { FicheSectionCard } from "../../../../components/content/FicheSectionCard";
 import { MarkAsReadButton } from "../../../../components/content/MarkAsReadButton";
 import { ReportableText } from "../../../../components/content/ReportableText";
+import catalog from "../../../../content/pathologies/index.json";
 import { requireUser } from "../../../../lib/auth/require-user";
-import { MarkdownBlocks, parseMarkdown, type Block } from "../../../markdown";
+import { buildFicheDocument } from "../../../../lib/content/fiche-document";
+import { classifyFicheSection, type FicheIconKey } from "../../../../lib/content/fiche-taxonomy";
+import { MarkdownBlocks, parseFrontmatter, parseMarkdown } from "../../../markdown";
 import { getPathologyBySlug } from "../../../../lib/content/queries";
+import { pageTitle } from "@/lib/brand";
+import { anatomyModules } from "@/lib/anatomy/catalog";
 import { createClient } from "../../../../lib/supabase/server";
-import type { PathologySectionKey } from "../../../../types/medtrain";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = { params: Promise<{ slug: string }> };
-type DocumentSection = { heading: Extract<Block, { kind: "h2" }>; blocks: Block[] };
 
-const sectionIcons: Array<[RegExp, LucideIcon]> = [
-  [/définition|épidémiologie/i, BookOpenText],
-  [/physiopathologie/i, Activity],
-  [/symptôme|signe|examen clinique/i, Stethoscope],
-  [/facteur|risque/i, ShieldAlert],
-  [/examen complémentaire|imagerie|diagnostic/i, FlaskConical],
-  [/prise en charge|traitement/i, ClipboardPlus],
-  [/complication|pronostic|urgence/i, AlertTriangle],
-  [/surveillance|suivi/i, HeartPulse],
-];
+/** Les chapitres portent une clé d'icône ; la dépendance à lucide reste ici. */
+const chapterIcons: Record<FicheIconKey, LucideIcon> = {
+  book: BookOpenText,
+  layers: Layers,
+  users: Users,
+  activity: Activity,
+  stethoscope: Stethoscope,
+  eye: Eye,
+  clipboard: ClipboardPlus,
+  flask: FlaskConical,
+  split: Split,
+  siren: Siren,
+  route: Route,
+  pill: Pill,
+  alert: AlertTriangle,
+  heart: HeartPulse,
+  link: Link2,
+  quote: Quote,
+};
 
-function iconForSection(title: string) {
-  return sectionIcons.find(([pattern]) => pattern.test(title))?.[1] ?? Microscope;
+function iconForSection(title: string): LucideIcon {
+  const chapter = classifyFicheSection(title);
+  return chapter ? chapterIcons[chapter.icon] : Microscope;
 }
 
-function splitDocument(blocks: Block[]) {
-  const preamble: Block[] = [];
-  const sections: DocumentSection[] = [];
-  let current: DocumentSection | null = null;
-  for (const block of blocks) {
-    if (block.kind === "h2") {
-      current = { heading: block, blocks: [] };
-      sections.push(current);
-    } else if (current) current.blocks.push(block);
-    else preamble.push(block);
-  }
-  return { preamble, sections };
-}
+const HIDDEN_TAGS = new Set(["import-vault", "a-reviser", "bachelor-3-lausanne"]);
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const pathology = await getPathologyBySlug(slug);
   return pathology
-    ? { title: `${pathology.title} — MedTrain`, description: pathology.definition ?? pathology.summary }
-    : { title: "Fiche introuvable — MedTrain" };
+    ? { title: pageTitle(pathology.title), description: pathology.summary ?? undefined }
+    : { title: pageTitle("Fiche introuvable") };
 }
 
 export default async function PathologyPage({ params }: PageProps) {
@@ -72,6 +86,7 @@ export default async function PathologyPage({ params }: PageProps) {
   const user = await requireUser(`/pathologies/${slug}`);
   const pathology = await getPathologyBySlug(slug);
   if (!pathology) notFound();
+
   const supabase = await createClient();
   const { data: progress } = await supabase
     .from("user_progress")
@@ -80,99 +95,187 @@ export default async function PathologyPage({ params }: PageProps) {
     .eq("pathology_id", pathology.id)
     .maybeSingle();
 
-  const legacySections = ([
-    { key: "pathophysiology", title: "Physiopathologie", content: pathology.pathophysiology ?? "", icon: Activity },
-    { key: "symptoms", title: "Signes et symptômes", content: pathology.symptoms ?? "", icon: Stethoscope },
-    { key: "risk_factors", title: "Facteurs de risque", content: pathology.risk_factors ?? "", icon: ShieldAlert },
-    { key: "complementary_exams", title: "Examens complémentaires", content: pathology.complementary_exams ?? "", icon: FlaskConical },
-    { key: "differential_diagnosis", title: "Diagnostics différentiels", content: pathology.differential_diagnosis ?? "", icon: Microscope },
-    { key: "treatments", title: "Traitements", content: pathology.treatments ?? "", icon: ClipboardPlus },
-    { key: "complications", title: "Complications", content: pathology.complications ?? "", icon: AlertTriangle },
-    { key: "monitoring", title: "Surveillance", content: pathology.monitoring ?? "", icon: HeartPulse },
-  ] satisfies Array<{ key: PathologySectionKey; title: string; content: string; icon: LucideIcon }>).filter((section) => Boolean(section.content));
   const richContent = pathology.content?.trim() ?? "";
-  const contentBlocks = richContent ? parseMarkdown(richContent) : [];
-  const { preamble, sections } = splitDocument(contentBlocks);
-  const isReviewed = pathology.review_status === "reviewed" && pathology.reviewer_name && pathology.reviewed_at;
-  const summary = pathology.definition ?? pathology.summary ?? "";
+  const frontmatter = parseFrontmatter(richContent);
+  const document = buildFicheDocument(richContent ? parseMarkdown(richContent) : []);
+  const keyPoints = catalog.find((entry) => entry.slug === slug)?.keyPoints ?? [];
+  const tags = frontmatter.tags.filter((tag) => !HIDDEN_TAGS.has(tag));
+
+  const isReviewed = Boolean(pathology.review_status === "reviewed" && pathology.reviewer_name && pathology.reviewed_at);
+  const isUrgent = pathology.criticality === "urgent";
+  const hasBody = document.sections.length > 0 || document.appendix.length > 0 || document.preamble.length > 0;
+
+  // Numérotation continue : le même « 07 » dans le sommaire et dans le fil.
+  const numbers = new Map(document.sections.map((section, index) => [section.id, index + 1]));
+
+  const toc: TocGroup[] = [
+    ...document.groups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      entries: group.sections.map((section) => ({
+        id: section.id,
+        title: section.title,
+        subsections: section.subsections,
+      })),
+    })),
+    ...(document.appendix.length > 0
+      ? [{
+          key: "annexes",
+          label: "Annexes",
+          entries: document.appendix.map((section) => ({ id: section.id, title: section.title, subsections: [] })),
+        }]
+      : []),
+  ];
+
+  // Bandeau « urgence » : renvoie vers la première section de prise en charge,
+  // le réflexe attendu quand la fiche s'ouvre en garde.
+  const urgentTarget = document.groups.find((group) => group.key === "traitement")?.sections[0];
 
   return (
-    <main className="pathology-page page-enter mx-auto w-full max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pt-8">
-      <Link className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 no-underline hover:text-teal-700" href="/specialties">
-        <ArrowLeft size={17} /> Toutes les spécialités
+    <main className="fiche page-enter">
+      <Link className="fiche-back" href="/specialties">
+        <ArrowLeft size={16} /> Toutes les spécialités
       </Link>
 
-      <header className="pathology-hero">
-        <div className="pathology-hero-main">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-extrabold uppercase tracking-[0.13em]">
-            <span className="rounded-full bg-teal-50 px-3 py-1.5 text-teal-800">{pathology.specialty?.name ?? "Médecine"}</span>
-            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-slate-600">Niveau {pathology.difficulty}</span>
-            {pathology.criticality === "urgent" && <span className="rounded-full bg-rose-100 px-3 py-1.5 text-rose-800">Urgence</span>}
-          </div>
-          <h1>{pathology.title}</h1>
-          <ReportableText className="pathology-lead" pathologyId={pathology.id} sectionKey="definition" text={summary} />
-          <div className="mt-7"><MarkAsReadButton initiallyCompleted={progress?.is_completed === true} pathologyId={pathology.id} /></div>
+      <header className={`fiche-head${isUrgent ? " is-urgent" : ""}`}>
+        <div className="fiche-chips">
+          <span className="fiche-chip is-specialty">{pathology.specialty?.name ?? "Médecine"}</span>
+          <span className="fiche-chip">{({ easy: "Fondamental", facile: "Fondamental", medium: "Intermédiaire", moyen: "Intermédiaire", hard: "Avancé", difficile: "Avancé" })[pathology.difficulty]}</span>
+          {isUrgent && <span className="fiche-chip is-urgent"><Siren size={13} /> Urgence</span>}
+          <span className={`fiche-chip ${isReviewed ? "is-reviewed" : "is-draft"}`}>
+            {isReviewed ? <BadgeCheck size={13} /> : <RotateCcw size={13} />}
+            {isReviewed ? "Fiche révisée" : "À réviser"}
+          </span>
         </div>
 
-        <aside className={`pathology-review-card ${isReviewed ? "is-reviewed" : "needs-review"}`} aria-label="État de révision">
-          <span className="pathology-review-icon">{isReviewed ? <BadgeCheck size={25} /> : <RotateCcw size={23} />}</span>
-          <div>
-            <p>{isReviewed ? "Fiche révisée" : "À réviser"}</p>
-            {isReviewed ? (
-              <span>Validée et signée par <strong>{pathology.reviewer_name}</strong><br />le {new Date(pathology.reviewed_at!).toLocaleDateString("fr-CH")}</span>
-            ) : (
-              <span>Cette fiche reste accessible, mais son contenu attend encore une validation médicale signée.</span>
-            )}
-          </div>
-        </aside>
+        <h1>{pathology.title}</h1>
+
+        {frontmatter.synonymes.length > 0 && (
+          <p className="fiche-synonyms">
+            <span>Aussi appelé</span> {frontmatter.synonymes.join(" · ")}
+          </p>
+        )}
+
+        <ReportableText
+          className="fiche-lead"
+          pathologyId={pathology.id}
+          sectionKey="definition"
+          text={pathology.summary ?? ""}
+        />
+
+        <div className="fiche-meta">
+          <span><Clock3 size={14} /> {document.minutes} min de lecture</span>
+          {document.sections.length > 0 && <span><Layers size={14} /> {document.sections.length} sections</span>}
+          {isReviewed ? (
+            <span className="is-reviewed">
+              <BadgeCheck size={14} /> Validée et signée par {pathology.reviewer_name} le{" "}
+              {new Date(pathology.reviewed_at!).toLocaleDateString("fr-CH")}
+            </span>
+          ) : (
+            <span className="is-draft"><FileWarning size={14} /> En attente de validation médicale signée</span>
+          )}
+        </div>
+
+        <div className="fiche-actions">
+          <MarkAsReadButton initiallyCompleted={progress?.is_completed === true} pathologyId={pathology.id} />
+        </div>
+
+        {tags.length > 0 && (
+          <ul className="fiche-tags">
+            {tags.map((tag) => <li key={tag}>{tag}</li>)}
+          </ul>
+        )}
       </header>
 
-      {sections.length > 0 && (
-        <details className="pathology-mobile-toc lg:hidden">
-          <summary><ListTree size={17} /> Sommaire de la fiche</summary>
-          <nav>{sections.map(({ heading }, index) => <a href={`#${heading.id}`} key={`${heading.id}-mobile`}><span>{String(index + 1).padStart(2, "0")}</span>{heading.text}</a>)}</nav>
-        </details>
+      {anatomyModules.some((module) => module.pathologySlugs.includes(slug)) && <section className="mb-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5"><p className="learning-eyebrow">LES BASES ANATOMIQUES DE CETTE FICHE</p><div className="learning-related">{anatomyModules.filter((module) => module.pathologySlugs.includes(slug)).map((module) => <Link href={`/anatomie/${module.slug}`} key={module.slug}><Layers size={16} />{module.title}<Link2 size={14} /></Link>)}</div></section>}
+
+      {isUrgent && urgentTarget && (
+        <a className="fiche-alert" href={`#${urgentTarget.id}`}>
+          <Siren size={17} />
+          <span>
+            <strong>Situation urgente</strong>
+            Aller directement à « {urgentTarget.title} » pour la conduite à tenir.
+          </span>
+        </a>
       )}
 
-      {richContent && (
-        <div className="pathology-layout">
-          <aside className="pathology-toc" aria-label="Sommaire de la fiche">
-            <p><ListTree size={17} /> Sommaire</p>
-            <nav>
-              {sections.map(({ heading }, index) => <a href={`#${heading.id}`} key={heading.id}><span>{String(index + 1).padStart(2, "0")}</span>{heading.text}</a>)}
-            </nav>
-            <small>{sections.length} section{sections.length > 1 ? "s" : ""} · lecture structurée</small>
-          </aside>
+      {keyPoints.length > 0 && (
+        <section aria-labelledby="fiche-essentiel" className="fiche-essentials">
+          <p id="fiche-essentiel"><Sparkles size={16} /> L’essentiel</p>
+          <ol>
+            {keyPoints.map((point) => <li key={point}><MarkdownBlocks blocks={parseMarkdown(point)} /></li>)}
+          </ol>
+        </section>
+      )}
 
-          <div className="min-w-0">
-            {preamble.length > 0 && <article className="pathology-document pathology-preamble"><MarkdownBlocks blocks={preamble} /></article>}
-            <div className="pathology-sections">
-              {sections.map(({ heading, blocks }, index) => {
-                const Icon = iconForSection(heading.text);
+      {hasBody ? (
+        <FicheReader
+          collapsibleIds={document.sections.map((section) => section.id)}
+          groups={toc}
+          meta={`${document.minutes} min · ${document.sections.length} sections`}
+        >
+          {document.preamble.length > 0 && (
+            <div className="fiche-document fiche-preamble">
+              <MarkdownBlocks blocks={document.preamble} />
+            </div>
+          )}
+
+          {document.groups.map((group, groupIndex) => (
+            <section aria-labelledby={`phase-${group.key}`} className="fiche-part" data-group={group.key} key={group.key}>
+              <header className="fiche-part-head">
+                <span className="fiche-part-index">{String(groupIndex + 1).padStart(2, "0")}</span>
+                <div>
+                  <h2 id={`phase-${group.key}`}>{group.label}</h2>
+                  <small>{group.hint}</small>
+                </div>
+                <span className="fiche-part-count">
+                  {group.sections.length} {group.sections.length > 1 ? "sections" : "section"}
+                </span>
+              </header>
+
+              {group.sections.map((section) => {
+                const Icon = section.chapter ? chapterIcons[section.chapter.icon] : Microscope;
                 return (
-                  <section className="pathology-document pathology-section" key={heading.id}>
-                    <header>
-                      <span><Icon size={20} /></span>
-                      <div><small>Section {String(index + 1).padStart(2, "0")}</small><h2 id={heading.id}>{heading.text}</h2></div>
-                    </header>
-                    <div className="pathology-section-body"><MarkdownBlocks blocks={blocks} /></div>
-                  </section>
+                  <FicheSectionCard
+                    chapterLabel={section.chapter?.label}
+                    group={group.key}
+                    icon={<Icon size={17} />}
+                    id={section.id}
+                    index={numbers.get(section.id) ?? 1}
+                    key={section.id}
+                    title={section.title}
+                  >
+                    <div className="fiche-document">
+                      <MarkdownBlocks blocks={section.blocks} />
+                    </div>
+                  </FicheSectionCard>
+                );
+              })}
+            </section>
+          ))}
+
+          {document.appendix.length > 0 && (
+            <div className="fiche-appendix">
+              {document.appendix.map((section) => {
+                const Icon = iconForSection(section.title);
+                return (
+                  <FicheAnchor id={section.id} key={section.id}>
+                    <h2><Icon size={15} /> {section.title}</h2>
+                    <div className="fiche-document">
+                      <MarkdownBlocks blocks={section.blocks} />
+                    </div>
+                  </FicheAnchor>
                 );
               })}
             </div>
-          </div>
-        </div>
-      )}
-
-      {!richContent && legacySections.length > 0 && (
-        <section className="pathology-sections mx-auto mt-7 max-w-4xl" aria-label="Contenu de la fiche">
-          {legacySections.map(({ key, title, content, icon: Icon }, index) => (
-            <article className="pathology-document pathology-section" key={title}>
-              <header><span><Icon size={20} /></span><div><small>Section {String(index + 1).padStart(2, "0")}</small><h2>{title}</h2></div></header>
-              <div className="pathology-section-body"><ReportableText pathologyId={pathology.id} sectionKey={key} text={content} /></div>
-            </article>
-          ))}
-        </section>
+          )}
+        </FicheReader>
+      ) : (
+        <p className="fiche-empty">
+          <FileWarning size={18} />
+          Le contenu détaillé de cette fiche n’a pas encore été rédigé. Le résumé ci-dessus reste
+          disponible et la fiche sera complétée lors de sa révision éditoriale.
+        </p>
       )}
     </main>
   );

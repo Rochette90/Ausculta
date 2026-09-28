@@ -1,14 +1,15 @@
+import { SLUG_PATTERN } from "@/lib/validation";
 import "server-only";
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import type { Pathology, Specialty } from "../../types/medtrain";
+import type { Criticality, Pathology, Specialty } from "../../types/content";
 import { createClient } from "../supabase/server";
 
 export type PathologySummary = Pick<
   Pathology,
-  "id" | "specialty_id" | "title" | "slug" | "definition" | "difficulty"
+  "id" | "specialty_id" | "title" | "slug" | "summary" | "difficulty"
 >;
 
 export type SpecialtyCatalogItem = Specialty & {
@@ -18,12 +19,12 @@ export type SpecialtyCatalogItem = Specialty & {
 export type PathologyDetails = Pathology & {
   summary: string;
   content: string | null;
-  criticality: "standard" | "important" | "urgent";
+  criticality: Criticality;
   specialty: Pick<Specialty, "name" | "slug" | "icon" | "color"> | null;
 };
 
 async function readEditorialContent(slug: string) {
-  if (!/^[a-z0-9-]+$/.test(slug)) return null;
+  if (!SLUG_PATTERN.test(slug)) return null;
   try {
     return await readFile(path.join(process.cwd(), "content", "pathologies", `${slug}.md`), "utf8");
   } catch {
@@ -40,7 +41,7 @@ export const getSpecialtyCatalog = cache(async (): Promise<SpecialtyCatalogItem[
       .order("order_index"),
     supabase
       .from("pathologies")
-      .select("id, specialty_id, title, slug, definition, difficulty")
+      .select("id, specialty_id, title, slug, summary, difficulty")
       .eq("is_published", true)
       .order("title"),
   ]);
@@ -61,9 +62,7 @@ export const getPathologyBySlug = cache(async (slug: string): Promise<PathologyD
   const [{ data, error }, editorialContent] = await Promise.all([supabase
     .from("pathologies")
     .select(`
-      id, specialty_id, title, slug, definition, pathophysiology, symptoms,
-      risk_factors, complementary_exams, differential_diagnosis, treatments,
-      complications, monitoring, difficulty, is_published, created_at, updated_at,
+      id, specialty_id, title, slug, difficulty, is_published, created_at, updated_at,
       summary, content, criticality, review_status, reviewed_by, reviewer_name, reviewed_at,
       specialty:specialties(name, slug, icon, color)
     `)

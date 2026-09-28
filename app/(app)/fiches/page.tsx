@@ -1,8 +1,6 @@
-import { ConnectedExperience } from "../../../components/app/ConnectedExperience";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export const metadata = { title: "Fiches pathologies — MedTrain" };
-
+// L'ancienne bibliothèque legacy est remplacée par le catalogue connecté.
 export default function FichesPage() {
-  return <ConnectedExperience returnTo="/fiches" screen="fiches" />;
+  redirect("/specialties");
 }
