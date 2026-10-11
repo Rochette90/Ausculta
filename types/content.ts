@@ -1,5 +1,4 @@
 export type Difficulty = "facile" | "moyen" | "difficile";
-export type UserRole = "student" | "admin";
 export type QuestionType = "single_best_answer" | "multiple_choice" | "long_menu";
 export type QuestionReviewStatus = "draft" | "in_review" | "approved" | "rejected";
 export type PathologyReviewStatus = "needs_review" | "reviewed";
@@ -74,8 +73,6 @@ export type QuestionOption = {
   is_correct: boolean;
   order_index: number;
 };
-
-export type PublicQuestionOption = Omit<QuestionOption, "is_correct">;
 
 export type UserProgress = {
   id: string;

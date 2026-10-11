@@ -49,17 +49,6 @@ async function getProgress(admin: ReturnType<typeof createAdminClient>, userId: 
   } satisfies Progress;
 }
 
-export async function GET() {
-  try {
-    const user = await requireAuthenticatedUser();
-    const admin = createAdminClient();
-    await enforceRateLimit(admin, user.id, "progress-read", 120, 60);
-    return apiJson(await getProgress(admin, user.id));
-  } catch (error) {
-    return handleApiError(error);
-  }
-}
-
 export async function POST(request: Request) {
   try {
     const user = await requireAuthenticatedUser();

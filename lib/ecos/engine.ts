@@ -155,10 +155,6 @@ export function scenarioRuleTiers(scenario: EcosScenario): EcosRule[][] {
   ];
 }
 
-export function scenarioRules(scenario: EcosScenario): EcosRule[] {
-  return scenarioRuleTiers(scenario).flat();
-}
-
 function matchScore(normalizedText: string, keywords: readonly string[]) {
   return keywords.reduce((score, keyword) => score + (hasKeyword(normalizedText, keyword) ? keywordWeight(keyword) : 0), 0);
 }

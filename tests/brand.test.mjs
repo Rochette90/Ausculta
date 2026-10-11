@@ -22,8 +22,6 @@ async function sourceFiles(roots) {
   const files = [];
   async function walk(dir) {
     for (const entry of await readdir(dir, { withFileTypes: true })) {
-      // Un doublon non routé traîne dans le dépôt : hors périmètre.
-      if (entry.name.includes(" 2.")) continue;
       const child = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, dir);
       if (entry.isDirectory()) await walk(child);
       else if (/\.(tsx?|mjs|css)$/.test(entry.name)) files.push(child);
