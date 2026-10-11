@@ -150,7 +150,6 @@
 .topbar .avatar { background: var(--mint); color: var(--mint-dark); }
 
 /* ECOS : résultats de l'examinateur, actions rapides et débriefing */
-.quick-actions { flex-wrap: wrap; }
 .message.examiner { max-width: 88%; }
 .message.examiner > span { color: var(--primary); }
 .message.examiner p { background: var(--surface-subtle); border-style: dashed; border-radius: 12px; font-size: 14px; }
