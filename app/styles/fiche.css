@@ -1,0 +1,818 @@
+/* ==========================================================================
+   Fiches médicales — composition de référence clinique : en-tête compact,
+   sommaire persistant qui suit la lecture, sections repliables et corps dense
+   mais respirant. Objectif : balayer d'abord, lire ensuite.
+   ========================================================================== */
+
+.fiche {
+  --fiche-top: 5.5rem;
+  --fiche-radius: 1.15rem;
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 6rem;
+}
+@media (min-width: 640px) { .fiche { padding-inline: 1.5rem; } }
+@media (min-width: 1024px) { .fiche { padding-top: 1.75rem; padding-inline: 2rem; } }
+
+/* Jauge d'avancement : repère de position dans une fiche longue. */
+.fiche-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 2px;
+  pointer-events: none;
+}
+.fiche-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #22c55e);
+  transform-origin: 0 50%;
+  transition: transform .12s linear;
+}
+
+.fiche-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .9rem;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.fiche-back:hover { color: var(--primary); }
+
+/* --- En-tête ------------------------------------------------------------- */
+
+.fiche-head {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  padding-left: clamp(1.55rem, 3.2vw, 2.35rem);
+  border: 1px solid var(--line);
+  border-radius: var(--fiche-radius);
+  background: var(--surface);
+}
+.fiche-head::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--primary), #22c55e);
+  content: "";
+}
+.fiche-head.is-urgent::before { background: linear-gradient(180deg, #f43f5e, #f97316); }
+
+.fiche-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .85rem; }
+.fiche-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .26rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface-subtle);
+  font-size: .69rem;
+  font-weight: 780;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.fiche-chip.is-specialty { color: var(--mint-dark); border-color: color-mix(in srgb, var(--primary) 28%, transparent); background: var(--mint); }
+.fiche-chip.is-urgent { color: #9f1239; border-color: #fecdd3; background: #fff1f2; }
+.fiche-chip.is-reviewed { color: #065f46; border-color: #a7f3d0; background: #ecfdf5; }
+.fiche-chip.is-draft { color: #92400e; border-color: #fde68a; background: #fffbeb; }
+
+.fiche-head h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.026em;
+}
+.fiche-synonyms { margin: .5rem 0 0; color: var(--muted); font-size: .85rem; line-height: 1.5; }
+.fiche-synonyms > span {
+  margin-right: .35rem;
+  color: var(--muted-light);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.fiche-lead { max-width: 64ch; margin: .85rem 0 0; color: var(--ink-secondary); font-size: 1rem; line-height: 1.65; }
+
+.fiche-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem 1.1rem;
+  margin-top: 1rem;
+  padding-top: .85rem;
+  border-top: 1px solid var(--line-subtle);
+  color: var(--muted);
+  font-size: .77rem;
+  font-weight: 620;
+}
+.fiche-meta span { display: inline-flex; align-items: center; gap: .35rem; }
+.fiche-meta .is-reviewed { color: #0f766e; }
+.fiche-meta .is-draft { color: #b45309; }
+.fiche-actions { margin-top: .95rem; }
+
+.fiche-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin: .95rem 0 0; padding: 0; list-style: none; }
+.fiche-tags li {
+  padding: .18rem .5rem;
+  border-radius: .4rem;
+  color: var(--muted);
+  background: var(--surface-subtle);
+  font-size: .71rem;
+  font-weight: 620;
+}
+.fiche-tags li::before { margin-right: .12rem; color: var(--muted-light); content: "#"; }
+
+/* --- Couleurs de phase ---------------------------------------------------- */
+/* Chaque phase du squelette porte sa teinte : le lecteur sait, à la couleur,
+   s'il est dans la synthèse, la clinique, le diagnostic ou la thérapeutique. */
+
+:is(.fiche-part, .fiche-section, .fiche-toc-group) { --group-accent: var(--primary); --group-soft: var(--mint); }
+:is(.fiche-part, .fiche-section, .fiche-toc-group)[data-group="clinique"] { --group-accent: var(--blue); --group-soft: var(--blue-light); }
+:is(.fiche-part, .fiche-section, .fiche-toc-group)[data-group="diagnostic"] { --group-accent: #7c3aed; --group-soft: #f1ecff; }
+:is(.fiche-part, .fiche-section, .fiche-toc-group)[data-group="traitement"] { --group-accent: var(--amber); --group-soft: var(--amber-light); }
+:is(.fiche-part, .fiche-section, .fiche-toc-group):is([data-group="ressources"], [data-group="annexes"]) {
+  --group-accent: var(--muted);
+  --group-soft: var(--surface-subtle);
+}
+
+/* --- Bandeau urgence ------------------------------------------------------- */
+/* Sur une fiche d'urgence, le premier geste doit être à un clic du titre. */
+
+.fiche-alert {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin-top: .7rem;
+  padding: .75rem 1rem;
+  border: 1px solid #fecdd3;
+  border-left: 4px solid var(--red);
+  border-radius: .85rem;
+  color: #9f1239;
+  background: #fff1f2;
+  font-size: .87rem;
+  text-decoration: none;
+}
+.fiche-alert:hover { border-color: var(--red); }
+.fiche-alert svg { flex: 0 0 auto; }
+.fiche-alert strong {
+  display: block;
+  font-size: .68rem;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+/* --- Encadré « L'essentiel » --------------------------------------------- */
+
+.fiche-essentials {
+  margin-top: .85rem;
+  padding: 1.05rem 1.25rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--line));
+  border-radius: var(--fiche-radius);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--mint) 42%, var(--surface)), var(--surface) 72%);
+}
+.fiche-essentials > p {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin: 0 0 .7rem;
+  color: var(--mint-dark);
+  font-size: .72rem;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.fiche-essentials ol { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; margin: 0; padding: 0; list-style: none; counter-reset: essentiel; }
+.fiche-essentials li {
+  display: grid;
+  grid-template-columns: 1.3rem minmax(0, 1fr);
+  gap: .6rem;
+  color: var(--ink-secondary);
+  font-size: .91rem;
+  line-height: 1.6;
+  counter-increment: essentiel;
+}
+.fiche-essentials li::before {
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: .4rem;
+  color: var(--surface);
+  background: var(--primary);
+  font-size: .68rem;
+  font-weight: 850;
+  content: counter(essentiel);
+}
+.fiche-essentials li :is(p, ul, ol) { margin: 0; color: inherit; }
+.fiche-essentials strong { color: var(--ink); font-weight: 780; }
+
+/* --- Colonne de lecture --------------------------------------------------- */
+
+.fiche-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  align-items: start;
+  gap: 1.4rem;
+  margin-top: 1.1rem;
+}
+.fiche-layout.is-bare { display: block; margin-top: .85rem; }
+/* `minmax(0, 1fr)` borne la colonne : sans cela un tableau large étire la piste
+   au-delà du viewport et fait défiler toute la page horizontalement. */
+.fiche-stream { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.15rem; min-width: 0; }
+.fiche-stream > * { min-width: 0; }
+.fiche-document, .pathology-document { overflow-wrap: break-word; }
+
+.fiche-toc {
+  position: sticky;
+  top: var(--fiche-top);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--fiche-top) - 1.5rem);
+  padding: .7rem .5rem .5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--fiche-radius);
+  background: var(--surface);
+}
+.fiche-toc-heading {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: .1rem .5rem .5rem;
+  color: var(--muted);
+  font-size: .67rem;
+  font-weight: 850;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.fiche-toc nav { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.fiche-toc ul, .fiche-toc-mobile ul { margin: 0; padding: 0; list-style: none; }
+
+/* Le sommaire n'est pas une liste de titres : c'est le plan de raisonnement,
+   d'où les phases nommées et tenues par un filet coloré. */
+.fiche-toc-group + .fiche-toc-group { margin-top: .5rem; }
+.fiche-toc-group > ul { border-left: 1.5px solid color-mix(in srgb, var(--group-accent) 25%, transparent); margin-left: .62rem; }
+.fiche-toc-group-label {
+  display: flex;
+  align-items: center;
+  gap: .38rem;
+  margin: 0 0 .15rem;
+  padding: .25rem .5rem;
+  color: var(--muted);
+  font-size: .62rem;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.fiche-toc-group-dot {
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: var(--group-accent);
+}
+.fiche-toc-link {
+  display: grid;
+  grid-template-columns: 1.45rem minmax(0, 1fr);
+  gap: .3rem;
+  padding: .4rem .5rem;
+  border-radius: .55rem;
+  color: var(--muted);
+  font-size: .79rem;
+  font-weight: 640;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color .15s, background .15s;
+}
+.fiche-toc-index { padding-top: .1rem; color: var(--muted-light); font-size: .63rem; font-weight: 850; }
+.fiche-toc-link:hover { color: var(--ink); background: var(--surface-subtle); }
+.fiche-toc-link[aria-current] {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--group-accent) 14%, transparent);
+  box-shadow: inset 2px 0 0 var(--group-accent);
+  font-weight: 790;
+}
+.fiche-toc-link[aria-current] .fiche-toc-index { color: var(--group-accent); }
+.fiche-toc-sub { margin: .1rem 0 .35rem 1.6rem; border-left: 1px solid var(--line); }
+.fiche-toc-sub a {
+  display: block;
+  padding: .22rem .55rem;
+  color: var(--muted);
+  font-size: .74rem;
+  line-height: 1.35;
+  text-decoration: none;
+}
+.fiche-toc-sub a:hover { color: var(--group-accent); }
+.fiche-toc footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .4rem;
+  margin-top: .45rem;
+  padding: .45rem .5rem 0;
+  border-top: 1px solid var(--line-subtle);
+  color: var(--muted-light);
+  font-size: .66rem;
+}
+.fiche-toc footer button {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .2rem .4rem;
+  border: 0;
+  border-radius: .4rem;
+  color: var(--muted);
+  background: transparent;
+  font-size: .66rem;
+  font-weight: 720;
+}
+.fiche-toc footer button:hover { color: var(--primary); background: var(--surface-subtle); }
+
+.fiche-toc-mobile {
+  display: none;
+  overflow: hidden;
+  margin-top: .85rem;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: var(--surface);
+}
+.fiche-toc-mobile summary {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .75rem .9rem;
+  color: var(--ink);
+  font-size: .82rem;
+  font-weight: 760;
+  cursor: pointer;
+}
+.fiche-toc-mobile summary small { margin-left: auto; color: var(--muted-light); font-weight: 600; }
+.fiche-toc-mobile > ul { max-height: 55vh; overflow-y: auto; padding: .15rem .5rem .55rem; border-top: 1px solid var(--line-subtle); }
+
+/* --- Phases de lecture ------------------------------------------------------ */
+/* Le fil ne défile pas en une masse de cartes : il avance par phases du
+   raisonnement, chacune annoncée avant ses sections. */
+
+.fiche-part { display: grid; grid-template-columns: minmax(0, 1fr); gap: .55rem; }
+.fiche-part + .fiche-part { margin-top: 1.15rem; }
+.fiche-part-head {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .1rem .15rem .55rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--group-accent) 28%, var(--line-subtle));
+}
+.fiche-part-index {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: .5rem;
+  color: var(--group-accent);
+  background: color-mix(in srgb, var(--group-accent) 14%, transparent);
+  font-size: .68rem;
+  font-weight: 850;
+}
+.fiche-part-head > div { flex: 1 1 auto; min-width: 0; }
+.fiche-part-head h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: .78rem;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.fiche-part-head small { display: block; margin-top: .1rem; color: var(--muted); font-size: .77rem; font-weight: 500; }
+.fiche-part-count { flex: 0 0 auto; color: var(--muted-light); font-size: .68rem; font-weight: 720; }
+
+/* --- Sections ------------------------------------------------------------- */
+
+.fiche-section {
+  scroll-margin-top: calc(var(--fiche-top) + .75rem);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-left: 3px solid transparent;
+  border-radius: var(--fiche-radius);
+  background: var(--surface);
+  transition: border-color .2s;
+}
+.fiche-section.is-active { border-color: color-mix(in srgb, var(--group-accent) 32%, var(--line)); border-left-color: var(--group-accent); }
+.fiche-section > header {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .75rem .95rem;
+  border-bottom: 1px solid var(--line-subtle);
+  background: color-mix(in srgb, var(--group-soft) 30%, var(--surface));
+}
+.fiche-section.is-collapsed > header { border-bottom-color: transparent; }
+/* Le numéro est le repère commun sommaire / fil / révision entre étudiants. */
+.fiche-section-index {
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--group-accent) 75%, var(--muted));
+  font-size: .72rem;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+}
+.fiche-section-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid color-mix(in srgb, var(--group-accent) 20%, var(--line));
+  border-radius: .6rem;
+  color: var(--group-accent);
+  background: var(--surface);
+}
+.fiche-section > header > div { flex: 1 1 auto; min-width: 0; }
+.fiche-section > header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.04rem;
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -.012em;
+}
+/* Intitulé canonique rappelé quand la fiche emploie un autre mot. */
+.fiche-section > header small {
+  display: block;
+  margin-top: .12rem;
+  color: var(--muted-light);
+  font-size: .63rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.fiche-section-toggle {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border: 1px solid transparent;
+  border-radius: .5rem;
+  color: var(--muted);
+  background: transparent;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.fiche-section-toggle:hover { color: var(--group-accent); border-color: var(--line); background: var(--surface); }
+.fiche-section-toggle svg { transition: transform .2s; }
+.fiche-section.is-collapsed .fiche-section-toggle svg { transform: rotate(-90deg); }
+.fiche-section-body { padding: 1rem clamp(.95rem, 2.4vw, 1.45rem) 1.2rem; }
+
+.fiche-preamble { padding: 0; }
+.fiche-preamble .callout { margin: 0 0 .3rem; }
+
+.fiche-appendix { display: grid; grid-template-columns: minmax(0, 1fr); gap: .7rem; }
+.fiche-appendix section {
+  scroll-margin-top: calc(var(--fiche-top) + .75rem);
+  padding: .95rem 1.1rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--fiche-radius);
+  background: color-mix(in srgb, var(--surface-subtle) 50%, var(--surface));
+}
+.fiche-appendix h2 {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin: 0 0 .45rem;
+  color: var(--muted);
+  font-size: .69rem;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.fiche-appendix .fiche-document { font-size: .87rem; }
+
+.fiche-empty {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  margin-top: .9rem;
+  padding: 1.05rem 1.2rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--fiche-radius);
+  color: var(--muted);
+  background: var(--surface);
+  font-size: .9rem;
+  line-height: 1.6;
+}
+.fiche-empty svg { flex: 0 0 auto; margin-top: .15rem; color: var(--amber); }
+
+/* --- Corps de texte ------------------------------------------------------- */
+/* `.pathology-document` reste l'alias utilisé par l'aperçu de l'éditeur admin. */
+
+.fiche-document,
+.pathology-document { color: var(--ink-secondary); font-size: .955rem; line-height: 1.68; }
+.fiche-document > :first-child,
+.pathology-document > :first-child { margin-top: 0; }
+.fiche-document > :last-child,
+.pathology-document > :last-child { margin-bottom: 0; }
+
+.fiche-document h2,
+.pathology-document h2 {
+  scroll-margin-top: calc(var(--fiche-top, 5.5rem) + .75rem);
+  margin: 2rem 0 .75rem;
+  color: var(--ink);
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: -.016em;
+}
+.fiche-document h3,
+.pathology-document h3 {
+  scroll-margin-top: calc(var(--fiche-top, 5.5rem) + .75rem);
+  display: flex;
+  align-items: baseline;
+  gap: .45rem;
+  margin: 1.45rem 0 .45rem;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: .75rem;
+  font-weight: 850;
+  letter-spacing: .1em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+.fiche-document h3::before,
+.pathology-document h3::before {
+  flex: 0 0 auto;
+  width: .3rem;
+  height: .3rem;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateY(-.15em);
+  content: "";
+}
+.fiche-document :is(h2, h3, h4):first-child,
+.pathology-document :is(h2, h3, h4):first-child { margin-top: 0; }
+.fiche-document h4,
+.pathology-document h4 { margin: 1.05rem 0 .3rem; color: var(--ink); font-size: .9rem; font-weight: 800; }
+
+.fiche-document p,
+.pathology-document p { margin: .6rem 0; }
+.fiche-document :is(ul, ol),
+.pathology-document :is(ul, ol) { margin: .55rem 0 .95rem; padding-left: 1.15rem; }
+.fiche-document li,
+.pathology-document li { margin: .3rem 0; padding-left: .1rem; }
+.fiche-document li::marker,
+.pathology-document li::marker { color: var(--primary); font-weight: 800; }
+.fiche-document :is(ul, ol) :is(ul, ol),
+.pathology-document :is(ul, ol) :is(ul, ol) { margin: .28rem 0 .4rem; }
+.fiche-document ul ul, .pathology-document ul ul { list-style: circle; }
+.fiche-document ul ul ul, .pathology-document ul ul ul { list-style: square; }
+
+.fiche-document li.fiche-task {
+  display: flex;
+  align-items: baseline;
+  gap: .45rem;
+  margin-left: -1.05rem;
+  color: var(--muted);
+  list-style: none;
+}
+.fiche-document li.fiche-task input { margin: 0; accent-color: var(--primary); }
+
+.fiche-document strong,
+.pathology-document strong { color: var(--ink); font-weight: 760; }
+.fiche-document em,
+.pathology-document em { color: var(--muted); }
+.fiche-document hr,
+.pathology-document hr { margin: 1.3rem 0; border: 0; border-top: 1px solid var(--line-subtle); }
+
+/* Surlignage « à retenir » : reprend les passages mis en rouge dans le vault. */
+.fiche-document .fiche-highlight,
+.pathology-document .fiche-highlight {
+  padding: .04em .18em;
+  border-radius: .25rem;
+  color: var(--ink);
+  background: color-mix(in srgb, #fde68a 68%, transparent);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.fiche-document .fiche-highlight :is(strong, em),
+.pathology-document .fiche-highlight :is(strong, em) { color: inherit; }
+
+.fiche-document code,
+.pathology-document code {
+  padding: .1rem .35rem;
+  border: 1px solid var(--line);
+  border-radius: .35rem;
+  color: var(--ink);
+  background: var(--surface-subtle);
+  font-size: .85em;
+}
+.fiche-document a,
+.pathology-document a {
+  color: var(--primary);
+  font-weight: 660;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--primary) 32%, transparent);
+  text-underline-offset: .18em;
+}
+.fiche-document a:hover,
+.pathology-document a:hover { text-decoration-color: currentColor; }
+.fiche-document .wiki-ref,
+.pathology-document .wiki-ref {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--primary) 30%, transparent);
+  text-underline-offset: .18em;
+}
+.fiche-document .wiki-ref.inert,
+.pathology-document .wiki-ref.inert { color: var(--muted); text-decoration-style: dotted; cursor: default; }
+
+/* --- Encadrés cliniques ---------------------------------------------------- */
+
+.fiche-document .callout,
+.pathology-document .callout {
+  --callout-accent: #0891b2;
+  --callout-line: #bae6fd;
+  --callout-bg: #f0f9ff;
+  --callout-ink: #155e75;
+  margin: 1rem 0;
+  padding: .75rem .9rem .8rem;
+  border: 1px solid var(--callout-line);
+  border-left: 3px solid var(--callout-accent);
+  border-radius: .7rem;
+  color: var(--callout-ink);
+  background: var(--callout-bg);
+}
+.fiche-document .callout-note, .pathology-document .callout-note,
+.fiche-document .callout-quote, .pathology-document .callout-quote {
+  --callout-accent: #64748b; --callout-line: #e2e8f0; --callout-bg: #f8fafc; --callout-ink: #334155;
+}
+.fiche-document :is(.callout-tip, .callout-success), .pathology-document :is(.callout-tip, .callout-success) {
+  --callout-accent: #059669; --callout-line: #a7f3d0; --callout-bg: #ecfdf5; --callout-ink: #065f46;
+}
+.fiche-document .callout-warning, .pathology-document .callout-warning {
+  --callout-accent: #d97706; --callout-line: #fde68a; --callout-bg: #fffbeb; --callout-ink: #92400e;
+}
+.fiche-document .callout-danger, .pathology-document .callout-danger {
+  --callout-accent: #e11d48; --callout-line: #fecdd3; --callout-bg: #fff1f2; --callout-ink: #9f1239;
+}
+.fiche-document .callout-important, .pathology-document .callout-important {
+  --callout-accent: #7c3aed; --callout-line: #ddd6fe; --callout-bg: #f5f3ff; --callout-ink: #5b21b6;
+}
+.fiche-document .callout-example, .pathology-document .callout-example {
+  --callout-accent: #4f46e5; --callout-line: #c7d2fe; --callout-bg: #eef2ff; --callout-ink: #3730a3;
+}
+.fiche-document .callout-title,
+.pathology-document .callout-title {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0 0 .25rem;
+  color: var(--callout-accent);
+  font-size: .69rem;
+  font-weight: 850;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.fiche-document .callout-body > :first-child,
+.pathology-document .callout-body > :first-child { margin-top: 0; }
+.fiche-document .callout-body > :last-child,
+.pathology-document .callout-body > :last-child { margin-bottom: 0; }
+.fiche-document .callout-body :is(p, li, h3, h4, strong, em),
+.pathology-document .callout-body :is(p, li, h3, h4, strong, em) { color: inherit; }
+.fiche-document .callout-body strong,
+.pathology-document .callout-body strong { font-weight: 820; }
+.fiche-document .callout-body li::marker,
+.pathology-document .callout-body li::marker { color: var(--callout-accent); }
+.fiche-document .callout-body h3::before,
+.pathology-document .callout-body h3::before { background: currentColor; }
+.fiche-document .callout-quote .callout-body,
+.pathology-document .callout-quote .callout-body { font-style: italic; }
+
+/* --- Tableaux -------------------------------------------------------------- */
+
+.fiche-document .table-scroll,
+.pathology-document .table-scroll {
+  max-width: 100%;
+  margin: .95rem 0 1.2rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: .8rem;
+  -webkit-overflow-scrolling: touch;
+}
+.fiche-document .table-scroll:focus-visible,
+.pathology-document .table-scroll:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fiche-document table,
+.pathology-document table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: .87rem;
+  line-height: 1.5;
+}
+.fiche-document th,
+.pathology-document th {
+  padding: .58rem .75rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--surface-subtle);
+  font-size: .67rem;
+  font-weight: 850;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.fiche-document td,
+.pathology-document td { padding: .58rem .75rem; border-bottom: 1px solid var(--line-subtle); vertical-align: top; }
+.fiche-document tbody tr:last-child td,
+.pathology-document tbody tr:last-child td { border-bottom: 0; }
+.fiche-document tbody tr:nth-child(even) td,
+.pathology-document tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-subtle) 42%, transparent); }
+.fiche-document :is(th, td) :is(ul, ol),
+.pathology-document :is(th, td) :is(ul, ol) { margin: .2rem 0; padding-left: .95rem; }
+
+/* --- Thème sombre ---------------------------------------------------------- */
+
+html[data-theme="dark"] .fiche-chip.is-urgent { color: #fda4af; border-color: #881337; background: #35121e; }
+html[data-theme="dark"] .fiche-chip.is-reviewed { color: #6ee7b7; border-color: #065f46; background: #092d24; }
+html[data-theme="dark"] .fiche-chip.is-draft { color: #fde68a; border-color: #713f12; background: #2d210c; }
+html[data-theme="dark"] .fiche-meta .is-reviewed { color: #5eead4; }
+html[data-theme="dark"] .fiche-meta .is-draft { color: #fbbf24; }
+html[data-theme="dark"] .fiche-essentials li::before { color: #041312; }
+html[data-theme="dark"] :is(.fiche-part, .fiche-section, .fiche-toc-group)[data-group="diagnostic"] {
+  --group-accent: #a78bfa;
+  --group-soft: #241f3d;
+}
+html[data-theme="dark"] .fiche-alert { color: #fecdd3; border-color: #881337; background: #35121e; }
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) .fiche-highlight {
+  color: #fef3c7;
+  background: color-mix(in srgb, #f59e0b 26%, transparent);
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) .callout {
+  --callout-accent: #22d3ee; --callout-line: #164e63; --callout-bg: #0c2a36; --callout-ink: #a5f3fc;
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) :is(.callout-note, .callout-quote) {
+  --callout-accent: #94a3b8; --callout-line: #334155; --callout-bg: #17212f; --callout-ink: #cbd5e1;
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) :is(.callout-tip, .callout-success) {
+  --callout-accent: #34d399; --callout-line: #065f46; --callout-bg: #092d24; --callout-ink: #a7f3d0;
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) .callout-warning {
+  --callout-accent: #fbbf24; --callout-line: #713f12; --callout-bg: #2d210c; --callout-ink: #fde68a;
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) .callout-danger {
+  --callout-accent: #fb7185; --callout-line: #881337; --callout-bg: #35121e; --callout-ink: #fecdd3;
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) .callout-important {
+  --callout-accent: #a78bfa; --callout-line: #4c1d95; --callout-bg: #1e1b3a; --callout-ink: #ddd6fe;
+}
+html[data-theme="dark"] :is(.fiche-document, .pathology-document) .callout-example {
+  --callout-accent: #818cf8; --callout-line: #3730a3; --callout-bg: #1b1d3a; --callout-ink: #c7d2fe;
+}
+
+/* --- Adaptation écrans ----------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  .fiche-layout { display: block; margin-top: 0; }
+  .fiche-toc { display: none; }
+  .fiche-toc-mobile { display: block; }
+  .fiche-stream { margin-top: .85rem; }
+}
+@media (max-width: 640px) {
+  .fiche { padding-bottom: 4.5rem; }
+  .fiche-head { padding: 1.1rem 1rem 1.15rem 1.25rem; }
+  .fiche-section > header { gap: .6rem; padding: .7rem .8rem; }
+  .fiche-section-body { padding: .9rem .9rem 1.05rem; }
+  .fiche-document, .pathology-document { font-size: .93rem; }
+  .fiche-essentials { padding: .95rem 1rem 1.05rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fiche-progress span,
+  .fiche-section,
+  .fiche-section-toggle svg,
+  .fiche-toc-link { transition: none; }
+}
+
+/* --- Impression ------------------------------------------------------------ */
+
+@media print {
+  .fiche-progress,
+  .fiche-toc,
+  .fiche-toc-mobile,
+  .fiche-back,
+  .fiche-actions,
+  .fiche-section-toggle { display: none !important; }
+  .fiche { max-width: none; padding: 0; }
+  .fiche-layout { display: block; }
+  .fiche-stream { display: block; }
+  .fiche-section-body[hidden] { display: block !important; }
+  .fiche-section { break-inside: avoid; margin-bottom: .6rem; }
+  .fiche-part-head { break-after: avoid; }
+  .fiche-alert { break-inside: avoid; }
+  .fiche-head, .fiche-essentials { break-inside: avoid; }
+  :is(.fiche-document, .pathology-document) :is(.callout, .table-scroll) { break-inside: avoid; }
+  :is(.fiche-document, .pathology-document) :is(h2, h3) { break-after: avoid; }
+}
+

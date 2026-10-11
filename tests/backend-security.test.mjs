@@ -158,10 +158,12 @@ test("the marketing homepage reflects live product data and the current product 
   assert.match(page, /stats=\{stats\}/);
   assert.match(stats, /\.eq\("is_published", true\)/);
   // Le lancement se concentre sur les stations ECOS (lib/features.ts).
-  assert.match(landing, /Réviser moins au hasard/);
+  assert.match(landing, /vous entraîne aux ECOS/);
   assert.match(landing, /patient simulé/);
-  for (const step of ["Anamnèse", "Examen clinique", "Synthèse", "Débriefing"]) assert.match(landing, new RegExp(`<h3>${step}</h3>`));
-  assert.match(landing, /MODE VOCAL/);
+  // Les quatre temps d'une station, chacun titré dans la marge.
+  for (const step of ["Anamnèse", "Examen clinique", "Synthèse", "Débriefing"]) assert.match(landing, new RegExp(`name: "${step}"`));
+  assert.match(landing, /<h3>\{step\.name\}<\/h3>/);
+  assert.match(landing, /Parlez-lui à voix haute/);
   assert.match(landing, /stats\.caseCount/);
   assert.match(landing, /EXAM_DURATION_SECONDS/);
   assert.match(landing, /UPCOMING_FEATURE_LABELS/);
@@ -187,10 +189,11 @@ test("public marketing pages explain the method and provide FAQ and contact rout
   ]);
   for (const step of ["anamnese", "examen", "synthese", "debriefing"]) {
     assert.match(method, new RegExp(`id: "${step}"`));
-    assert.match(landing, new RegExp(`href="/methode#${step}"`));
+    assert.match(landing, new RegExp(`href: "/methode#${step}"`));
     assert.match(footer, new RegExp(`href: "/methode#${step}"`));
   }
-  assert.match(method, /DEUX MODES/);
+  assert.match(method, /id="modes"/);
+  assert.match(method, /Deux modes/);
   assert.match(faq, /Comment se déroule une station/);
   assert.match(faq, /<details/);
   assert.match(faq, /Comment les fiches sont-elles validées/);
@@ -202,8 +205,8 @@ test("public marketing pages explain the method and provide FAQ and contact rout
   assert.match(xrayTutorial, /InteractiveTutorial/);
   assert.match(quality, /Révision signée/);
   assert.match(quality, /À réviser/);
-  assert.match(about, /NOS PRINCIPES/);
-  assert.match(news, /JOURNAL DU PRODUIT|NOUVEAUTÉS/);
+  assert.match(about, /Nos principes/);
+  assert.match(news, /Journal du produit/);
   for (const route of ["catalogue", "methode", "pricing", "faq"]) {
     assert.match(header, new RegExp(`href: "/${route}"`));
   }

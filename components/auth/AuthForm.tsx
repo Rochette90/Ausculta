@@ -4,10 +4,6 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase/client";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { BrandLogo } from "../brand/BrandLogo";
 
 export function AuthForm({ nextPath, switchNextPath = nextPath, mode }: { nextPath: string; switchNextPath?: string; mode: "login" | "signup" }) {
@@ -56,23 +52,22 @@ export function AuthForm({ nextPath, switchNextPath = nextPath, mode }: { nextPa
   }
 
   return (
-    <Card className="auth-card">
-      <div className="logo auth-logo"><BrandLogo priority /></div>
-      <p className="eyebrow">{isSignup ? "CRÉER VOTRE COMPTE" : "ESPACE ÉTUDIANT SÉCURISÉ"}</p>
-      <h1>{isSignup ? "Commencez à pratiquer." : "Retrouvez votre progression."}</h1>
-      <p>{isSignup ? "Créez gratuitement votre espace de révision clinique." : "Connectez-vous pour retrouver vos stations et votre progression."}</p>
-      <Button className="full" variant="outline" type="button" disabled={loading} onClick={signInWithGoogle}>Continuer avec Google</Button>
-      <div className="auth-divider"><span>ou</span></div>
+    <div className="auth-card">
+      <Link className="logo auth-mobile-logo" href="/" aria-label="Retour à l’accueil"><BrandLogo /></Link>
+      <h1>{isSignup ? "Créer votre compte" : "Se connecter"}</h1>
+      <p className="auth-intro">{isSignup ? "Gratuit, sans carte bancaire. Votre première station vous attend juste après." : "Retrouvez vos stations et votre progression."}</p>
+      <button className="button quiet full" type="button" disabled={loading} onClick={signInWithGoogle}>Continuer avec Google</button>
+      <div className="auth-divider"><span>ou avec votre e-mail</span></div>
       <form onSubmit={signInWithEmail}>
-        <Label htmlFor="email">Adresse e-mail</Label>
-        <Input id="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="prenom.nom@unil.ch" />
-        <Label htmlFor="password">Mot de passe</Label>
-        <Input id="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="8 caractères minimum" />
-        <Button className="full" disabled={loading}>{loading ? isSignup ? "Création…" : "Connexion…" : isSignup ? "Créer mon compte" : "Se connecter"}</Button>
+        <label htmlFor="email">Adresse e-mail</label>
+        <input className="field" id="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="prenom.nom@unil.ch" />
+        <label htmlFor="password">Mot de passe</label>
+        <input className="field" id="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="8 caractères minimum" />
+        <button className="button primary full" disabled={loading} type="submit">{loading ? isSignup ? "Création…" : "Connexion…" : isSignup ? "Créer mon compte" : "Se connecter"}</button>
       </form>
       {status && <p className="auth-status" role="status">{status}</p>}
-      <p className="auth-switch">{isSignup ? "Déjà inscrit·e ?" : "Pas encore de compte ?"} <Link href={`${isSignup ? "/login" : "/signup"}?next=${encodeURIComponent(switchNextPath)}`}>{isSignup ? "Se connecter" : "S’inscrire"}</Link></p>
-      <Link className="auth-back" href="/">← Retour à l’accueil</Link>
-    </Card>
+      <p className="auth-switch">{isSignup ? "Déjà inscrit·e ?" : "Pas encore de compte ?"} <Link href={`${isSignup ? "/login" : "/signup"}?next=${encodeURIComponent(switchNextPath)}`}>{isSignup ? "Se connecter" : "Créer un compte"}</Link></p>
+      <Link className="auth-back" href="/">Retour à l’accueil</Link>
+    </div>
   );
 }

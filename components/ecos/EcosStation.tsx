@@ -8,7 +8,8 @@ import { EXAMINER_PREFIX, isExamTransition, PROCEDURE_PREFIX } from "@/lib/ecos/
 import type { EcosCriterion, EcosMessage, EcosMode, EcosProcedureCategory, EcosStationView } from "@/lib/ecos/types";
 import type { EcosDebriefView } from "@/lib/ecos/debrief";
 import type { EcosCommunicationReport, QuestionKind } from "@/lib/ecos/communication";
-import { BRAND_NAME, BRAND_NAME_UPPER } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/brand";
+import { ListeningBars } from "@/components/brand/BrandLogo";
 import { remainingSeconds } from "@/lib/ecos/timing";
 import { readChatEvents } from "@/lib/ecos/chat-stream";
 import { base64AudioBlob, PatientVoicePlayer } from "./patient-voice";
@@ -112,7 +113,6 @@ function CommunicationReport({ report }: { report: EcosCommunicationReport }) {
   ].filter(Boolean).join(" ");
   return (
     <section className="ecos-debrief communication-report" aria-labelledby="communication-title">
-      <p className="eyebrow">COMMUNICATION</p>
       <h2 id="communication-title">Ta façon de mener l’entretien</h2>
       {total > 0 && (
         <div className="question-mix">
@@ -211,8 +211,6 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const score = criteria.reduce((total, criterion) => total + criterion.earned, 0);
   const maxScore = result?.maxScore ?? station.maxScore;
   const percent = Math.round((score / maxScore) * 100);
-  const patientInitials = station.patientLabel
-    .split(/\s+/).filter((part) => /^[A-ZÀ-Ý]/.test(part)).slice(0, 2).map((part) => part[0]).join("") || "PT";
   const coveredCriterion = criteria.find((criterion) => criterion.earned === criterion.points);
   const missedCriterion = criteria.find((criterion) => criterion.earned < criterion.points);
   const timed = mode === "exam";
@@ -652,44 +650,57 @@ export function EcosStation({ station }: { station: EcosStationView }) {
     router.push("/cas");
   }
 
-  const eyebrow = ["STATION ECOS", station.specialty?.toUpperCase(), SETTING_LABEL[station.setting].toUpperCase()].filter(Boolean).join(" · ");
   const examMinutes = Math.round(examSeconds / 60);
   const phaseIndex = PHASES.findIndex((entry) => entry.id === phase);
+  const stationNumber = station.code.replace(/^station-/, "");
+  const briefingMeta = [`Station ${stationNumber}`, SETTING_LABEL[station.setting], station.specialty].filter(Boolean).join(", ");
+  // « M. Favre, 62 ans » → « M. Favre » dans l'échange.
+  const patientShort = station.patientLabel.split(",")[0]?.trim() || "Patient";
+  const patientState = speaking || loading ? "speaking" : listening ? "listening" : "idle";
+  const filledPoints = Math.floor(score);
+  const halfPoint = score - filledPoints >= 0.5;
 
   return (
-    <main className="page-enter mx-auto w-full max-w-7xl px-4 pb-28 pt-8 sm:px-6 lg:px-8">
-      {stationError && <div role="alert" className="learning-notice">{stationError}{screen === "report" && <button className="button secondary ml-3" disabled={saving} onClick={() => void finishStation()}>Réessayer la sauvegarde</button>}</div>}
+    <main className="station-main">
+      {stationError && <div role="alert" className="learning-notice">{stationError}{screen === "report" && <button className="button secondary small ml-3" disabled={saving} onClick={() => void finishStation()}>Réessayer la sauvegarde</button>}</div>}
       {saving && <p role="status" className="learning-notice">Enregistrement et calcul du bilan…</p>}
       {screen === "briefing" && (
-        <div className="briefing-page page-enter">
-          <button className="back-link" onClick={backToCatalog}>← Tous les cas cliniques</button>
+        <div className="briefing">
+          <button className="text-link station-back" onClick={backToCatalog} type="button">Toutes les stations</button>
           <div className="briefing-grid">
-            <section>
-              <p className="eyebrow">{eyebrow}</p>
+            <section className="briefing-main">
+              <p className="briefing-meta">{briefingMeta}</p>
               <h1>{station.candidateTitle}</h1>
-              <p className="lead">Anamnèse, examen clinique puis synthèse : la station se déroule comme à l’examen.</p>
-              <div className="instruction-card">
-                <div className="paper-label">CONSIGNE AU CANDIDAT</div>
+              <div className="consigne">
+                <h2>Consigne au candidat</h2>
                 {station.brief.map((line, index) => index === 1 ? <p key={line}><strong>{line}</strong></p> : <p key={line}>{line}</p>)}
-                <ol className="ecos-brief-steps">
-                  <li><strong>Anamnèse</strong> : interroge le patient, à l’écrit ou à la voix.</li>
-                  <li><strong>Examen clinique</strong> : annonce-le (« On passe à l’examen clinique ») puis choisis tes gestes et tes examens ; chacun débloque son résultat. Les gestes inutiles coûtent des points.</li>
-                  <li><strong>Synthèse</strong> : ton diagnostic principal et ta prise en charge, puis le bilan. Une fois la synthèse ouverte, l’entretien et l’examen sont terminés.</li>
-                </ol>
               </div>
-              <fieldset className="ecos-mode-options"><legend>Choisis tes conditions</legend><label htmlFor="ecos-training" aria-label="Mode entraînement"><input id="ecos-training" type="radio" name="ecos-mode" checked={mode === "training"} onChange={() => setMode("training")} /><span><strong>Entraînement</strong><small>Sans chronomètre. La grille et les conseils arrivent au bilan, à la fin.</small></span></label><label htmlFor="ecos-exam" aria-label="Mode examen"><input id="ecos-exam" type="radio" name="ecos-mode" checked={mode === "exam"} onChange={() => setMode("exam")} /><span><strong>Examen</strong><small>{examMinutes} minutes pour toute la station, comme le jour de l’examen.</small></span></label></fieldset>
+              <h2 className="briefing-subtitle">Le déroulé</h2>
+              <ol className="ecos-brief-steps">
+                <li><strong>Anamnèse.</strong> Interroge le patient, à l’écrit ou à la voix.</li>
+                <li><strong>Examen clinique.</strong> Annonce-le (« On passe à l’examen clinique ») puis choisis tes gestes et tes examens ; chacun débloque son résultat. Les gestes inutiles coûtent des points.</li>
+                <li><strong>Synthèse.</strong> Ton diagnostic principal et ta prise en charge, puis le bilan. Une fois la synthèse ouverte, l’entretien et l’examen sont terminés.</li>
+              </ol>
+              <fieldset className="ecos-mode-options">
+                <legend>Choisis tes conditions</legend>
+                <label htmlFor="ecos-training" aria-label="Mode entraînement"><input id="ecos-training" type="radio" name="ecos-mode" checked={mode === "training"} onChange={() => setMode("training")} /><span><strong>Entraînement</strong><small>Sans chronomètre. La grille et les conseils arrivent au bilan, à la fin.</small></span></label>
+                <label htmlFor="ecos-exam" aria-label="Mode examen"><input id="ecos-exam" type="radio" name="ecos-mode" checked={mode === "exam"} onChange={() => setMode("exam")} /><span><strong>Examen</strong><small>{examMinutes} minutes pour toute la station, comme le jour de l’examen.</small></span></label>
+              </fieldset>
             </section>
-            <aside className="brief-aside">
-              <div className="patient-portrait"><span>{patientInitials}</span><i /></div>
-              <h2>{station.patientLabel}</h2>
-              <p>Patient simulé interactif</p>
-              <div className="station-facts"><div><strong>{mode === "exam" ? formatTime(examSeconds) : "Libre"}</strong><span>{mode === "exam" ? "Temps disponible" : "Sans chronomètre"}</span></div><div><strong>{station.maxScore}</strong><span>Points possibles</span></div></div>
-              <ul>
-                <li>Microphone recommandé</li>
+            <aside className="briefing-patient" aria-label="Patient">
+              <span className="patient-mark"><ListeningBars /></span>
+              <p className="patient-name voice">{station.patientLabel}</p>
+              <p className="patient-kind">Patient simulé, répond à l’écrit et à la voix</p>
+              <dl className="briefing-facts">
+                <div><dt>{mode === "exam" ? "Temps disponible" : "Chronomètre"}</dt><dd>{mode === "exam" ? formatTime(examSeconds) : "Aucun"}</dd></div>
+                <div><dt>Points possibles</dt><dd>{station.maxScore}</dd></div>
+              </dl>
+              <ul className="briefing-tips">
+                <li>Micro recommandé</li>
                 <li>Réponses vocales en français</li>
                 <li>Débriefing et sources après la station</li>
               </ul>
-              <button className="button primary full" disabled={starting} onClick={startStation}>{starting ? "Préparation de la station…" : "Démarrer la station"}<span aria-hidden="true"> →</span></button>
+              <button className="button primary full" disabled={starting} onClick={startStation} type="button">{starting ? "Préparation de la station…" : "Entrer dans la salle"}</button>
               <small>{mode === "exam" ? "Le chronomètre démarre lorsque le patient est prêt." : "Prends le temps qu’il te faut."}</small>
             </aside>
           </div>
@@ -697,52 +708,60 @@ export function EcosStation({ station }: { station: EcosStationView }) {
       )}
 
       {screen === "station" && (
-        <div className="station-page page-enter">
-          <section className="station-header">
-            <div><p className="eyebrow">{mode === "exam" ? "MODE EXAMEN" : "MODE ENTRAÎNEMENT"}</p><h1>{station.candidateTitle}</h1></div>
-            {timed
-              ? <div className={`timer ${secondsLeft < 90 ? "timer-alert" : ""}`} role="timer" aria-live="off"><span>Temps restant</span><strong>{formatTime(secondsLeft)}</strong></div>
-              : <div className="ecos-free-time"><span>Entraînement</span><strong>Sans chrono</strong></div>}
-            <button className="button danger-ghost" disabled={busy} onClick={() => (phase === "synthese" ? void finishStation() : requestSynthesis())}>{phase === "synthese" ? "Terminer" : "Aller à la synthèse"}</button>
-          </section>
+        <div className="station">
+          <header className="station-bar">
+            <div className="station-bar-title">
+              <p>Station {stationNumber}, {mode === "exam" ? "mode examen" : "entraînement"}</p>
+              <h1>{station.candidateTitle}</h1>
+            </div>
+            <nav className="ecos-phases" aria-label="Étapes de la station">
+              <ol>
+                {PHASES.map((item, index) => {
+                  const locked = phase === "synthese" && item.id !== "synthese";
+                  return (
+                    <li key={item.id}>
+                      <button type="button" aria-current={phase === item.id ? "step" : undefined} aria-disabled={busy || locked || undefined} className={phase === item.id ? "active" : phaseIndex > index ? "done" : ""} onClick={() => { if (!busy && !locked) goToPhase(item.id); }}>
+                        {phaseIndex > index && <Check aria-hidden="true" size={14} />}{item.label}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+            <div className="station-bar-end">
+              {timed
+                ? <div className={`timer${secondsLeft < 90 ? " timer-alert" : ""}`} role="timer" aria-live="off"><span>Temps restant</span><strong>{formatTime(secondsLeft)}</strong></div>
+                : <span className="ecos-free-time">Sans chronomètre</span>}
+              <button className="button secondary small" disabled={busy} onClick={() => (phase === "synthese" ? void finishStation() : requestSynthesis())} type="button">{phase === "synthese" ? "Terminer" : "Aller à la synthèse"}</button>
+            </div>
+          </header>
 
-          <div className="consultation-grid">
-            <aside className="patient-panel">
-              <div className="patient-portrait large"><span>{patientInitials}</span><i className={loading || speaking ? "speaking" : ""} /></div>
-              <h2>{station.patientLabel}</h2>
-              <div className="patient-status"><span className={loading || speaking ? "status-dot active" : "status-dot"} />{speaking ? "Vous répond…" : loading ? "Réfléchit…" : listening ? "Vous écoute…" : phase === "examen" ? "Examen en cours" : phase === "synthese" ? "Attend vos conclusions" : "En consultation"}</div>
+          <div className="consultation">
+            <aside className="patient-panel" aria-label="Patient">
+              <div className="patient-id">
+                <span className="patient-mark"><ListeningBars state={patientState} /></span>
+                <div>
+                  <p className="patient-name voice">{station.patientLabel}</p>
+                  <p className="patient-status">{speaking ? "Vous répond…" : loading ? "Réfléchit…" : listening ? "Vous écoute…" : phase === "examen" ? "Examen en cours" : phase === "synthese" ? "Attend vos conclusions" : "En consultation"}</p>
+                </div>
+              </div>
               {phase !== "synthese" && (
-                <button className={`conversation-toggle${conversation ? " active" : ""}`} onClick={() => (conversation ? stopConversation() : startConversation())} aria-pressed={conversation}>
-                  {conversation ? <><Square aria-hidden="true" size={15} /> Arrêter la conversation</> : <><Mic aria-hidden="true" size={16} /> Conversation vocale</>}
+                <button className={`conversation-toggle${conversation ? " active" : ""}`} onClick={() => (conversation ? stopConversation() : startConversation())} aria-pressed={conversation} type="button">
+                  {conversation ? <><Square aria-hidden="true" size={15} /> Arrêter la conversation</> : <><Mic aria-hidden="true" size={17} /> Conversation vocale</>}
                 </button>
               )}
-              {!conversation && <button className="voice-toggle" onClick={toggleVoice} aria-pressed={voiceEnabled}>{voiceEnabled ? "Voix activée" : "Voix désactivée"}</button>}
-              <div className="privacy-note">Les échanges de cette simulation sont réservés à ton entraînement.</div>
+              {!conversation && <button className="voice-toggle" onClick={toggleVoice} aria-pressed={voiceEnabled} type="button">{voiceEnabled ? "Voix du patient activée" : "Voix du patient coupée"}</button>}
+              <p className="privacy-note">Les échanges de cette simulation servent uniquement à ton entraînement.</p>
             </aside>
 
-            <section className="conversation-panel">
-              <nav className="ecos-phases" aria-label="Étapes de la station">
-                <ol>
-                  {PHASES.map((item, index) => {
-                    const locked = phase === "synthese" && item.id !== "synthese";
-                    return (
-                      <li key={item.id}>
-                        <button type="button" aria-current={phase === item.id ? "step" : undefined} aria-disabled={busy || locked || undefined} className={phase === item.id ? "active" : phaseIndex > index ? "done" : ""} onClick={() => { if (!busy && !locked) goToPhase(item.id); }}>
-                          <span>{phaseIndex > index ? <Check aria-hidden="true" size={13} /> : index + 1}</span>{item.label}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </nav>
-
+            <section className="conversation-panel" aria-label="Entretien">
               {conversation && (
                 <div className="voice-stage">
-                  <span className={`voice-stage-bars${listening ? " is-listening" : speaking ? " is-speaking" : ""}`} aria-hidden="true"><i /><i /><i /><i /></span>
+                  <span className="voice-stage-mic"><ListeningBars state={patientState} /></span>
                   <p className="voice-stage-status" role="status">{speaking ? "Le patient vous répond…" : loading ? "Le patient réfléchit…" : listening ? "À vous : je vous écoute." : "Un instant…"}</p>
                   {lastSystemNote && <p className="voice-stage-note">{lastSystemNote}</p>}
                   <p className="voice-stage-heard">{input ? <><span>Compris</span> {input}</> : phase === "anamnese" ? "Parlez normalement. Pour passer à l’examen, dites « je vais vous examiner »." : "Vous pouvez encore poser une question au patient."}</p>
-                  <button type="button" className="learning-inline-link" onClick={() => setShowTranscript((value) => !value)} aria-expanded={showTranscript}>{showTranscript ? "Masquer l’échange écrit" : "Afficher l’échange écrit"}</button>
+                  <button type="button" className="text-link" onClick={() => setShowTranscript((value) => !value)} aria-expanded={showTranscript}>{showTranscript ? "Masquer l’échange écrit" : "Afficher l’échange écrit"}</button>
                 </div>
               )}
 
@@ -751,22 +770,22 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                   const view = messageView(message);
                   return (
                     <div key={`${message.role}-${index}`} className={view.className}>
-                      <span>{view.label}</span>
+                      <span>{view.label === "Patient" ? patientShort : view.label}</span>
                       <p>{view.text}</p>
                     </div>
                   );
                 })}
                 {loading && (streamingText
-                  ? <div className="message patient"><span>Patient</span><p>{streamingText}</p></div>
-                  : <div className="message patient loading-message"><span>Patient</span><p><i /><i /><i /></p></div>)}
+                  ? <div className="message patient"><span>{patientShort}</span><p>{streamingText}</p></div>
+                  : <div className="message patient loading-message"><span>{patientShort}</span><p><ListeningBars state="speaking" /><span className="sr-only">Le patient répond…</span></p></div>)}
               </div>
 
               {confirmingSynthesis && phase !== "synthese" && (
                 <div className="ecos-confirm" role="alertdialog" aria-labelledby="ecos-confirm-title">
                   <p id="ecos-confirm-title"><strong>Passer à la synthèse ?</strong> Tu ne pourras plus interroger le patient ni réaliser de geste.</p>
                   <div>
-                    <button type="button" className="button secondary" onClick={() => setConfirmingSynthesis(false)}>Continuer la station</button>
-                    <button type="button" className="button primary" disabled={openingSynthesis} onClick={() => void openSynthesis()}>Ouvrir la synthèse</button>
+                    <button type="button" className="button secondary small" onClick={() => setConfirmingSynthesis(false)}>Continuer la station</button>
+                    <button type="button" className="button primary small" disabled={openingSynthesis} onClick={() => void openSynthesis()}>Ouvrir la synthèse</button>
                   </div>
                 </div>
               )}
@@ -774,7 +793,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
               {phase === "anamnese" && !confirmingSynthesis && (
                 <div className="ecos-phase-actions">
                   <p>Anamnèse terminée ? Annonce l’examen clinique.</p>
-                  <button className="button secondary" aria-disabled={busy || undefined} onClick={() => { if (!busy) void announceExam(); }}>On passe à l’examen clinique →</button>
+                  <button className="button quiet small" aria-disabled={busy || undefined} onClick={() => { if (!busy) void announceExam(); }} type="button">On passe à l’examen clinique</button>
                 </div>
               )}
 
@@ -793,7 +812,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                             const unavailable = done || busy || timeOver;
                             return (
                               <button key={procedure.id} type="button" className={done ? "done" : ""} aria-pressed={done} aria-disabled={unavailable || undefined} onClick={() => { if (!unavailable) void performProcedure(procedure.id); }}>
-                                {done ? <Check aria-hidden="true" size={15} /> : null}{pendingProcedure === procedure.id ? "Résultat en cours…" : procedure.label}
+                                <span className="procedure-box" aria-hidden="true">{done ? <Check size={14} /> : null}</span>{pendingProcedure === procedure.id ? "Résultat en cours…" : procedure.label}
                               </button>
                             );
                           })}
@@ -803,13 +822,13 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                   })}
                   <div className="ecos-last-result" aria-live="polite">
                     {lastResult
-                      ? <p><strong>{lastResult.label}</strong> — {lastResult.result}</p>
+                      ? <p><strong>{lastResult.label}</strong>{lastResult.result}</p>
                       : <p>Les résultats s’affichent ici et dans l’échange.</p>}
                   </div>
                   {!confirmingSynthesis && (
                     <div className="ecos-phase-actions">
                       <p>{performed.length} geste{performed.length > 1 ? "s" : ""} réalisé{performed.length > 1 ? "s" : ""}.</p>
-                      <button className="button secondary" aria-disabled={busy || undefined} onClick={() => { if (!busy) requestSynthesis(); }}>Passer à la synthèse →</button>
+                      <button className="button quiet small" aria-disabled={busy || undefined} onClick={() => { if (!busy) requestSynthesis(); }} type="button">Passer à la synthèse</button>
                     </div>
                   )}
                 </div>
@@ -825,7 +844,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                           <label key={option}><input type="radio" name="ecos-diagnosis" value={option} checked={diagnosis === option} onChange={() => setDiagnosis(option)} /><span>{option}</span></label>
                         ))}</div>
                       : optionsError
-                        ? <p role="alert">Les propositions n’ont pas pu être chargées. <button type="button" className="learning-inline-link" onClick={() => void openSynthesis()}>Réessayer</button></p>
+                        ? <p role="alert">Les propositions n’ont pas pu être chargées. <button type="button" className="text-link" onClick={() => void openSynthesis()}>Réessayer</button></p>
                         : <p role="status">Chargement des propositions…</p>}
                   </fieldset>
                   <label className="ecos-synthesis-plan">
@@ -842,17 +861,6 @@ export function EcosStation({ station }: { station: EcosStationView }) {
               {phase !== "synthese" && !conversation && (
                 <>
                   <form className="composer" onSubmit={submit}>
-                    <button
-                      type="button"
-                      className={`mic-button ${listening ? "recording" : ""}`}
-                      disabled={loading}
-                      onClick={startListening}
-                      aria-pressed={listening}
-                      aria-label={listening ? "Arrêter l’enregistrement vocal" : "Dicter une question au patient"}
-                      title={listening ? "Enregistrement en cours…" : "Dicter ta question"}
-                    >
-                      {listening ? <Square aria-hidden="true" size={16} /> : <Mic aria-hidden="true" size={18} />}
-                    </button>
                     <input
                       maxLength={800}
                       readOnly={busy}
@@ -863,6 +871,17 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                       aria-label="Question au patient"
                     />
                     <button
+                      type="button"
+                      className={`mic-button${listening ? " recording" : ""}`}
+                      disabled={loading}
+                      onClick={startListening}
+                      aria-pressed={listening}
+                      aria-label={listening ? "Arrêter l’enregistrement vocal" : "Dicter une question au patient"}
+                      title={listening ? "Enregistrement en cours…" : "Dicter ta question"}
+                    >
+                      {listening ? <Square aria-hidden="true" size={16} /> : <Mic aria-hidden="true" size={19} />}
+                    </button>
+                    <button
                       type="submit"
                       className="send-button"
                       disabled={!input.trim() || busy}
@@ -872,33 +891,37 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                       <SendHorizontal aria-hidden="true" size={18} />
                     </button>
                   </form>
-                  <p className="composer-hint">{phase === "examen" ? "Les gestes se choisissent dans la liste ci-dessus." : "Une question à la fois fonctionne le mieux. Appuie sur le micro pour dicter, ou lance la conversation vocale pour parler sans les mains."}</p>
+                  <p className="composer-hint">{phase === "examen" ? "Les gestes se choisissent dans la liste ci-dessus." : "Une question à la fois fonctionne le mieux. Le micro dicte ta question ; la conversation vocale te laisse parler sans les mains."}</p>
                 </>
               )}
             </section>
-
           </div>
         </div>
       )}
 
       {screen === "report" && (
-        <div className="report-page page-enter">
-          <button className="back-link" onClick={backToCatalog}>← Tous les cas cliniques</button>
+        <div className="report">
+          <button className="text-link station-back" onClick={backToCatalog} type="button">Toutes les stations</button>
           <section className="report-hero">
-            <div className="score-ring" style={{ "--score": `${result ? percent * 3.6 : 0}deg` } as React.CSSProperties}><div>{result ? <><strong>{percent}%</strong><span>{score}/{maxScore} points</span></> : <><strong>…</strong><span>/{maxScore} points</span></>}</div></div>
             <div>
-              <p className="eyebrow">{result ? "BILAN ENREGISTRÉ" : "STATION TERMINÉE"}</p>
+              <p className="briefing-meta">{result ? "Bilan enregistré" : "Station terminée"}, {mode === "exam" ? "mode examen" : "entraînement"}</p>
               <h1>{!result ? (saving ? "Correction en cours…" : "Bilan en attente.") : percent >= 70 ? "Des repères bien couverts." : "Une bonne base à consolider."}</h1>
               <p className="lead">{saving ? "Relecture de ta grille en cours…" : "Ce bilan repère les thèmes abordés dans ton entretien, tes gestes et ta synthèse, et ta façon de communiquer. Compare ta démarche au débriefing ci-dessous."}</p>
-              {result && <div className="report-tags"><span>+{result.xp} XP</span><span>{mode === "exam" ? "Mode examen" : "Entraînement"}</span></div>}
+            </div>
+            <div className="score-card">
+              <p className="score"><strong>{result ? score : "…"}</strong><span>sur {maxScore} points</span></p>
+              <div className="score-cells" aria-hidden="true">
+                {Array.from({ length: maxScore }, (_, index) => <i className={result && index < filledPoints ? "is-on" : result && halfPoint && index === filledPoints ? "is-half" : ""} key={index} />)}
+              </div>
+              {result && <p className="score-foot"><span>{percent} %</span><span>+{result.xp} XP</span></p>}
             </div>
           </section>
           <section className="report-grid">
             <div className="rubric-card">
-              <div className="section-heading"><div><p className="eyebrow">GRILLE ECOS</p><h2>Analyse par compétence</h2></div><strong>{score}/{maxScore}</strong></div>
+              <div className="section-heading"><h2>Ta grille</h2><strong>{score}/{maxScore}</strong></div>
               {criteria.map((criterion) => (
                 <div className="rubric-row" key={criterion.id}>
-                  <span className={criterion.earned === criterion.points ? "criterion-icon success" : criterion.earned > 0 ? "criterion-icon partial" : "criterion-icon"}>{criterion.earned === criterion.points ? "✓" : criterion.earned > 0 ? "~" : "!"}</span>
+                  <span className={criterion.earned === criterion.points ? "criterion-icon success" : criterion.earned > 0 ? "criterion-icon partial" : "criterion-icon"}>{criterion.earned === criterion.points ? "✓" : criterion.earned > 0 ? "~" : "!"}<span className="sr-only">{criterion.earned === criterion.points ? " couvert" : criterion.earned > 0 ? " en partie" : " manqué"}</span></span>
                   <div><strong>{criterion.label}</strong><p>{criterion.earned === criterion.points ? "Objectif couvert." : criterion.hint}</p>{criterion.reviewed ? <span className="review-badge">+{criterion.reviewed} à la relecture</span> : null}</div>
                   <b>{criterion.earned}/{criterion.points}</b>
                 </div>
@@ -912,25 +935,26 @@ export function EcosStation({ station }: { station: EcosStationView }) {
               )}
             </div>
             <aside className="feedback-card">
-              <p className="eyebrow">COACH {BRAND_NAME_UPPER}</p><h2>À retenir</h2>
+              <h2>À retenir</h2>
               {result?.synthesis && (
                 <div className={`feedback ${result.synthesis.chosen === result.synthesis.correct ? "good" : "improve"}`}>
-                  <span>Dx</span>
                   <p><strong>{result.synthesis.chosen === result.synthesis.correct ? "Bon diagnostic" : "Diagnostic attendu"}</strong>{result.synthesis.chosen ? `Ton choix : ${result.synthesis.chosen}. ` : "Aucun diagnostic proposé. "}{result.synthesis.chosen === result.synthesis.correct ? "" : `Attendu : ${result.synthesis.correct}.`}</p>
                 </div>
               )}
-              {result && <div className="feedback good"><span>+</span><p><strong>Thème couvert</strong>{coveredCriterion?.label ?? "Aucun thème complètement repéré."}</p></div>}
-              {result && <div className="feedback improve"><span>↗</span><p><strong>À améliorer</strong>{missedCriterion?.hint ?? "Poursuis cette approche structurée."}</p></div>}
-              <button className="button primary full" disabled={saving || Boolean(stationError)} onClick={replay}>Rejouer la station</button>
-              <button className="button secondary full" onClick={backToCatalog}>Continuer l’entraînement</button>
+              {result && <div className="feedback good"><p><strong>Thème couvert</strong>{coveredCriterion?.label ?? "Aucun thème complètement repéré."}</p></div>}
+              {result && <div className="feedback improve"><p><strong>À améliorer</strong>{missedCriterion?.hint ?? "Poursuis cette approche structurée."}</p></div>}
+              <div className="feedback-actions">
+                <button className="button primary full" disabled={saving || Boolean(stationError)} onClick={replay} type="button">Rejouer la station</button>
+                <button className="button secondary full" onClick={backToCatalog} type="button">Choisir une autre station</button>
+              </div>
             </aside>
           </section>
 
           {result?.communication && <CommunicationReport report={result.communication} />}
 
           {result?.procedures && (result.procedures.missed.length > 0 || result.procedures.unhelpful.length > 0) && (
-            <section className="ecos-debrief ecos-procedure-feedback" aria-label="Retour sur l’examen clinique">
-              <p className="eyebrow">EXAMEN CLINIQUE</p>
+            <section className="ecos-debrief ecos-procedure-feedback" aria-labelledby="procedures-title">
+              <h2 id="procedures-title">Ton examen clinique</h2>
               <div className="ecos-debrief-grid">
                 <DebriefList title="Gestes attendus non réalisés" items={result.procedures.missed} />
                 <DebriefList title="Gestes peu utiles dans cette situation" items={result.procedures.unhelpful} />
@@ -940,8 +964,8 @@ export function EcosStation({ station }: { station: EcosStationView }) {
 
           {result?.debrief ? (
             <section className="ecos-debrief" aria-labelledby="ecos-debrief-title">
-              <p className="eyebrow">DÉBRIEFING</p>
-              <h2 id="ecos-debrief-title">{result.debrief.diagnosis}</h2>
+              <h2 id="ecos-debrief-title">Débriefing</h2>
+              <p className="debrief-dx voice">{result.debrief.diagnosis}</p>
               <p className="lead">{result.debrief.summary}</p>
               <div className="ecos-debrief-grid">
                 <DebriefList title="Éléments clés du cas" items={result.debrief.keyFindings} />
@@ -952,7 +976,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
               {result.debrief.fiches.length > 0 && (
                 <div className="ecos-debrief-links">
                   <h3>Réviser avec les fiches</h3>
-                  <div>{result.debrief.fiches.map((fiche) => <Link className="learning-inline-link" href={`/pathologies/${fiche.slug}`} key={fiche.slug}><BookOpen aria-hidden="true" size={15} /> {fiche.title}</Link>)}</div>
+                  <div>{result.debrief.fiches.map((fiche) => <Link className="text-link" href={`/pathologies/${fiche.slug}`} key={fiche.slug}><BookOpen aria-hidden="true" size={15} /> {fiche.title}</Link>)}</div>
                 </div>
               )}
               <div className="ecos-debrief-sources">

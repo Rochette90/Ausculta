@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
 import { BRAND_PRO_PLAN } from "@/lib/brand";
 
 export function BillingActions({ hasCustomer, isPro }: { hasCustomer: boolean; isPro: boolean }) {
@@ -29,8 +28,8 @@ export function BillingActions({ hasCustomer, isPro }: { hasCustomer: boolean; i
 
   return (
     <div className="billing-actions">
-      {!isPro && <Button disabled={loading} onClick={() => void openBilling("/api/billing/checkout")}>Passer à {BRAND_PRO_PLAN}</Button>}
-      {hasCustomer && <Button variant="outline" disabled={loading} onClick={() => void openBilling("/api/billing/portal")}>Gérer l’abonnement</Button>}
+      {!isPro && <button className="button primary small" disabled={loading} onClick={() => void openBilling("/api/billing/checkout")} type="button">Passer à {BRAND_PRO_PLAN}</button>}
+      {hasCustomer && <button className="button secondary small" disabled={loading} onClick={() => void openBilling("/api/billing/portal")} type="button">Gérer l’abonnement</button>}
       {error && <p role="status">{error}</p>}
     </div>
   );

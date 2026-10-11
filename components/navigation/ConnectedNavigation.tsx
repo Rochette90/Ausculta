@@ -40,21 +40,22 @@ export function ConnectedNavigation({ avatarUrl, initials, streak, isAdmin = fal
           {navigationItems.map((item) => <Link aria-current={isActive(item.href) ? "page" : undefined} className={isActive(item.href) ? "nav-active" : ""} href={item.href} key={item.href}>{item.label}</Link>)}
         </nav>
         <div className="profile-chip">
+          {streak > 0 && <span className="streak">Série : <strong>{streak} j</strong></span>}
           <ThemeToggle />
-          <span className="streak" aria-label={`${streak} jours de série`}>🔥 {streak}</span>
           <Link
-            className="avatar overflow-hidden bg-cover bg-center"
+            className="avatar"
             href="/profil"
             aria-label="Ouvrir le profil"
             style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : undefined}
           >
             {!avatarUrl && (initials || "ÉT")}
           </Link>
-          <form action="/auth/signout" method="post"><button className="signout-button">Déconnexion</button></form>
+          <form action="/auth/signout" method="post"><button className="signout-button">Se déconnecter</button></form>
         </div>
       </header>
       <nav className="mobile-nav" aria-label="Navigation mobile">
-        {navigationItems.map(({ href, shortLabel, icon: Icon }) => <Link aria-current={isActive(href) ? "page" : undefined} className={isActive(href) ? "active" : ""} href={href} key={href}><Icon aria-hidden="true" size={18} /><span>{shortLabel}</span></Link>)}
+        {navigationItems.map(({ href, shortLabel, icon: Icon }) => <Link aria-current={isActive(href) ? "page" : undefined} className={isActive(href) ? "active" : ""} href={href} key={href}><Icon aria-hidden="true" size={19} /><span>{shortLabel}</span></Link>)}
+        <Link aria-current={pathname === "/profil" ? "page" : undefined} className={pathname === "/profil" ? "active" : ""} href="/profil"><span className="mobile-nav-avatar" aria-hidden="true" style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : undefined}>{!avatarUrl && (initials || "ÉT")}</span><span>Profil</span></Link>
       </nav>
     </>
   );

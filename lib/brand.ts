@@ -15,6 +15,8 @@ export const BRAND_TAGLINE = "Écouter. Comprendre. Soigner.";
 
 /** Asset officiel du mot-symbole, avec ses dimensions intrinsèques. */
 export const BRAND_LOGO_SRC = "/ausculta-logo.svg";
+/** Variante claire du mot-symbole, pour le thème sombre (mêmes dimensions). */
+export const BRAND_LOGO_DARK_SRC = "/ausculta-logo-dark.svg";
 export const BRAND_LOGO_WIDTH = 243;
 export const BRAND_LOGO_HEIGHT = 52;
 

@@ -6,7 +6,7 @@ import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
-  description: "Préparez vos ECOS face à un patient simulé, puis consolidez avec des fiches structurées, des QCM expliqués et l’anatomie clinique.",
+  description: "Entraînez-vous aux ECOS face à un patient simulé qui vous répond, à l’écrit ou à la voix, puis recevez votre grille corrigée et un débriefing.",
 };
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, HelpCircle, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { BRAND_NAME, BRAND_PLAN_LABEL, pageTitle } from "@/lib/brand";
 import { EXAM_DURATION_SECONDS } from "@/lib/ecos/timing";
 import { FEATURES, type FeatureKey } from "@/lib/features";
@@ -63,25 +63,38 @@ const faqGroups = allFaqGroups.map((group) => ({
 }));
 
 export default async function FaqPage() {
-
   return (
-    <>
-      <main>
-        <section className="mx-auto w-[calc(100%-2rem)] max-w-[900px] pb-14 pt-20 text-center sm:pb-20 sm:pt-28">
-          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[var(--mint)] text-[var(--mint-dark)]"><HelpCircle aria-hidden="true" size={27} /></span>
-          <p className="eyebrow mt-7">QUESTIONS FRÉQUENTES</p>
-          <h1 className="mb-0 mt-3 text-balance">Tout ce qu’il faut savoir pour <span>bien démarrer.</span></h1>
-          <p className="mx-auto mb-0 mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">Déroulé des stations, mode vocal, notation, progression et tarifs : retrouvez ici les réponses essentielles.</p>
-        </section>
+    <main>
+      <header className="mk-head mk-wrap">
+        <h1>Questions fréquentes</h1>
+        <p className="lead">Déroulé des stations, voix, notation, progression et tarifs : les réponses essentielles avant de commencer.</p>
+      </header>
 
-        <section className="mx-auto w-[calc(100%-2rem)] max-w-[900px] pb-20 sm:pb-28">
-          <div className="grid gap-12">
-            {faqGroups.map((group) => <div key={group.title}><h2 className="mb-5 mt-0 text-2xl">{group.title}</h2><div className="grid gap-3">{group.questions.map((item) => <details className="group rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-sm)] open:border-[color-mix(in_srgb,var(--primary)_45%,var(--line))]" key={item.question}><summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 font-bold text-[var(--ink)] marker:content-none sm:px-6"><span>{item.question}</span><span className="grid size-8 shrink-0 place-items-center rounded-full bg-[var(--surface-subtle)] text-[var(--primary)] transition group-open:rotate-45"><Plus aria-hidden="true" size={17} /></span></summary><p className="mb-0 border-t border-[var(--line-subtle)] px-5 pb-6 pt-5 leading-7 text-[var(--muted)] sm:px-6">{item.answer}</p></details>)}</div></div>)}
-          </div>
-        </section>
+      <section className="mk-section is-surface" aria-label="Questions et réponses">
+        <div className="mk-wrap mk-stack">
+          {faqGroups.map((group) => (
+            <div className="faq-group script-line" key={group.title}>
+              <h2>{group.title}</h2>
+              <div className="faq-list">
+                {group.questions.map((item) => (
+                  <details key={item.question}>
+                    <summary>{item.question}<Plus aria-hidden="true" size={20} /></summary>
+                    <p>{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        <section className="border-t border-[var(--line)] bg-[var(--surface-subtle)] px-4 py-20 text-center sm:py-24"><p className="eyebrow">UNE AUTRE QUESTION ?</p><h2 className="mx-auto mb-0 mt-2 max-w-2xl text-balance text-3xl sm:text-4xl">Dites-nous ce qui vous manque pour avancer.</h2><p className="mx-auto mb-0 mt-4 max-w-xl text-[var(--muted)]">Question technique, suggestion ou correction médicale : la page Contact vous indique le meilleur canal.</p><Link className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[var(--primary)] px-6 py-3 font-bold text-white no-underline hover:bg-[var(--primary-hover)]" href="/contact">Nous contacter <ArrowRight aria-hidden="true" size={17} /></Link></section>
-      </main>
-    </>
+      <section className="mk-end" aria-labelledby="faq-end-title">
+        <div className="mk-wrap">
+          <h2 id="faq-end-title">Une autre question ?</h2>
+          <p>Question technique, suggestion ou correction médicale : écrivez-nous, nous lisons tous les messages.</p>
+          <Link className="button primary" href="/contact">Nous écrire</Link>
+        </div>
+      </section>
+    </main>
   );
 }

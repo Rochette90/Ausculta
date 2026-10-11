@@ -1,11 +1,10 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { cn } from "../../lib/utils";
-import { Button, buttonVariants } from "./button";
 import { MenuToggleIcon } from "./menu-toggle-icon";
 import { useScroll } from "./use-scroll";
 import { BrandLogo } from "../brand/BrandLogo";
@@ -24,10 +23,11 @@ const links = allLinks.filter((link) => !link.feature || FEATURES[link.feature])
 
 export function Header({ signedIn }: { signedIn: boolean }) {
   const [open, setOpen] = useState(false);
-  const scrolled = useScroll(12);
+  const scrolled = useScroll(8);
+  const pathname = usePathname();
   // « Mon espace » suppose un compte : réservé à une session authentifiée.
-  const accountHref = signedIn ? "/dashboard" : "/login";
-  const accountLabel = signedIn ? "Mon espace" : "Se connecter";
+  const startHref = signedIn ? "/dashboard" : "/signup?next=%2Fcas";
+  const startLabel = signedIn ? "Mon espace" : "Commencer";
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -48,77 +48,44 @@ export function Header({ signedIn }: { signedIn: boolean }) {
   }
 
   return (
-    <header
-      className={cn(
-        "sticky z-50 mx-auto w-full border transition-all duration-300 ease-out",
-        open
-          ? "top-0 border-transparent bg-[var(--surface)]"
-          : scrolled
-            ? "top-3 w-[calc(100%-2rem)] max-w-[1040px] rounded-2xl border-[var(--line)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] shadow-[var(--shadow-md)] backdrop-blur-xl"
-            : "top-0 border-x-0 border-t-0 border-b-[var(--line)] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] backdrop-blur-xl",
-      )}
-    >
-      <nav className={cn("mx-auto flex h-[72px] w-full max-w-[1280px] items-center justify-between px-4 transition-all sm:px-6", scrolled && !open && "h-16 max-w-[1040px]")} aria-label="Navigation principale">
-        <Link className="logo no-underline" href="/" aria-label={`Accueil ${BRAND_NAME}`} onClick={closeMenu}>
+    <header className={cn("site-header", scrolled && "is-scrolled", open && "is-open")}>
+      <div className="mk-wrap site-header-inner">
+        <Link className="logo" href="/" aria-label={`Accueil ${BRAND_NAME}`} onClick={closeMenu}>
           <BrandLogo priority />
         </Link>
 
-        <div className="hidden items-center gap-0.5 lg:flex">
+        <nav className="site-nav" aria-label="Navigation principale">
           {links.map((link) => (
-            <Link
-              key={link.label}
-              className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "px-2.5 text-[var(--muted)] no-underline hover:bg-[var(--surface-subtle)] hover:text-[var(--ink)]")}
-              href={link.href}
-            >
-              {link.label}
-            </Link>
+            <Link aria-current={pathname === link.href ? "page" : undefined} href={link.href} key={link.href}>{link.label}</Link>
           ))}
-          <ThemeToggle />
-          <Link className={cn(buttonVariants({ size: "sm" }), "ml-1 min-h-10 bg-[var(--primary)] px-4 text-white no-underline hover:bg-[var(--primary-hover)]")} href={accountHref}>
-            {accountLabel} <ArrowRight aria-hidden="true" size={15} />
-          </Link>
-        </div>
+        </nav>
 
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="site-header-actions">
           <ThemeToggle />
-          <Button
-            aria-controls="marketing-mobile-menu"
+          {!signedIn && <Link className="site-header-signin" href="/login">Se connecter</Link>}
+          <Link className="button primary small" href={startHref}>{startLabel}</Link>
+          <button
+            aria-controls="site-menu"
             aria-expanded={open}
             aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-            className="border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] hover:border-[var(--primary)] hover:text-[var(--primary)]"
+            className="site-menu-button"
             onClick={() => setOpen((current) => !current)}
-            size="icon"
             type="button"
-            variant="outline"
           >
             <MenuToggleIcon aria-hidden="true" className="size-5" open={open} />
-          </Button>
+          </button>
         </div>
-      </nav>
+      </div>
 
-      <div
-        className={cn(
-          "absolute inset-x-0 top-full z-50 h-[calc(100dvh-72px)] border-t border-[var(--line)] bg-[var(--surface)] lg:hidden",
-          open ? "block" : "hidden",
-        )}
-        id="marketing-mobile-menu"
-      >
-        <div className="flex h-full flex-col justify-between p-5">
-          <div className="grid gap-2">
-            {links.map((link) => (
-              <Link
-                key={link.label}
-                className="rounded-xl px-4 py-4 text-lg font-semibold text-[var(--ink)] no-underline hover:bg-[var(--surface-subtle)]"
-                href={link.href}
-                onClick={closeMenu}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <Link className="mb-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 font-bold text-white no-underline" href={accountHref} onClick={closeMenu}>
-            {accountLabel} <ArrowRight aria-hidden="true" size={16} />
-          </Link>
+      <div className={cn("site-menu", open && "is-open")} id="site-menu" hidden={!open}>
+        <nav aria-label="Navigation mobile">
+          {links.map((link) => (
+            <Link href={link.href} key={link.href} onClick={closeMenu}>{link.label}</Link>
+          ))}
+        </nav>
+        <div className="site-menu-actions">
+          <Link className="button primary full" href={startHref} onClick={closeMenu}>{signedIn ? "Ouvrir mon espace" : "Créer un compte gratuit"}</Link>
+          {!signedIn && <Link className="button secondary full" href="/login" onClick={closeMenu}>Se connecter</Link>}
         </div>
       </div>
     </header>

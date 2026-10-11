@@ -1,8 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Hanken_Grotesk, Newsreader } from "next/font/google";
 import { ThemeInitializer } from "../components/theme/ThemeInitializer";
 import "./globals.css";
 import "./learning.css";
+import "./styles/marketing.css";
+import "./styles/station.css";
+import "./styles/fiche.css";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
+
+// Deux voix typographiques : le sans-serif pour l'interface et l'étudiant,
+// le serif pour la parole du patient et les phrases de récit. Polices
+// auto-hébergées au build (aucune requête vers Google depuis le navigateur).
+const sans = Hanken_Grotesk({ subsets: ["latin", "latin-ext"], variable: "--font-hanken", display: "swap" });
+const voice = Newsreader({ subsets: ["latin", "latin-ext"], variable: "--font-newsreader", display: "swap", axes: ["opsz"] });
 
 function metadataOrigin() {
   try {
@@ -32,9 +42,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e9f1ef" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a1a20" },
+  ],
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html data-scroll-behavior="smooth" data-theme="light" lang="fr" suppressHydrationWarning>
+    <html className={`${sans.variable} ${voice.variable}`} data-scroll-behavior="smooth" data-theme="light" lang="fr" suppressHydrationWarning>
       <body>
         <ThemeInitializer />
         {children}

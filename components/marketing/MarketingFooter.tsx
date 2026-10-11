@@ -1,6 +1,7 @@
-import { Footer7 } from "@/components/ui/footer-7";
+import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { FEATURES, type FeatureKey } from "@/lib/features";
-import { BRAND_LOGO_HEIGHT, BRAND_LOGO_SRC, BRAND_LOGO_WIDTH, BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/brand";
 
 type FooterLink = { name: string; href: string; feature?: FeatureKey };
 
@@ -43,13 +44,27 @@ const sections = allSections.map((section) => ({
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-[var(--line)] bg-[var(--surface)]">
-      <Footer7
-        copyright={`© 2026 ${BRAND_NAME} · Contenu pédagogique, ne remplace pas un avis médical.`}
-        description="La plateforme suisse d’entraînement aux ECOS : un patient simulé, une grille corrigée et un débriefing à chaque station."
-        logo={{ url: "/", src: BRAND_LOGO_SRC, alt: BRAND_NAME, title: `Accueil ${BRAND_NAME}`, width: BRAND_LOGO_WIDTH, height: BRAND_LOGO_HEIGHT }}
-        sections={sections}
-      />
+    <footer className="site-footer">
+      <div className="mk-wrap">
+        <div className="site-footer-grid">
+          <div className="site-footer-brand">
+            <Link className="logo" href="/" aria-label={`Accueil ${BRAND_NAME}`}><BrandLogo /></Link>
+            <p>La plateforme suisse d’entraînement aux ECOS : un patient simulé, une grille corrigée et un débriefing à chaque station.</p>
+          </div>
+          {sections.map((section) => (
+            <nav aria-label={section.title} key={section.title}>
+              <h2>{section.title}</h2>
+              <ul>
+                {section.links.map((link) => <li key={link.href}><Link href={link.href}>{link.name}</Link></li>)}
+              </ul>
+            </nav>
+          ))}
+        </div>
+        <div className="site-footer-bottom">
+          <span>© 2026 {BRAND_NAME}. Contenu pédagogique, ne remplace pas un avis médical.</span>
+          <a href="#top">Revenir en haut de la page</a>
+        </div>
+      </div>
     </footer>
   );
 }

@@ -1,9 +1,21 @@
-import { ArrowRight, CheckCircle2, ChevronRight, ClipboardList, Clock3, CreditCard, Ear, HelpCircle, MessagesSquare, Mic, Newspaper, Route, Sparkles, Stethoscope, Target, Users } from "lucide-react";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import type { MarketingStats } from "@/lib/marketing/stats";
 import { EXAM_DURATION_SECONDS } from "@/lib/ecos/timing";
 import { FEATURES, UPCOMING_FEATURE_LABELS } from "@/lib/features";
-import { BRAND_NAME, BRAND_NAME_UPPER, BRAND_PRO_PLAN } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/brand";
+import { ListeningBars } from "@/components/brand/BrandLogo";
+
+/** Rang d'une réplique dans l'entrée orchestrée du héros. */
+const line = (index: number) => ({ "--line": index }) as CSSProperties;
+
+// Les quatre temps d'une station, chacun relié à sa section de la méthode.
+const STEPS = [
+  { name: "Anamnèse", say: "Vous l’écoutez.", text: "Le patient répond à vos questions, une par une. Il ne souffle jamais le diagnostic et nie ce qui n’appartient pas au cas.", href: "/methode#anamnese", link: "Comment se passe l’entretien" },
+  { name: "Examen clinique", say: "Vous l’examinez.", text: "Constantes, auscultation, ECG : chaque geste choisi débloque son résultat. Un geste peu utile coûte un demi-point.", href: "/methode#examen", link: "Les gestes et leurs résultats" },
+  { name: "Synthèse", say: "Vous tranchez.", text: "Un diagnostic parmi quatre propositions, puis votre prise en charge, rédigée avec vos mots.", href: "/methode#synthese", link: "Ce qu’on attend de la synthèse" },
+  { name: "Débriefing", say: "Vous voyez ce qui vous a échappé.", text: "Votre grille sur 22 points, les gestes oubliés, les drapeaux rouges, les diagnostics différentiels et les sources.", href: "/methode#debriefing", link: "Comment la grille est notée" },
+] as const;
 
 export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: MarketingStats }) {
   // Les stations supposent un compte : un visiteur anonyme passe par
@@ -17,89 +29,111 @@ export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: Mar
   const upcoming = UPCOMING_FEATURE_LABELS.filter(({ feature }) => !FEATURES[feature]).map(({ label }) => label);
 
   return (
-    <div className="landing-page page-enter">
-      <main>
-        <section className="landing-hero" aria-labelledby="landing-title">
-          <div className="landing-hero-copy">
-            <p className="eyebrow">ECOS · PATIENT SIMULÉ</p>
-            <h1 id="landing-title">Réviser moins au hasard.<br /><span className="landing-hero-emphasis">Raisonner comme en clinique.</span></h1>
-            <p>Entraînez-vous aux ECOS face à un patient simulé qui vous répond, à l’écrit ou à la voix. Anamnèse, examen clinique, synthèse&nbsp;: chaque station se termine par votre grille corrigée et un débriefing.</p>
+    <main className="landing">
+      <section className="landing-hero mk-wrap" aria-labelledby="landing-title">
+        <ol className="script" aria-label="Extrait d’un entretien avec un patient simulé">
+          <li className="script-line" style={line(0)}>
+            <span className="script-who">Vous</span>
+            <p className="script-student">Bonjour Monsieur Favre. Qu’est-ce qui vous amène aujourd’hui ?</p>
+          </li>
+          <li className="script-line is-patient" style={line(1)}>
+            <span className="script-who">M. Favre, 62 ans</span>
+            <p className="script-patient voice">Bonjour docteur… j’ai une douleur très forte dans la poitrine depuis presque une heure, et ça ne passe pas.</p>
+          </li>
+          <li className="script-line" style={line(2)}>
+            <span className="script-who">Vous</span>
+            <p className="script-student">Est-ce que la douleur se déplace quelque part ?</p>
+          </li>
+          <li className="script-line is-patient" style={line(3)}>
+            <span className="script-who">M. Favre</span>
+            <p className="script-pending"><ListeningBars state="speaking" /> répond…</p>
+          </li>
+        </ol>
+
+        <div className="landing-intro script-line">
+          <span className="script-spacer" />
+          <div>
+            <h1 id="landing-title">{BRAND_NAME} vous entraîne aux ECOS face à un patient simulé qui vous répond, à l’écrit ou à la voix.</h1>
             <div className="landing-actions">
-              <Link className="button primary" href={enterHref}>{primaryLabel} <ArrowRight aria-hidden="true" size={17} /></Link>
-              <Link className="button secondary" href="/methode">Découvrir la méthode <ChevronRight aria-hidden="true" size={16} /></Link>
+              <Link className="button primary" href={enterHref}>{primaryLabel}</Link>
+              <Link className="text-link" href="/methode">Voir le déroulé d’une station</Link>
             </div>
-            <p className="landing-hero-note">{hasStations ? `${stats.caseCount} stations jouables · mode entraînement ou examen` : "Stations en préparation"}</p>
+            <p className="landing-note">{hasStations ? `${stats.caseCount} stations jouables, en mode entraînement ou en mode examen.` : "Les stations sont en préparation."}</p>
           </div>
+        </div>
+      </section>
 
-          <div className="landing-demo" aria-label={`Aperçu d’une station ${BRAND_NAME}`}>
-            <div className="hero-product-glow" aria-hidden="true" />
-            <div className="demo-window">
-              <div className="demo-top"><span>Station 01 · Urgences</span><span>Entraînement</span></div>
-              <div className="demo-patient">
-                <span className="patient-portrait" aria-hidden="true">MF<i /></span>
-                <div><strong>M. Favre, 62 ans</strong><small>Douleur thoracique d’apparition aiguë</small></div>
-              </div>
-              <div className="demo-dialogue">
-                <div className="student"><small>Vous</small><p>Bonjour Monsieur Favre. Qu’est-ce qui vous amène aujourd’hui&nbsp;?</p></div>
-                <div><small>Patient simulé</small><p>J’ai une douleur dans la poitrine depuis ce matin. Ça serre fort.</p></div>
-                <div className="student"><small>Vous</small><p>Est-ce que la douleur se déplace quelque part&nbsp;?</p></div>
-                <div className="demo-listening"><span className="demo-listening-bars" aria-hidden="true"><i /><i /><i /><i /></span>Le patient répond…</div>
-              </div>
-              <div className="demo-score"><div><span>Anamnèse en cours</span><strong>6 éléments sur 10 explorés</strong></div><i><b style={{ width: "60%" }} /></i></div>
+      <section className="landing-steps" aria-labelledby="landing-steps-title">
+        <div className="mk-wrap">
+          <div className="script-line">
+            <span className="script-spacer" />
+            <h2 className="landing-steps-title" id="landing-steps-title">Après l’entretien, la station continue comme le jour de l’examen.</h2>
+          </div>
+          <ol className="steps">
+            {STEPS.map((step) => (
+              <li className="script-line" key={step.name}>
+                <h3>{step.name}</h3>
+                <div>
+                  <p className="step-say voice">{step.say}</p>
+                  <p className="step-text">{step.text}</p>
+                  <Link className="text-link" href={step.href}>{step.link}</Link>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="landing-voice mk-wrap" aria-labelledby="landing-voice-title">
+        <div className="voice-panel">
+          <div>
+            <h2 id="landing-voice-title">Parlez-lui à voix haute.</h2>
+            <p>Activez le micro et menez l’entretien comme le jour de l’examen. Le patient vous répond à l’oral, l’échange reste écrit à l’écran et le clavier reste disponible. La voix fonctionne sur Chrome, Edge et Safari.</p>
+            <dl>
+              <div><dt>Entraînement</dt><dd>Sans chronomètre, à votre rythme.</dd></div>
+              <div><dt>Examen</dt><dd>{examMinutes} minutes pour toute la station, ni indice ni score avant la fin.</dd></div>
+            </dl>
+            <Link className="button primary" href={stationsHref}>Essayer à la voix</Link>
+          </div>
+          <div className="voice-disc" aria-hidden="true"><ListeningBars state="speaking" /></div>
+        </div>
+      </section>
+
+      <section className="landing-more mk-wrap" aria-label={`Découvrir ${BRAND_NAME}`}>
+        <div className="script-line">
+          <span className="script-who">Pour qui</span>
+          <div>
+            <h2>Conçu pour les étudiants en médecine en Suisse</h2>
+            <p>Un entraînement exigeant, aligné sur le cursus et l’examen fédéral, que l’on peut reprendre sur son téléphone entre deux cours. Une station à la fois suffit pour installer une routine.</p>
+          </div>
+        </div>
+        <div className="script-line">
+          <span className="script-who">Avant de commencer</span>
+          <div>
+            <ul className="link-list">
+              <li><Link href="/methode">La méthode</Link><span>Les trois temps, les deux modes et la notation</span></li>
+              <li><Link href="/pricing">Les tarifs</Link><span>Gratuit aujourd’hui, et ce que prépare la suite</span></li>
+              <li><Link href="/faq">Les questions fréquentes</Link><span>Patient simulé, voix, notation, compte</span></li>
+              <li><Link href="/a-propos">Le projet</Link><span>Pourquoi {BRAND_NAME} existe</span></li>
+              <li><Link href="/nouveautes">Les nouveautés</Link><span>Ce qui a changé récemment</span></li>
+            </ul>
+            {upcoming.length > 0 && <p className="landing-upcoming">Prochainement : {upcoming.join(" et ")}.</p>}
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-end mk-wrap" aria-labelledby="landing-end-title">
+        <div className="script-line is-patient">
+          <span className="script-who">Votre patient</span>
+          <div>
+            <p className="script-patient voice">« Bonjour docteur… »</p>
+            <div className="landing-end-actions">
+              <h2 id="landing-end-title">{hasStations ? "Toutes les stations sont gratuites pour l’instant." : "Les premières stations arrivent bientôt."}</h2>
+              <Link className="button primary" href={enterHref}>{signedIn ? "Ouvrir mon espace" : "Créer mon compte gratuit"}</Link>
             </div>
-            <div className="floating-card streak-card"><span><Clock3 aria-hidden="true" size={17} /></span><div><strong>{examMinutes} min</strong><small>en mode examen</small></div></div>
-            <div className="floating-card xp-card"><span><ClipboardList aria-hidden="true" size={17} /></span><div><strong>22 points</strong><small>grille et diagnostic</small></div></div>
           </div>
-        </section>
-
-        <section className="landing-method" id="methode">
-          <div className="landing-section-head landing-method-heading"><div><p className="eyebrow">UNE STATION COMPLÈTE</p><h2>Chaque étape prépare la suivante</h2></div><p>Mener l’entretien, examiner, conclure, puis revenir sur ce qui vous a échappé&nbsp;: le même déroulé que le jour de l’examen.</p></div>
-          <p className="landing-catalog-proof">{hasStations ? "Anamnèse · Examen clinique · Synthèse · Débriefing" : "Contenu en préparation"}</p>
-          <div className="pillar-grid four-pillars">
-            <article className="pillar-card pillar-card-accent"><span className="pillar-number">01</span><div className="pillar-icon"><Ear size={23} /></div><p className="pillar-step">ÉCOUTER</p><h3>Anamnèse</h3><p>Menez l’entretien avec le patient simulé. Il répond à vos questions, sans souffler le diagnostic.</p><Link href="/methode#anamnese">Voir comment ça fonctionne <ArrowRight aria-hidden="true" size={14} /></Link></article>
-            <article className="pillar-card" id="cas-cliniques"><span className="pillar-number">02</span><div className="pillar-icon"><Stethoscope size={23} /></div><p className="pillar-step">EXAMINER</p><h3>Examen clinique</h3><p>Choisissez vos gestes et vos examens. Chaque geste débloque son résultat.</p><Link href="/methode#examen">Explorer l’examen <ArrowRight aria-hidden="true" size={14} /></Link></article>
-            <article className="pillar-card"><span className="pillar-number">03</span><div className="pillar-icon"><MessagesSquare size={23} /></div><p className="pillar-step">CONCLURE</p><h3>Synthèse</h3><p>Retenez un diagnostic parmi quatre propositions et rédigez votre prise en charge.</p><Link href="/methode#synthese">Découvrir la synthèse <ArrowRight aria-hidden="true" size={14} /></Link></article>
-            <article className="pillar-card"><span className="pillar-number">04</span><div className="pillar-icon"><Target size={23} /></div><p className="pillar-step">PROGRESSER</p><h3>Débriefing</h3><p>Votre grille corrigée, les gestes oubliés, les drapeaux rouges et les points à revoir.</p><Link href="/methode#debriefing">Comprendre le bilan <ArrowRight aria-hidden="true" size={14} /></Link></article>
-          </div>
-          <Link className="landing-section-link" href="/methode">Découvrir toute la méthode <ArrowRight aria-hidden="true" size={16} /></Link>
-        </section>
-
-        <section className="landing-method" aria-labelledby="landing-voice-title">
-          <div className="landing-section-head"><div><p className="eyebrow">MODE VOCAL</p><h2 id="landing-voice-title">Parlez au patient.<br />Il vous répond.</h2></div><p>Activez le micro et menez l’entretien à voix haute, comme le jour de l’examen. Le patient simulé répond à l’oral et tout l’échange reste affiché à l’écran. Le clavier reste disponible à tout moment.</p></div>
-          <p className="landing-voice-note"><Mic aria-hidden="true" size={15} /> La voix dépend de votre navigateur&nbsp;: Chrome, Edge et Safari la prennent en charge.</p>
-          <Link className="button primary" href={stationsHref}>Essayer à la voix <ArrowRight aria-hidden="true" size={16} /></Link>
-        </section>
-
-        <section className="landing-discover" aria-labelledby="landing-discover-title">
-          <div className="landing-discover-head"><div><p className="eyebrow">EXPLORER {BRAND_NAME_UPPER}</p><h2 id="landing-discover-title">Les réponses importantes, avant même de créer un compte</h2></div><p>Voyez comment se déroule une station, ce qui est gratuit et dans quelle direction le projet avance.</p></div>
-          <div className="landing-discover-grid">
-            <Link className="landing-discover-card is-featured" href="/methode"><span><Route aria-hidden="true" size={23} /></span><small>{hasStations ? `${stats.caseCount} STATIONS · ${examMinutes} MIN EN MODE EXAMEN` : "STATIONS EN PRÉPARATION"}</small><h3>Comprendre le déroulé d’une station</h3><p>Les trois temps, les deux modes et la façon dont la grille est notée.</p><b>Voir la méthode <ArrowRight aria-hidden="true" size={15} /></b></Link>
-            <Link className="landing-discover-card" href="/pricing"><span><CreditCard aria-hidden="true" size={22} /></span><small>ACCÈS ET FORMULES</small><h3>Voir les tarifs</h3><p>Commencez gratuitement et découvrez ce que prépare {BRAND_PRO_PLAN}.</p><b>Comparer les offres <ArrowRight aria-hidden="true" size={15} /></b></Link>
-            <Link className="landing-discover-card" href="/faq"><span><HelpCircle aria-hidden="true" size={22} /></span><small>QUESTIONS FRÉQUENTES</small><h3>Lever les doutes avant de commencer</h3><p>Fonctionnement du patient simulé, notation, compte et progression.</p><b>Consulter la FAQ <ArrowRight aria-hidden="true" size={15} /></b></Link>
-            <Link className="landing-discover-card" href="/a-propos"><span><Users aria-hidden="true" size={22} /></span><small>LE PROJET</small><h3>Comprendre le projet</h3><p>Pourquoi {BRAND_NAME} existe et les principes qui le guident.</p><b>Lire à propos <ArrowRight aria-hidden="true" size={15} /></b></Link>
-            <Link className="landing-discover-card" href="/nouveautes"><span><Newspaper aria-hidden="true" size={22} /></span><small>JOURNAL DU PRODUIT</small><h3>Suivre les nouveautés</h3><p>Stations, fonctionnalités et améliorations récemment livrées.</p><b>Voir les évolutions <ArrowRight aria-hidden="true" size={15} /></b></Link>
-          </div>
-          {upcoming.length > 0 && <p className="landing-discover-more">PROCHAINEMENT<span>{upcoming.join(" · ")}</span></p>}
-        </section>
-
-        <section className="landing-audience">
-          <div><p className="eyebrow">PENSÉ POUR VOTRE CURSUS</p><h2>Conçu pour les étudiants en médecine en Suisse</h2><p>Un outil d’entraînement exigeant, utilisable au quotidien et centré sur les situations que vous devez maîtriser.</p></div>
-          <ul>
-            <li><CheckCircle2 aria-hidden="true" size={20} /><span>Aligné sur les besoins du cursus et de l’examen fédéral</span></li>
-            <li><CheckCircle2 aria-hidden="true" size={20} /><span>Utilisable sur mobile entre deux cours ou en session de révision</span></li>
-            <li><CheckCircle2 aria-hidden="true" size={20} /><span>Idéal pour installer une routine régulière sans se disperser</span></li>
-          </ul>
-        </section>
-
-        <section className="landing-cta">
-          <span className="landing-cta-icon"><Sparkles aria-hidden="true" size={23} /></span>
-          <p className="eyebrow">VOTRE PROCHAINE STATION PEUT COMMENCER ICI</p>
-          <h2>Passez des révisions passives à un vrai entraînement clinique</h2>
-          <p className="landing-cta-copy">Créez votre espace, choisissez une station et laissez {BRAND_NAME} organiser la suite.</p>
-          <div className="landing-cta-prices"><span><b>Découverte</b> CHF 0</span><span><b>{BRAND_PRO_PLAN}</b> CHF 14.90/mois</span></div>
-          <div className="landing-cta-actions"><Link className="button primary" href={enterHref}>{signedIn ? "Ouvrir mon espace" : "Créer mon compte gratuit"} <ArrowRight aria-hidden="true" size={17} /></Link><Link className="button secondary" href="/faq">Consulter la FAQ</Link></div>
-        </section>
-      </main>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 }
