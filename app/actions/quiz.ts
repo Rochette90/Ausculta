@@ -6,6 +6,7 @@ import { ApiError } from "../lib/api-security";
 import { enforceRateLimit } from "../lib/rate-limit";
 import { createAdminClient, createClient } from "../../lib/supabase/server";
 import { BRAND_NAME } from "@/lib/brand";
+import { FEATURES } from "@/lib/features";
 
 export type AnswerQuestionParams = {
   questionId: string;
@@ -50,6 +51,7 @@ export async function answerQuestion({
   selectedOptionId,
   isDailyQuiz = false,
 }: AnswerQuestionParams): Promise<AnswerQuestionResult> {
+  if (!FEATURES.quiz) return failure("Module indisponible");
   if (!UUID_PATTERN.test(questionId) || !UUID_PATTERN.test(selectedOptionId)) {
     return failure("Réponse invalide");
   }

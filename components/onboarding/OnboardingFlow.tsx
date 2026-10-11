@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SpecialtyIcon } from "../content/SpecialtyIcon";
 import { BRAND_NAME } from "@/lib/brand";
-import { isLearningPriorityAvailable } from "@/lib/features";
+import { isLearningPriorityAvailable, ONBOARDING_ASKS_SPECIALTIES } from "@/lib/features";
 
 type SpecialtyOption = {
   id: string;
@@ -39,7 +39,13 @@ const allPriorities = [
 // Seules les priorités dont le module est actif sont proposées. S'il n'en
 // reste qu'une, elle est retenue d'office et l'étape disparaît.
 const priorities = allPriorities.filter((priority) => isLearningPriorityAvailable(priority.id));
-const steps = (priorities.length > 1 ? ["studies", "priority", "specialties"] : ["studies", "specialties"]) as ReadonlyArray<"studies" | "priority" | "specialties">;
+// Les spécialités ne sont demandées que si elles servent (fiches ou QCM actifs) :
+// en périmètre ECOS seul, l'onboarding tient en un écran, que l'on peut passer.
+const steps: ReadonlyArray<"studies" | "priority" | "specialties"> = [
+  "studies",
+  ...(priorities.length > 1 ? ["priority" as const] : []),
+  ...(ONBOARDING_ASKS_SPECIALTIES ? ["specialties" as const] : []),
+];
 
 export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: OnboardingFlowProps) {
   const router = useRouter();
@@ -107,19 +113,19 @@ export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: Onboa
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-2xl bg-teal-600 text-white shadow-lg shadow-teal-600/20"><GraduationCap size={22} /></span>
-            <div><strong className="block text-base text-slate-950">Bienvenue sur {BRAND_NAME}</strong><span className="text-xs text-slate-500">Quelques choix pour personnaliser ton espace</span></div>
+            <div><strong className="block text-base text-slate-950">Bienvenue sur {BRAND_NAME}</strong><span className="text-xs text-slate-500">{steps.length > 1 ? "Quelques choix pour personnaliser ton espace" : "Une question avant ta première station"}</span></div>
           </div>
           <button className="text-sm font-semibold text-slate-500 transition hover:text-slate-900" disabled={busy} onClick={() => void submit("skip")} type="button">Passer pour le moment</button>
         </header>
 
-        <div className="mt-7 grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label={`Étape ${stepNumber} sur ${steps.length}`}>
+        {steps.length > 1 && <div className="mt-7 grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label={`Étape ${stepNumber} sur ${steps.length}`}>
           {steps.map((item, index) => <span className={`h-1.5 rounded-full transition ${index <= stepIndex ? "bg-teal-600" : "bg-slate-200"}`} key={item} />)}
-        </div>
+        </div>}
 
         <section className="mt-5 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
           <div className="border-b border-slate-100 px-6 py-7 sm:px-10 sm:py-9">
-            <p className="mb-2 text-xs font-extrabold uppercase tracking-[.16em] text-teal-700">Étape {stepNumber} sur {steps.length}</p>
-            {step === "studies" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Où en es-tu dans tes études ?</h1><p className="mb-0 mt-3 text-slate-500">Ces informations nous aident à proposer un rythme adapté.</p></>}
+            {steps.length > 1 && <p className="mb-2 text-xs font-extrabold uppercase tracking-[.16em] text-teal-700">Étape {stepNumber} sur {steps.length}</p>}
+            {step === "studies" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Où en es-tu dans tes études ?</h1><p className="mb-0 mt-3 text-slate-500">{steps.length > 1 ? "Ces informations nous aident à proposer un rythme adapté." : "Cela nous aide à savoir pour qui construire les prochaines stations. Tu peux passer cette étape."}</p></>}
             {step === "priority" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Quelle est ta priorité actuelle ?</h1><p className="mb-0 mt-3 text-slate-500">Ton tableau de bord commencera par l’activité la plus utile pour toi.</p></>}
             {step === "specialties" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Que veux-tu travailler en premier ?</h1><p className="mb-0 mt-3 text-slate-500">Choisis deux ou trois spécialités. Tu pourras les modifier plus tard.</p></>}
           </div>

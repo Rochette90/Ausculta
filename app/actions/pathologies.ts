@@ -6,6 +6,7 @@ import { ApiError } from "../lib/api-security";
 import { enforceRateLimit } from "../lib/rate-limit";
 import { createAdminClient, createClient } from "../../lib/supabase/server";
 import { BRAND_NAME } from "@/lib/brand";
+import { ficheIsAccessible } from "@/lib/content/fiche-access";
 
 export type MarkPathologyAsReadResult = {
   success: boolean;
@@ -42,6 +43,7 @@ export async function markPathologyAsRead(
 
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "pathology-read", 30, 60);
+    if (!(await ficheIsAccessible(admin, pathologyId))) return failure("Fiche introuvable");
     const { data, error } = await admin.rpc("mark_pathology_as_read", {
       p_user_id: user.id,
       p_pathology_id: pathologyId,

@@ -6,6 +6,7 @@ import {
   readJsonObject,
   requireAuthenticatedUser,
 } from "../../lib/api-security";
+import { FEATURES } from "@/lib/features";
 import { gradeTutorial } from "@/lib/tutorials/questions";
 import { calculateActivityReward } from "../../lib/ecos";
 import { enforceRateLimit } from "../../lib/rate-limit";
@@ -53,6 +54,8 @@ export async function POST(request: Request) {
   try {
     const user = await requireAuthenticatedUser();
     assertSameOrigin(request);
+    // Seuls les tutoriels passent par cette route.
+    if (!FEATURES.tutorials) throw new ApiError(404, "module_not_found", "Module introuvable.");
     const body = await readJsonObject(request, 4_096);
     const activityType = typeof body.activityType === "string"
       ? body.activityType.trim().slice(0, 40)

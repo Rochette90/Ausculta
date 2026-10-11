@@ -5,6 +5,7 @@ import { DEFAULT_AFTER_LOGIN_PATH, safeRedirectPath } from "../../lib/auth/safe-
 import { createClient } from "../../lib/supabase/server";
 import { getOnboardingMetadata } from "../../lib/onboarding/metadata";
 import { pageTitle } from "@/lib/brand";
+import { ONBOARDING_ASKS_SPECIALTIES } from "@/lib/features";
 import { zurichDate } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
       .select("onboarding_completed_at, onboarding_skipped_at")
       .eq("id", user.id)
       .maybeSingle(),
-    supabase
+    !ONBOARDING_ASKS_SPECIALTIES ? { data: [], error: null } : supabase
       .from("specialties")
       .select("id, name, icon")
       .order("order_index"),

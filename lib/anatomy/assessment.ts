@@ -21,6 +21,4 @@ export function gradeAnatomy(questions: AnatomyQuestion[], input: unknown): Anat
   return { score, total: questions.length, percent: Math.round(score / questions.length * 100), corrections };
 }
 
-export function normalizeSearch(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim();
-}
+export { normalizeSearch } from "../text.ts";

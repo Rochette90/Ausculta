@@ -8,6 +8,7 @@ import { getCurrentUser } from "../../lib/auth/require-user";
 import { createAdminClient } from "../../lib/supabase/server";
 import { enforceRateLimit } from "../lib/rate-limit";
 import { BRAND_NAME } from "@/lib/brand";
+import { ficheIsAccessible } from "@/lib/content/fiche-access";
 
 type ActionResult = { success: boolean; error?: string; reportId?: string };
 
@@ -46,6 +47,7 @@ export async function createPathologyReport(input: CreatePathologyReportInput): 
   try {
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "pathology-report", 10, 3600);
+    if (!(await ficheIsAccessible(admin, input.pathologyId))) return { success: false, error: "Signalement invalide" };
     const { data, error } = await admin.rpc("create_pathology_report", {
       p_user_id: user.id,
       p_pathology_id: input.pathologyId,

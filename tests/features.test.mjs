@@ -94,3 +94,34 @@ test("catalogue masqué : seules les fiches liées à une station restent lisibl
   assert.ok(STATION_FICHE_SLUGS.size > 0);
   for (const slug of STATION_FICHE_SLUGS) assert.ok(published.has(slug), `fiche de débriefing absente du catalogue : ${slug}`);
 });
+
+test("un module masqué est fermé à tous les niveaux, pas seulement dans la navigation", async () => {
+  const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
+  // Pages : un layout par module répond « introuvable » si le proxy est contourné.
+  const layouts = {
+    "../app/(app)/quiz/layout.tsx": "quiz",
+    "../app/(app)/anatomie/layout.tsx": "anatomy",
+    "../app/(app)/sessions/layout.tsx": "sessions",
+    "../app/(app)/specialties/layout.tsx": "fiches",
+    "../app/(app)/fiches/layout.tsx": "fiches",
+    "../app/(marketing)/catalogue/layout.tsx": "fiches",
+    "../app/(marketing)/qualite/layout.tsx": "fiches",
+    "../app/(marketing)/tutoriels/layout.tsx": "tutorials",
+  };
+  for (const [path, feature] of Object.entries(layouts)) {
+    assert.match(await read(path), new RegExp(`if \\(!FEATURES\\.${feature}\\) notFound\\(\\);`), path);
+  }
+  // API et actions serveur.
+  assert.match(await read("../app/api/anatomy/[slug]/route.ts"), /if \(!FEATURES\.anatomy\) throw new ApiError\(404/);
+  assert.match(await read("../app/api/progress/route.ts"), /if \(!FEATURES\.tutorials\) throw new ApiError\(404/);
+  assert.match(await read("../app/actions/quiz.ts"), /if \(!FEATURES\.quiz\) return failure/);
+  assert.match(await read("../app/actions/study-sessions.ts"), /if \(!FEATURES\.sessions\) return/);
+  // Fiches : seules celles d'un débriefing restent accessibles.
+  for (const path of ["../app/actions/pathologies.ts", "../app/actions/reports.ts"]) {
+    assert.match(await read(path), /ficheIsAccessible\(admin, /, path);
+  }
+  // Tableau de bord : aucune requête ni écriture pour un module masqué.
+  const dashboard = await read("../lib/dashboard/queries.ts");
+  assert.match(dashboard, /FEATURES\.quiz \? getDailyQuiz\(\)/);
+  assert.match(dashboard, /!FEATURES\.quiz \? none : selectAllPages/);
+});

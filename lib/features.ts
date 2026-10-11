@@ -77,6 +77,12 @@ export const LEARNING_PRIORITY_FEATURES = {
 
 export type LearningPriority = keyof typeof LEARNING_PRIORITY_FEATURES;
 
+/**
+ * Les spécialités prioritaires ne servent qu'à ordonner les fiches et les QCM :
+ * l'onboarding ne les demande que si l'un de ces modules est actif.
+ */
+export const ONBOARDING_ASKS_SPECIALTIES: boolean = FEATURES.fiches || FEATURES.quiz;
+
 export function isLearningPriorityAvailable(priority: LearningPriority): boolean {
   return FEATURES[LEARNING_PRIORITY_FEATURES[priority]];
 }

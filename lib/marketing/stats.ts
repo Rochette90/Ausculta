@@ -2,8 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { createAdminClient } from "../supabase/server";
-import pathologyCatalog from "@/content/pathologies/index.json";
-import questionCatalog from "@/content/questions/index.json";
+import { FEATURES } from "../features";
 import caseCatalog from "@/content/cases/index.json";
 
 export type MarketingStats = {
@@ -14,9 +13,20 @@ export type MarketingStats = {
   specialties: Array<{ name: string; pathologyCount: number }>;
 };
 
+/** Fiches et QCM masqués : leurs chiffres ne sont ni lus ni affichés. */
+const libraryEnabled = FEATURES.fiches || FEATURES.quiz;
+
 // Repli hors-ligne calculé depuis les catalogues embarqués : une seule
-// source de vérité locale, jamais de chiffres codés en dur.
-function buildFallback(): MarketingStats {
+// source de vérité locale, jamais de chiffres codés en dur. Les catalogues
+// volumineux ne sont chargés que si leur module est actif.
+async function buildFallback(): Promise<MarketingStats> {
+  if (!libraryEnabled) {
+    return { specialtyCount: 0, pathologyCount: 0, questionCount: 0, caseCount: caseCatalog.length, specialties: [] };
+  }
+  const [{ default: pathologyCatalog }, { default: questionCatalog }] = await Promise.all([
+    import("@/content/pathologies/index.json"),
+    import("@/content/questions/index.json"),
+  ]);
   const ready = (pathologyCatalog as Array<{ specialty: string; status: string }>)
     .filter((item) => item.status === "ready");
   const bySpecialty = new Map<string, number>();
@@ -35,17 +45,22 @@ function buildFallback(): MarketingStats {
   };
 }
 
-const fallback = buildFallback();
 export const getMarketingStats = cache(async (): Promise<MarketingStats> => {
   try {
     const admin = createAdminClient();
+    const publishedCases = admin.from("clinical_cases").select("id", { count: "exact", head: true }).eq("status", "published");
+    if (!libraryEnabled) {
+      const casesResult = await publishedCases;
+      if (casesResult.error) return buildFallback();
+      return { specialtyCount: 0, pathologyCount: 0, questionCount: 0, caseCount: casesResult.count ?? 0, specialties: [] };
+    }
     const [specialtiesResult, pathologiesResult, questionsResult, casesResult] = await Promise.all([
       admin.from("specialties").select("id, name, order_index").order("order_index"),
       admin.from("pathologies").select("specialty_id").eq("is_published", true),
       admin.from("questions").select("id", { count: "exact", head: true }).eq("is_published", true),
-      admin.from("clinical_cases").select("id", { count: "exact", head: true }).eq("status", "published"),
+      publishedCases,
     ]);
-    if (specialtiesResult.error || pathologiesResult.error || questionsResult.error || casesResult.error) return fallback;
+    if (specialtiesResult.error || pathologiesResult.error || questionsResult.error || casesResult.error) return buildFallback();
     const pathologies = pathologiesResult.data ?? [];
     const specialties = (specialtiesResult.data ?? []).map((specialty) => ({
       name: specialty.name,
@@ -59,6 +74,6 @@ export const getMarketingStats = cache(async (): Promise<MarketingStats> => {
       specialties,
     };
   } catch {
-    return fallback;
+    return buildFallback();
   }
 });

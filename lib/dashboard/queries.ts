@@ -5,6 +5,9 @@ import { cache } from "react";
 import { getDailyQuiz, getDailyQuizAttempt, type DailyQuiz } from "../quiz/daily";
 import { featuredStudySession } from "../study-sessions/catalog";
 import { getStudySessionProgress } from "../study-sessions/progress";
+import { getCurrentUser } from "../auth/require-user";
+import { stationCandidateTitle } from "../ecos/cases";
+import { ecosPublicCode } from "../ecos/stations/index";
 import { createClient } from "../supabase/server";
 import { selectAllPages } from "../supabase/select-all";
 import { getOnboardingMetadata } from "../onboarding/metadata";
@@ -126,22 +129,25 @@ function lastSevenDates() {
 
 export const getDashboardData = cache(async (userId: string): Promise<DashboardData> => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Déjà vérifié par la page : pas de nouvel aller-retour vers l'authentification.
+  const user = await getCurrentUser();
   const onboarding = user ? getOnboardingMetadata(user) : null;
+  // Un module masqué (lib/features.ts) ne coûte aucune requête.
+  const none = Promise.resolve({ data: [] as never[], error: null });
   const weekDates = lastSevenDates();
   const eventsSince = new Date(Date.now() - 8 * 86_400_000).toISOString();
   const [profileResult, specialtiesResult, pathologiesResult, questionsResult, progressResult, activityResult, ecosXpResult, dailyQuiz, featuredSessionProgress] = await Promise.all([
     getDashboardProfile(supabase, userId),
-    supabase
+    !(FEATURES.fiches || FEATURES.quiz) ? none : supabase
       .from("specialties")
       .select("id, name, slug, icon, color")
       .order("order_index", { ascending: true }),
-    supabase
+    !FEATURES.fiches ? none : supabase
       .from("pathologies")
       .select("id, specialty_id, title, slug, difficulty")
       .eq("is_published", true)
       .order("title", { ascending: true }),
-    selectAllPages((from, to) => supabase
+    !FEATURES.quiz ? none : selectAllPages((from, to) => supabase
       .from("questions")
       .select("id, specialty_id")
       .eq("is_published", true)
@@ -164,8 +170,9 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       .select("created_at, amount")
       .eq("user_id", userId)
       .gte("created_at", eventsSince),
-    getDailyQuiz().catch(() => null),
-    getStudySessionProgress(userId, featuredStudySession.slug).catch(() => []),
+    // Le quiz du jour est créé à la première lecture : jamais quand les QCM sont masqués.
+    FEATURES.quiz ? getDailyQuiz().catch(() => null) : null,
+    FEATURES.sessions ? getStudySessionProgress(userId, featuredStudySession.slug).catch(() => []) : [],
   ]);
 
   const firstError = [
@@ -274,11 +281,14 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       }];
     }
     if (row.resource_type === "clinical_case") {
+      // `resource_id` est le nom interne de la station, qui nomme le diagnostic :
+      // l'historique affiche le titre vu par le candidat et renvoie à la station.
+      const code = row.resource_id ? ecosPublicCode(row.resource_id) : null;
       return [{
         id: `clinical-case-${row.resource_id ?? row.last_activity_at}`,
-        label: "Station clinique terminée",
-        detail: row.resource_id ? `Cas ${row.resource_id.replaceAll("-", " ")}` : "Entraînement ECOS",
-        href: "/cas",
+        label: (row.resource_id && stationCandidateTitle(row.resource_id)) || "Station ECOS",
+        detail: "Station terminée",
+        href: code ? `/cas/${code}` : "/cas",
         completedAt: row.last_activity_at,
         kind: "clinical_case",
       }];

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, BookOpen, Search } from "lucide-react";
 import type { SpecialtyCatalogItem } from "@/lib/content/queries";
-import { normalizeSearch } from "@/lib/anatomy/assessment";
+import { normalizeSearch } from "@/lib/text";
 
 export function FicheCatalog({ specialties, completedIds }: { specialties: SpecialtyCatalogItem[]; completedIds: string[] }) {
   const [query, setQuery] = useState("");

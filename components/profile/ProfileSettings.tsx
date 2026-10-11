@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { BRAND_NAME } from "@/lib/brand";
+import { FEATURES } from "@/lib/features";
 
 type SpecialtyOption = { id: string; name: string };
 
@@ -202,6 +203,8 @@ export function ProfileSettings({
           </div>
         </div>
 
+        {/* Objectifs de QCM : affichés seulement quand le module est actif (lib/features.ts). */}
+        {FEATURES.quiz && <>
         <div className="my-7 h-px bg-slate-100" />
 
         <div className="flex items-center gap-3">
@@ -251,6 +254,7 @@ export function ProfileSettings({
             </select>
           </div>
         </div>
+        </>}
 
         <div className="mt-7 flex flex-wrap items-center gap-3">
           <Button disabled={saving || avatarBusy} type="submit">

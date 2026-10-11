@@ -267,9 +267,9 @@ export function UserDashboard({ data, firstName, stations = [] }: { data: Dashbo
             <Link className="learning-inline-link" href="/cas">Toutes les stations <ArrowRight size={16} /></Link>
           </div>
           {playableStations.length > 0 ? (
-            <div className="anatomy-module-grid">
+            <div className="learning-tile-grid">
               {playableStations.map((station) => (
-                <article className="anatomy-module-card" key={station.code}>
+                <article className="learning-tile" key={station.code}>
                   <div className="learning-card-top"><span>ECOS · {station.specialty ?? "Transversal"}</span><Clock3 size={16} /></div>
                   <h3>{station.candidateTitle}</h3>
                   <p>{[station.patientLabel, difficultyLabels[station.difficulty]].filter(Boolean).join(" · ")}</p>

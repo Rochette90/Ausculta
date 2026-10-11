@@ -39,6 +39,11 @@ type CaseRow = {
 const editorialTitles = new Map(caseCatalog.map((item) => [item.slug, item.candidateTitle]));
 const STATION_DURATION = `${Math.round(EXAM_DURATION_SECONDS / 60)} min`;
 
+/** Titre vu par le candidat pour une station, à partir de son nom interne. */
+export function stationCandidateTitle(slug: string): string | null {
+  return editorialTitles.get(slug) ?? null;
+}
+
 function fallbackCandidateTitle(setting: string | undefined) {
   if (setting?.toLocaleLowerCase("fr").includes("urgence")) return "Consultation aux urgences";
   if (setting?.toLocaleLowerCase("fr").includes("cabinet")) return "Consultation au cabinet";

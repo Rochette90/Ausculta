@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/require-user";
+import { FEATURES } from "@/lib/features";
 import { getStudySession } from "@/lib/study-sessions/catalog";
 import { createAdminClient } from "@/lib/supabase/server";
 
@@ -12,6 +13,7 @@ export async function setStudySessionStepCompletion(
   stepId: string,
   completed: boolean,
 ): Promise<StudySessionActionResult> {
+  if (!FEATURES.sessions) return { ok: false, message: "Module indisponible." };
   const user = await requireUser(`/sessions/${encodeURIComponent(sessionSlug)}`);
   const session = getStudySession(sessionSlug);
   const stepIndex = session?.steps.findIndex((step) => step.id === stepId) ?? -1;

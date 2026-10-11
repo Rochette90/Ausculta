@@ -1,6 +1,7 @@
 import { ApiError, apiJson, assertSameOrigin, handleApiError, readJsonObject, requireAuthenticatedUser } from "@/app/lib/api-security";
 import { enforceRateLimit } from "@/app/lib/rate-limit";
 import { getAnatomyModule } from "@/lib/anatomy/catalog";
+import { FEATURES } from "@/lib/features";
 import { gradeAnatomy } from "@/lib/anatomy/assessment";
 import { createAdminClient } from "@/lib/supabase/server";
 import { UUID_PATTERN } from "@/lib/validation";
@@ -9,6 +10,7 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
   try {
     const user = await requireAuthenticatedUser();
     assertSameOrigin(request);
+    if (!FEATURES.anatomy) throw new ApiError(404, "module_not_found", "Module introuvable.");
     const { slug } = await context.params;
     const lesson = getAnatomyModule(slug);
     if (!lesson) throw new ApiError(404, "module_not_found", "Module introuvable.");

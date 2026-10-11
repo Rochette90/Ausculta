@@ -77,7 +77,8 @@ const HIDDEN_TAGS = new Set(["import-vault", "a-reviser", "bachelor-3-lausanne"]
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const pathology = await getPathologyBySlug(slug);
+  const readable = FEATURES.fiches || STATION_FICHE_SLUGS.has(slug);
+  const pathology = readable ? await getPathologyBySlug(slug) : null;
   return pathology
     ? { title: pageTitle(pathology.title), description: pathology.summary ?? undefined }
     : { title: pageTitle("Fiche introuvable") };

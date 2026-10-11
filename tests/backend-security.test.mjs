@@ -441,7 +441,9 @@ test("new accounts receive a short, skippable and personalized onboarding", asyn
   assert.match(flow, /Choisis deux ou trois spécialités/);
   assert.match(route, /requireAuthenticatedUser\(\)/);
   assert.match(route, /assertSameOrigin\(request\)/);
-  assert.match(route, /specialtyIds\.length < 2 \|\| specialtyIds\.length > 3/);
+  // Deux ou trois spécialités quand l'onboarding les demande, aucune sinon.
+  assert.match(route, /minimumSpecialties = ONBOARDING_ASKS_SPECIALTIES \? 2 : 0/);
+  assert.match(route, /specialtyIds\.length < minimumSpecialties \|\| specialtyIds\.length > 3/);
   assert.match(route, /onboarding_completed_at: now/);
   assert.match(dashboardQuery, /priority_specialty_ids/);
   assert.match(dashboard, /profile\.learning_priority/);

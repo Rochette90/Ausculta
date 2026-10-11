@@ -12,6 +12,7 @@ import { enforceRateLimit } from "../../lib/rate-limit";
 import { createAdminClient } from "../../../lib/supabase/server";
 import { getOnboardingMetadata, isMissingOnboardingColumn } from "../../../lib/onboarding/metadata";
 import { ONBOARDING_METADATA_KEY } from "@/lib/brand";
+import { ONBOARDING_ASKS_SPECIALTIES } from "@/lib/features";
 
 const UNIVERSITIES = new Set(["lausanne", "geneve", "fribourg", "berne", "bale", "zurich", "autre"]);
 const STUDY_YEARS = new Set(["b1", "b2", "b3", "m1", "m2", "m3", "autre"]);
@@ -35,7 +36,7 @@ function optionalExamDate(value: unknown) {
   const maximum = `${Number(today.slice(0, 4)) + 10}${today.slice(4)}`;
   const isRealDate = !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
   if (!isRealDate || value < today || value > maximum) {
-    throw new ApiError(400, "invalid_onboarding", "Choisissez une date d’examen à venir.");
+    throw new ApiError(400, "invalid_onboarding", "Choisis une date d’examen à venir.");
   }
   return value;
 }
@@ -76,17 +77,21 @@ export async function POST(request: Request) {
     const examDate = optionalExamDate(body.examDate);
     const specialtyIds = Array.isArray(body.specialtyIds) ? [...new Set(body.specialtyIds)] : [];
 
-    if (specialtyIds.length < 2 || specialtyIds.length > 3 || specialtyIds.some((id) => typeof id !== "string" || !UUID_PATTERN.test(id))) {
-      throw new ApiError(400, "invalid_onboarding", "Choisissez deux ou trois spécialités prioritaires.");
+    // Les spécialités ne sont exigées que si l'onboarding les demande (lib/features.ts).
+    const minimumSpecialties = ONBOARDING_ASKS_SPECIALTIES ? 2 : 0;
+    if (specialtyIds.length < minimumSpecialties || specialtyIds.length > 3 || specialtyIds.some((id) => typeof id !== "string" || !UUID_PATTERN.test(id))) {
+      throw new ApiError(400, "invalid_onboarding", "Choisis deux ou trois spécialités prioritaires.");
     }
 
-    const { data: specialties, error: specialtiesError } = await admin
-      .from("specialties")
-      .select("id")
-      .in("id", specialtyIds as string[]);
-    if (specialtiesError) throw specialtiesError;
-    if ((specialties ?? []).length !== specialtyIds.length) {
-      throw new ApiError(400, "invalid_onboarding", "Une spécialité sélectionnée n’existe pas.");
+    if (specialtyIds.length > 0) {
+      const { data: specialties, error: specialtiesError } = await admin
+        .from("specialties")
+        .select("id")
+        .in("id", specialtyIds as string[]);
+      if (specialtiesError) throw specialtiesError;
+      if ((specialties ?? []).length !== specialtyIds.length) {
+        throw new ApiError(400, "invalid_onboarding", "Une spécialité sélectionnée n’existe pas.");
+      }
     }
 
     const now = new Date().toISOString();
@@ -106,7 +111,7 @@ export async function POST(request: Request) {
 
     const { error: goalError } = await admin.from("user_learning_goals").upsert({
       user_id: user.id,
-      target_specialty_id: specialtyIds[0],
+      target_specialty_id: specialtyIds[0] ?? null,
       updated_at: now,
     }, { onConflict: "user_id" });
     if (goalError) throw goalError;
