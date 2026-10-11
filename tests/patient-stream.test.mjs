@@ -269,8 +269,8 @@ test("la route de discussion contrôle tout avant de répondre en flux", async (
   assert.match(route, /await Promise\.all\(\[\s*enforceRateLimit\(admin, user\.id, "ecos-chat", 30, 60\),[\s\S]+synthesisStarted\(admin, sessionId, user\.id\),[\s\S]+\]\);[\s\S]+new ReadableStream/);
   assert.match(route, /sessionDeadline\(session\.mode, session\.started_at\)[\s\S]+new ReadableStream/);
   assert.match(route, /"content-type": "application\/x-ndjson; charset=utf-8"/);
-  // La voix réaliste n'est synthétisée que si le navigateur la demande.
-  assert.match(route, /const voice = wantsVoice \? speechConfig\(scenario\) : null;/);
+  // La voix réaliste n'est synthétisée que si le navigateur la demande et que le quota du jour le permet.
+  assert.match(route, /const voice = wantsVoice && voiceWithinQuota \? speechConfig\(scenario\) : null;/);
   // La question est enregistrée avant la réponse, et « done » part en dernier.
   assert.match(route, /studentSaved\.then\(async \(\) => \{[\s\S]+p_role: "patient"/);
   assert.match(route, /await Promise\.all\(\[audioSent, saved\]\);[\s\S]+send\(\{ type: "done"/);

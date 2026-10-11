@@ -71,7 +71,7 @@ function messageView(message: EcosMessage) {
 /** Error text sent by the API for expected refusals (time over, synthesis started…). */
 async function apiErrorMessage(response: Response, fallback: string) {
   const data = await response.json().catch(() => null) as { error?: string } | null;
-  return response.status === 400 || response.status === 409 ? data?.error ?? fallback : fallback;
+  return response.status === 400 || response.status === 409 || response.status === 429 ? data?.error ?? fallback : fallback;
 }
 
 function DebriefList({ title, items }: { title: string; items: string[] }) {
@@ -332,7 +332,12 @@ export function EcosStation({ station }: { station: EcosStationView }) {
     try {
       const response = await fetch("/api/ecos/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ station: station.code, mode }), signal: AbortSignal.timeout(20_000) });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "La station n’a pas pu démarrer.");
+      if (!response.ok) {
+        // Quota du jour atteint : le serveur l'explique, on le dit tel quel.
+        setSessionId(null);
+        setStationError(response.status === 429 && typeof data.error === "string" ? data.error : "La station n’a pas pu démarrer. Vérifie ta connexion puis réessaie.");
+        return;
+      }
       setSessionId(data.sessionId);
       deadline.current = Date.now() + examSeconds * 1_000;
       const firstMessage: EcosMessage = { role: "patient", content: data.initialMessage };

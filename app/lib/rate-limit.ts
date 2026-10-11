@@ -2,13 +2,14 @@ import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ApiError } from "./api-security";
 
-export async function enforceRateLimit(
+/** Compte l'appel et dit s'il reste dans la limite, sans lever d'erreur. */
+export async function withinRateLimit(
   admin: SupabaseClient,
   userId: string,
   scope: string,
   limit: number,
   windowSeconds = 60,
-) {
+): Promise<boolean> {
   const { data, error } = await admin.rpc("check_rate_limit", {
     p_user_id: userId,
     p_scope: scope,
@@ -17,10 +18,33 @@ export async function enforceRateLimit(
   });
 
   if (error) throw error;
-  if (!data) {
+  return Boolean(data);
+}
+
+export async function enforceRateLimit(
+  admin: SupabaseClient,
+  userId: string,
+  scope: string,
+  limit: number,
+  windowSeconds = 60,
+) {
+  if (!(await withinRateLimit(admin, userId, scope, limit, windowSeconds))) {
     throw new ApiError(429, "rate_limit_exceeded", "Trop de requêtes", {
       "retry-after": String(windowSeconds),
     });
+  }
+}
+
+/** Quota journalier : même compteur, message lisible par l'étudiant. */
+export async function enforceDailyQuota(
+  admin: SupabaseClient,
+  userId: string,
+  scope: string,
+  limit: number,
+  message: string,
+) {
+  if (!(await withinRateLimit(admin, userId, scope, limit, 86_400))) {
+    throw new ApiError(429, "daily_quota_exceeded", message);
   }
 }
 

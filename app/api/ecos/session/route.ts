@@ -6,10 +6,11 @@ import {
   handleApiError,
   requireAuthenticatedUser,
 } from "../../../lib/api-security";
-import { enforceRateLimit } from "../../../lib/rate-limit";
+import { enforceDailyQuota, enforceRateLimit } from "../../../lib/rate-limit";
 import { createAdminClient } from "../../../../lib/supabase/server";
 
 import { getPublishedClinicalCase } from "@/lib/ecos/cases";
+import { ecosQuotas } from "@/lib/ecos/quotas";
 import { resolveEcosStation } from "@/lib/ecos/stations";
 import { parseEcosMode } from "@/lib/ecos/timing";
 
@@ -26,6 +27,17 @@ export async function POST(request: Request) {
     if (!clinicalCase) throw new ApiError(404, "station_unavailable", "Station indisponible.");
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "ecos-session", 10, 60);
+    await enforceDailyQuota(admin, user.id, "ecos-session-day", ecosQuotas().dailySessions,
+      "Tu as atteint le nombre de stations prévu pour aujourd’hui. Reviens demain.");
+
+    // Une seule station ouverte par compte : celles restées en suspens (onglet
+    // fermé, page rechargée) sont closes avant d'en créer une nouvelle.
+    const { error: abandonError } = await admin
+      .from("ecos_sessions")
+      .update({ status: "abandoned" })
+      .eq("user_id", user.id)
+      .eq("status", "active");
+    if (abandonError) throw abandonError;
 
     const { data: sessionId, error } = await admin.rpc("create_ecos_session", {
       p_user_id: user.id,

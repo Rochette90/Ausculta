@@ -2,6 +2,7 @@ import { buildPatientPrompt, EXAMINER_PREFIX, localPatientReply } from "@/lib/ec
 import { encodeChatEvent, type ChatStreamEvent } from "@/lib/ecos/chat-stream";
 import { patientAiChain, patientAiTimeoutMs, type TranscriptMessage } from "@/lib/ecos/patient-ai";
 import { streamPatientReply } from "@/lib/ecos/patient-reply";
+import { DAY_SECONDS, ecosQuotas, sessionIsFull } from "@/lib/ecos/quotas";
 import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { usesReservedPrefix } from "@/lib/ecos/text";
@@ -16,7 +17,7 @@ import {
   readJsonObject,
   requireAuthenticatedUser,
 } from "../../../lib/api-security";
-import { enforceRateLimit } from "../../../lib/rate-limit";
+import { enforceDailyQuota, enforceRateLimit, withinRateLimit } from "../../../lib/rate-limit";
 import { stopwatch } from "../../../lib/timing";
 import { createAdminClient } from "../../../../lib/supabase/server";
 
@@ -73,7 +74,8 @@ export async function POST(request: Request) {
 
     // Contrôles indépendants lancés ensemble : un seul aller-retour vers la base.
     const admin = createAdminClient();
-    const [, sessionResult, synthesisOpen, historyResult] = await Promise.all([
+    const quotas = ecosQuotas();
+    const [, sessionResult, synthesisOpen, historyResult, , voiceWithinQuota] = await Promise.all([
       enforceRateLimit(admin, user.id, "ecos-chat", 30, 60),
       admin
         .from("ecos_sessions")
@@ -89,6 +91,10 @@ export async function POST(request: Request) {
         .eq("user_id", user.id)
         .order("sequence", { ascending: false })
         .limit(HISTORY_WINDOW - 1),
+      enforceDailyQuota(admin, user.id, "ecos-chat-day", quotas.dailyMessages,
+        "Tu as atteint le nombre de questions prévu pour aujourd’hui. Termine la station pour voir ton bilan."),
+      // Au-delà du quota de voix réaliste, la voix du navigateur prend le relais.
+      wantsVoice ? withinRateLimit(admin, user.id, "ecos-voice-day", quotas.dailyVoiceReplies, DAY_SECONDS) : false,
     ]);
     const { data: session, error: sessionError } = sessionResult;
     if (sessionError) throw sessionError;
@@ -105,6 +111,9 @@ export async function POST(request: Request) {
       throw new ApiError(409, "synthesis_started", "La synthèse est commencée : l’entretien est terminé.");
     }
     if (historyResult.error) throw historyResult.error;
+    if (sessionIsFull(historyResult.data?.[0]?.sequence, quotas)) {
+      throw new ApiError(409, "session_full", "Cette station a atteint sa longueur maximale. Passe à la synthèse pour la terminer.");
+    }
     const history: TranscriptMessage[] = [
       ...(historyResult.data ?? []).reverse().map(({ role, content }) => ({ role, content }) as TranscriptMessage),
       { role: "student", content: message },
@@ -121,7 +130,7 @@ export async function POST(request: Request) {
     })).then(({ error }) => { if (error) throw error; });
     studentSaved.catch(() => undefined);
 
-    const voice = wantsVoice ? speechConfig(scenario) : null;
+    const voice = wantsVoice && voiceWithinQuota ? speechConfig(scenario) : null;
     const chain = patientAiChain();
     const turn = history.filter((item) => item.role === "student").length;
 
@@ -141,7 +150,8 @@ export async function POST(request: Request) {
           segments += 1;
           if (index === 0) timing.mark("first-segment");
           send({ type: "segment", index, text });
-          if (!voice) return;
+          // Navigateur parti : inutile de payer une synthèse que personne n'entendra.
+          if (!voice || request.signal.aborted) return;
           const audio = synthesizeSpeech(voice, text, { timeoutMs: SEGMENT_SPEECH_TIMEOUT_MS })
             .then((bytes) => ({ bytes, error: null }), (error: unknown) => ({ bytes: null, error }));
           audioSent = audioSent.then(async () => {

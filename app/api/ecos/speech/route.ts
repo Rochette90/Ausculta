@@ -1,4 +1,5 @@
 import { EXAMINER_PREFIX } from "@/lib/ecos/engine";
+import { DAY_SECONDS, ecosQuotas } from "@/lib/ecos/quotas";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { elevenLabsSpeechRequest, isPermanentVoiceFailure, SPEECH_MAX_CHARACTERS, speechConfig, speechErrorReason } from "@/lib/ecos/voice";
 import { UUID_PATTERN } from "@/lib/validation";
@@ -10,7 +11,7 @@ import {
   readJsonObject,
   requireAuthenticatedUser,
 } from "../../../lib/api-security";
-import { enforceRateLimit } from "../../../lib/rate-limit";
+import { enforceRateLimit, withinRateLimit } from "../../../lib/rate-limit";
 import { stopwatch } from "../../../lib/timing";
 import { createAdminClient } from "../../../../lib/supabase/server";
 
@@ -43,7 +44,8 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
-    await enforceRateLimit(admin, user.id, "ecos-speech", 40, 60);
+    // La route ne lit que la phrase d'ouverture : quelques appels par minute suffisent.
+    await enforceRateLimit(admin, user.id, "ecos-speech", 10, 60);
     const { data: session, error: sessionError } = await admin
       .from("ecos_sessions")
       .select("id, status, station_slug")
@@ -58,6 +60,10 @@ export async function POST(request: Request) {
 
     const config = speechConfig(scenario);
     if (!config) throw new ApiError(503, "speech_unavailable", "Voix réaliste non configurée");
+    // Quota du jour atteint : même réponse, le navigateur lit avec sa propre voix.
+    if (!(await withinRateLimit(admin, user.id, "ecos-voice-day", ecosQuotas().dailyVoiceReplies, DAY_SECONDS))) {
+      throw new ApiError(503, "speech_unavailable", "Voix réaliste indisponible pour aujourd’hui");
+    }
 
     const { data: lines, error: linesError } = await admin
       .from("ecos_messages")
