@@ -13,7 +13,7 @@ imported_at: 2026-08-12
 ---
 
 > [!warning] Statut éditorial
-> **À réviser.** Cette fiche a été adaptée depuis le vault pédagogique MED - Last Dance. Elle doit être relue, corrigée si nécessaire puis signée nominativement dans MedTrain avant d'être considérée comme révisée.
+> **À réviser.** Cette fiche a été adaptée depuis le vault pédagogique MED - Last Dance. Elle doit être relue, corrigée si nécessaire puis signée nominativement dans Ausculta avant d'être considérée comme révisée.
 
 ---
 
@@ -271,5 +271,5 @@ Dépression **chronique ≥ 2 ans**.
 ## Provenance pédagogique
 
 - Source interne : `Psychiatrie/Troubles de l'humeur (3H).md` dans le vault MED - Last Dance
-- Import MedTrain : 12 août 2026
+- Import Ausculta : 12 août 2026
 - Statut : **À réviser — non signée**

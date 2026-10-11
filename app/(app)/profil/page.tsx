@@ -6,7 +6,7 @@ import { ProfileSettings } from "../../../components/profile/ProfileSettings";
 import { requireUser } from "../../../lib/auth/require-user";
 import { getProfileSummary } from "../../../lib/profile/queries";
 import { createClient } from "../../../lib/supabase/server";
-import { BRAND_PRO_PLAN, pageTitle } from "@/lib/brand";
+import { BRAND_PLAN_LABEL, BRAND_PRO_PLAN, pageTitle } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Profil") };
@@ -145,7 +145,7 @@ export default async function ProfilPage() {
             <p className="mb-0 mt-3 text-sm leading-6 text-slate-500">
               {subscription?.current_period_end
                 ? `Prochaine échéance : ${new Date(subscription.current_period_end).toLocaleDateString("fr-CH", { timeZone: "Europe/Zurich" })}`
-                : "Passe à Pro pour débloquer l’entraînement complet."}
+                : `Passe à ${BRAND_PLAN_LABEL} pour débloquer l’entraînement complet.`}
             </p>
             <BillingActions hasCustomer={Boolean(profile?.stripe_customer_id)} isPro={isPro} />
           </section>

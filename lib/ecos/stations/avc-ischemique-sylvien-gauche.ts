@@ -1,7 +1,7 @@
 import type { EcosScenario } from "../types.ts";
 import { communicationCriterion, LABS, planReaction, presentationCriterion, VITALS } from "./shared.ts";
 
-const TIME = ["quelle heure", "a quelle heure", "heure", "depuis quand", "depuis combien", "derniere fois", "dernier moment", "vue normale", "vue en bonne sante", "allait bien", "quand avez vous remarque", "quand est ce", "quand ca", "quand a", "debut", "commence"];
+const TIME = ["quelle heure", "a quelle heure", "heure", "depuis quand", "depuis combien", "derniere fois", "dernier moment", "vue normale", "vue en bonne sante", "allait bien", "quand avez vous remarque", "quand est ce", "quand ca", "quand a", "debut", "commence", "d un coup", "progressiv", "brutal", "brusque", "faisiez", "elle faisait", "au moment ou"];
 const GLUCOSE = ["glycemie", "sucre", "hypoglyc", "dextro", "glucose"];
 const ANTICOAGULANTS = ["anticoag", "fluidif", "sang liquide", "xarelto", "eliquis", "lixiana", "pradaxa", "marcoumar", "sintrom", "heparine", "aspirine"];
 
@@ -11,6 +11,7 @@ export const avcIschemiqueSylvienGauche: EcosScenario = {
   setting: "urgences",
   patient: { name: "Mme Rossier", age: 68, sex: "F" },
   proxy: true,
+  voiceSex: "M",
   persona: "La patiente a un trouble du langage et ne dit que quelques mots ; c’est son mari, inquiet mais précis, qui répond aux questions à sa place.",
   brief: [
     "Vous êtes médecin assistant·e au service des urgences.",
@@ -21,6 +22,11 @@ export const avcIschemiqueSylvienGauche: EcosScenario = {
   history: {
     identity: "Elle s’appelle Monique Rossier, elle a 68 ans. Moi, c’est Jean, son mari.",
     occupation: "Elle est retraitée, ancienne enseignante.",
+    living: "Nous vivons tous les deux dans une maison. Elle était complètement autonome, elle conduit encore.",
+    feeling: "Elle a l’air perdue, et ça la frustre de ne pas trouver ses mots. Moi, je suis très inquiet.",
+    previousEpisodes: "Non, jamais rien de pareil. Ni faiblesse passagère, ni trouble de la parole avant ce matin.",
+    course: "Rien ne s’améliore depuis ce matin, c’est pareil.",
+    otherSymptoms: "Sa bouche tombe un peu à droite.",
     medications: "Elle prend de l’amlodipine pour la tension, c’est tout. Pas d’anticoagulant, pas d’aspirine.",
     allergies: "Pas d’allergie connue.",
     personalHistory: "De l’hypertension depuis des années. Elle se plaint parfois de palpitations, mais on n’a jamais fait d’examen. Jamais d’AVC, pas d’opération ni de saignement récent.",

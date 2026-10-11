@@ -1,5 +1,5 @@
 import type { EcosScenario } from "../types.ts";
-import { communicationCriterion, DYSPNEA, FEVER, LABS, ONSET, planReaction, presentationCriterion, treatmentsCriterion, VITALS } from "./shared.ts";
+import { CHARACTER, communicationCriterion, DYSPNEA, FEVER, INTENSITY, LABS, LOCATION, ONSET, planReaction, presentationCriterion, treatmentsCriterion, VITALS } from "./shared.ts";
 
 const GENERAL = ["poids", "maigri", "fatigue", "fatigu", "appetit", "sueur", "transpir"];
 const INJECTION = ["drogue", "inject", "seringue", "heroine", "cocaine", "substance", "consommation"];
@@ -23,6 +23,11 @@ export const endocarditeInfectieuse: EcosScenario = {
   history: {
     identity: "Rui Costa, 45 ans.",
     occupation: "Je travaille de temps en temps sur des chantiers, je suis au chômage en ce moment.",
+    living: "J’habite seul dans un petit appartement. Je vois ma sœur de temps en temps.",
+    feeling: "Vidé. Je n’ai plus aucune énergie.",
+    previousEpisodes: "Non, jamais eu une fièvre qui dure comme ça.",
+    course: "Ça ne passe pas : la fièvre revient tous les soirs, et je suis de plus en plus faible.",
+    otherSymptoms: "Je transpire beaucoup la nuit, je trempe les draps.",
     medications: "Je suis sous méthadone depuis trois ans, au centre. Rien d’autre.",
     allergies: "Pas d’allergie, j’ai déjà eu de la pénicilline sans problème.",
     personalHistory: "Une hépatite C traitée il y a quatre ans. Jamais eu de problème de cœur, pas d’opération.",
@@ -34,8 +39,16 @@ export const endocarditeInfectieuse: EcosScenario = {
   },
   rules: [
     { topic: "fièvre", keywords: FEVER, reply: "Jusqu’à 39,5 le soir, avec de gros frissons qui me secouent." },
-    { topic: "état général", keywords: GENERAL, reply: "J’ai perdu quatre kilos, je transpire beaucoup la nuit et je suis épuisé." },
-    { topic: "dyspnée et douleur", keywords: [...DYSPNEA, "ou avez vous mal", "avez vous mal", "douleur", "irrad", "sur 10", "intensit", "echelle", "poitrine", "douleur thoracique", "toux", "tousse", "crach"], reply: "Je suis essoufflé depuis quelques jours et j’ai mal sur les côtés de la poitrine quand je respire fort. Je tousse un peu." },
+    { topic: "poids", keywords: ["poids", "maigri", "kilos"], reply: "J’ai perdu quatre kilos." },
+    { topic: "sueurs nocturnes", keywords: ["sueur", "transpir"], reply: "Je transpire beaucoup la nuit." },
+    { topic: "fatigue", keywords: ["fatigue", "fatigu", "epuise", "energie"], reply: "Je suis épuisé." },
+    { topic: "appétit", keywords: ["appetit", "manger", "mangez", "faim"], reply: "Je n’ai pas beaucoup d’appétit." },
+    { topic: "dyspnée", keywords: DYSPNEA, reply: "Je suis essoufflé depuis quelques jours." },
+    { topic: "douleur thoracique", keywords: [...LOCATION, "ou avez vous mal", "avez vous mal", "douleur", "poitrine", "douleur thoracique"], reply: "J’ai mal sur les côtés de la poitrine quand je respire fort." },
+    { topic: "caractère", keywords: CHARACTER, reply: "Comme un point de côté." },
+    { topic: "intensité", keywords: INTENSITY, reply: "Trois sur dix, c’est surtout gênant." },
+    { topic: "irradiation", keywords: ["irrad", "ailleurs", "se deplace", "descend", "diffuse"], reply: "Non, ça reste sur les côtés." },
+    { topic: "toux", keywords: ["toux", "tousse", "tousser", "crach"], reply: "Je tousse un peu, sans cracher de sang." },
     { topic: "soins dentaires", keywords: DENTAL, reply: "Mes dents ne sont pas en bon état, mais je ne suis pas allé chez le dentiste depuis des années." },
     { topic: "procédures", keywords: PROCEDURE, reply: "Non, pas d’hôpital, pas d’opération ni de perfusion ces derniers mois. Pas de nouveau tatouage." },
     { topic: "cœur", keywords: HEART, reply: "Non, on ne m’a jamais parlé d’un souffle ni d’un problème de valve." },

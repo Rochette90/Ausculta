@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 const reasons = [
   { icon: Bug, title: "Problème technique", text: "Décrivez la page, l’action réalisée et le message affiché." },
-  { icon: BookOpenCheck, title: "Contenu médical", text: "Indiquez la fiche ou la question concernée et la correction proposée." },
+  { icon: BookOpenCheck, title: "Contenu médical", text: "Indiquez la station ou la fiche concernée et la correction proposée." },
   { icon: Building2, title: "Faculté ou partenariat", text: "Présentez votre institution, votre projet et la forme de collaboration souhaitée." },
 ];
 

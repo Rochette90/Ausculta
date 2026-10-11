@@ -1,5 +1,5 @@
 import type { User } from "@supabase/supabase-js";
-import { ONBOARDING_METADATA_KEY } from "@/lib/brand";
+import { LEGACY_ONBOARDING_METADATA_KEY, ONBOARDING_METADATA_KEY } from "@/lib/brand";
 
 export type OnboardingMetadata = {
   university: string | null;
@@ -22,7 +22,8 @@ const EMPTY_ONBOARDING: OnboardingMetadata = {
 };
 
 export function getOnboardingMetadata(user: Pick<User, "user_metadata">): OnboardingMetadata {
-  const raw = user.user_metadata?.[ONBOARDING_METADATA_KEY];
+  // Repli sur la clé de l'ancien nom pour les comptes antérieurs au renommage.
+  const raw = user.user_metadata?.[ONBOARDING_METADATA_KEY] ?? user.user_metadata?.[LEGACY_ONBOARDING_METADATA_KEY];
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return EMPTY_ONBOARDING;
   const value = raw as Record<string, unknown>;
   const learningPriority = ["fiches", "qcm", "cas_cliniques", "seances"].includes(String(value.learningPriority))

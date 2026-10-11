@@ -43,7 +43,7 @@ export function Footer7({
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             {logo && (
               <div className="flex items-center gap-2 lg:justify-start">
-                <Link href={logo.url}>
+                <Link className="footer-logo" href={logo.url}>
                   <Image alt={logo.alt} className="h-8 w-auto" height={logo.height ?? 52} src={logo.src} title={logo.title} width={logo.width ?? 242} />
                 </Link>
               </div>

@@ -24,6 +24,8 @@ export type EcosCriterion = {
   hint: string;
   points: number;
   earned: number;
+  /** Points accordés à la relecture par le modèle (question posée autrement). */
+  reviewed?: number;
 };
 
 export type EcosProcedureCategory = "constantes" | "examen" | "complementaire";
@@ -75,6 +77,19 @@ export type EcosRule = {
 export type EcosHistory = {
   identity: string;
   occupation: string;
+  /** Vie quotidienne : logement, entourage, autonomie. */
+  living: string;
+  /** Réponse à « Comment vous sentez-vous ? ». */
+  feeling: string;
+  /** Réponse à « Ça vous est déjà arrivé ? ». */
+  previousEpisodes: string;
+  /** Réponse à « Comment ça a évolué ? ». */
+  course: string;
+  /**
+   * Réponse à une question ouverte (« Avez-vous d'autres symptômes ? ») :
+   * un seul élément, le plus gênant. Le reste n'est dit que sur question précise.
+   */
+  otherSymptoms: string;
   medications: string;
   allergies: string;
   personalHistory: string;
@@ -94,6 +109,8 @@ export type EcosScenario = {
   patient: { name: string; age: number; sex: "F" | "M" };
   /** A relative answers for the patient (e.g. aphasia). */
   proxy?: boolean;
+  /** Sex of the speaking voice when it is not the patient's (the relative who answers). */
+  voiceSex?: "F" | "M";
   /** The complaint is a pain: unscripted pain questions are not denied outright. */
   painful?: boolean;
   /** Tone and behaviour of the simulated patient. */

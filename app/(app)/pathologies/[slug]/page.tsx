@@ -27,6 +27,8 @@ import type { LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FEATURES } from "@/lib/features";
+import { STATION_FICHE_SLUGS } from "@/lib/ecos/stations/index";
 import { FicheAnchor } from "../../../../components/content/FicheAnchor";
 import { FicheReader, type TocGroup } from "../../../../components/content/FicheReader";
 import { FicheSectionCard } from "../../../../components/content/FicheSectionCard";
@@ -86,6 +88,8 @@ export default async function PathologyPage({ params }: PageProps) {
   const user = await requireUser(`/pathologies/${slug}`);
   const pathology = await getPathologyBySlug(slug);
   if (!pathology) notFound();
+  // Catalogue masqué : seules les fiches citées par un débriefing restent lisibles.
+  if (!FEATURES.fiches && !STATION_FICHE_SLUGS.has(slug)) notFound();
 
   const supabase = await createClient();
   const { data: progress } = await supabase
@@ -133,8 +137,8 @@ export default async function PathologyPage({ params }: PageProps) {
 
   return (
     <main className="fiche page-enter">
-      <Link className="fiche-back" href="/specialties">
-        <ArrowLeft size={16} /> Toutes les spécialités
+      <Link className="fiche-back" href={FEATURES.fiches ? "/specialties" : "/cas"}>
+        <ArrowLeft size={16} /> {FEATURES.fiches ? "Toutes les spécialités" : "Retour aux stations"}
       </Link>
 
       <header className={`fiche-head${isUrgent ? " is-urgent" : ""}`}>
@@ -187,7 +191,7 @@ export default async function PathologyPage({ params }: PageProps) {
         )}
       </header>
 
-      {anatomyModules.some((module) => module.pathologySlugs.includes(slug)) && <section className="mb-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5"><p className="learning-eyebrow">LES BASES ANATOMIQUES DE CETTE FICHE</p><div className="learning-related">{anatomyModules.filter((module) => module.pathologySlugs.includes(slug)).map((module) => <Link href={`/anatomie/${module.slug}`} key={module.slug}><Layers size={16} />{module.title}<Link2 size={14} /></Link>)}</div></section>}
+      {FEATURES.anatomy && anatomyModules.some((module) => module.pathologySlugs.includes(slug)) && <section className="mb-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5"><p className="learning-eyebrow">LES BASES ANATOMIQUES DE CETTE FICHE</p><div className="learning-related">{anatomyModules.filter((module) => module.pathologySlugs.includes(slug)).map((module) => <Link href={`/anatomie/${module.slug}`} key={module.slug}><Layers size={16} />{module.title}<Link2 size={14} /></Link>)}</div></section>}
 
       {isUrgent && urgentTarget && (
         <a className="fiche-alert" href={`#${urgentTarget.id}`}>

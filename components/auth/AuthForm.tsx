@@ -60,7 +60,7 @@ export function AuthForm({ nextPath, switchNextPath = nextPath, mode }: { nextPa
       <div className="logo auth-logo"><BrandLogo priority /></div>
       <p className="eyebrow">{isSignup ? "CRÉER VOTRE COMPTE" : "ESPACE ÉTUDIANT SÉCURISÉ"}</p>
       <h1>{isSignup ? "Commencez à pratiquer." : "Retrouvez votre progression."}</h1>
-      <p>{isSignup ? "Créez gratuitement votre espace de révision clinique." : "Connectez-vous pour retrouver vos stations, quiz et statistiques."}</p>
+      <p>{isSignup ? "Créez gratuitement votre espace de révision clinique." : "Connectez-vous pour retrouver vos stations et votre progression."}</p>
       <Button className="full" variant="outline" type="button" disabled={loading} onClick={signInWithGoogle}>Continuer avec Google</Button>
       <div className="auth-divider"><span>ou</span></div>
       <form onSubmit={signInWithEmail}>

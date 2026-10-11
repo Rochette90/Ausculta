@@ -8,13 +8,17 @@ import {
   requireAuthenticatedUser,
 } from "../../../../lib/api-security";
 import { enforceRateLimit } from "../../../../lib/rate-limit";
+import { BRAND_NAME } from "@/lib/brand";
+import { communicationReport } from "@/lib/ecos/communication";
 import { debriefView } from "@/lib/ecos/debrief";
-import { diagnosisOptions, gradeEcosStation } from "@/lib/ecos/grading";
+import { diagnosisOptions, EXAM_CRITERION_ID, gradeEcosStation, storedTranscript } from "@/lib/ecos/grading";
+import { patientAiChain } from "@/lib/ecos/patient-ai";
+import { requestReview, reviewLine, withoutReview } from "@/lib/ecos/review";
 import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { DIAGNOSIS_PREFIX, PLAN_PREFIX } from "@/lib/ecos/text";
 import { sessionDeadline } from "@/lib/ecos/timing";
-import type { EcosMessage } from "@/lib/ecos/types";
+import type { EcosMessage, EcosScenario } from "@/lib/ecos/types";
 import { createAdminClient } from "../../../../../lib/supabase/server";
 
 const MAX_PLAN_LENGTH = 1_200;
@@ -30,9 +34,21 @@ async function readSynthesis(request: Request) {
   return { diagnosis, plan };
 }
 
+/** Bilan renvoyé au navigateur : grille, communication et débriefing. */
+function stationReport(scenario: EcosScenario, transcript: EcosMessage[]) {
+  return {
+    saved: true,
+    ...gradeEcosStation(scenario, transcript),
+    communication: communicationReport(transcript),
+    debrief: debriefView(scenario.debrief),
+  };
+}
+
 /**
  * Grades the station from the transcript stored by the server (never from the
  * browser) and only then reveals the debrief: diagnosis, key points, sources.
+ * The model reviews the grid items the keywords missed (lib/ecos/review.ts);
+ * its review is stored with the transcript so that reopening shows the same grade.
  */
 export async function POST(
   request: Request,
@@ -63,8 +79,7 @@ export async function POST(
     if (!scenario) throw new ApiError(409, "unsupported_station", "Scénario non disponible.");
 
     if (session.status === "completed") {
-      const graded = gradeEcosStation(scenario, (session.transcript ?? []) as EcosMessage[]);
-      return apiJson({ saved: true, ...graded, debrief: debriefView(scenario.debrief) });
+      return apiJson(stationReport(scenario, storedTranscript(session.transcript)));
     }
     if (session.status !== "active") {
       throw new ApiError(409, "session_not_active", "Session déjà clôturée");
@@ -107,19 +122,29 @@ export async function POST(
 
     // Les 400 derniers messages, dans l'ordre : la synthèse, ajoutée en dernier,
     // n'est jamais tronquée par un long entraînement.
-    const transcript = ((rows ?? []) as EcosMessage[]).reverse();
-    const graded = gradeEcosStation(scenario, transcript);
+    const transcript = withoutReview(storedTranscript(rows ?? []).reverse());
+    // Relecture des éléments manqués par les mots-clés ; sans réponse à temps,
+    // la note des mots-clés vaut seule.
+    const review = await requestReview({
+      chain: patientAiChain(),
+      scenario,
+      messages: transcript,
+      examCriterionId: EXAM_CRITERION_ID,
+      log: (reason) => console.error(`${BRAND_NAME} review: ${reason}`),
+    });
+    const stored = review ? [...transcript, reviewLine(review)] : transcript;
+    const report = stationReport(scenario, stored);
     const { error: completeError } = await admin.rpc("complete_ecos_session", {
       p_user_id: user.id,
       p_session_id: id,
-      p_score: graded.score,
-      p_max_score: graded.maxScore,
-      p_xp: graded.xp,
-      p_transcript: transcript,
+      p_score: report.score,
+      p_max_score: report.maxScore,
+      p_xp: report.xp,
+      p_transcript: stored,
     });
     if (completeError) throw completeError;
 
-    return apiJson({ saved: true, ...graded, debrief: debriefView(scenario.debrief) });
+    return apiJson(report);
   } catch (error) {
     return handleApiError(error);
   }

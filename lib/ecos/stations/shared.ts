@@ -23,16 +23,16 @@ export const treatmentsCriterion: EcosCriterionDefinition = {
   hint: "Médicaments habituels, automédication et allergies",
   points: 2,
   groups: [
-    ["medicament", "traitement habituel", "traitements habituels", "traitement regulier", "quel traitement", "quels traitements", "sous traitement", "avez vous un traitement", "avez vous des traitements", "suivez vous un traitement", "prenez vous", "vous prenez", "ordonnance", "comprime"],
+    ["medicament", "traitement habituel", "traitements habituels", "traitement regulier", "quel traitement", "quels traitements", "sous traitement", "avez vous un traitement", "avez vous des traitements", "suivez vous un traitement", "prenez vous", "vous prenez", "vos traitements", "prenez vous regulierement", "quelque chose regulierement", "ordonnance", "comprime"],
     ["allerg"],
   ],
 };
 
-export const ONSET = ["depuis quand", "depuis combien", "depuis", "combien de temps", "il y a combien", "quelle heure", "quand est ce", "quand a", "quand ca", "quand avez", "a quel moment", "commence", "debut", "apparu", "apparition", "comment c est arrive", "que s est il passe", "qu est ce qui s est passe", "racontez"];
+export const ONSET = ["depuis quand", "depuis combien", "depuis", "combien de temps", "il y a combien", "quelle heure", "quand est ce", "quand a", "quand ca", "quand avez", "a quel moment", "commence", "debut", "apparu", "apparition", "comment c est arrive", "que s est il passe", "qu est ce qui s est passe", "racontez", "d un coup", "brutal", "brusque", "progressiv", "petit a petit", "faisiez", "au moment ou", "comment ca a commence"];
 export const LOCATION = ["ou avez vous", "ou est ce", "ou ca", "ou exactement", "ou se situe", "ou se trouve", "ou sentez", "ou localis", "localis", "endroit", "montrez moi", "montrer"];
-export const CHARACTER = ["type de douleur", "quel type", "quel genre", "decri", "comment est la douleur", "a quoi ressemble", "ressemble", "sensation", "serre", "serrement", "oppress", "pesant", "coup de poignard", "crampe", "comme une brulure", "ca brule"];
-export const INTENSITY = ["intensit", "sur 10", "sur dix", "de 0 a 10", "de 1 a 10", "echelle", "combien sur", "a quel point", "tres fort"];
-export const RADIATION = ["irrad", "diffuse", "descend", "remonte", "se propage", "ailleurs"];
+export const CHARACTER = ["type de douleur", "quel type", "quel genre", "decri", "comment est la douleur", "a quoi ressemble", "ressemble", "sensation", "serre", "serrement", "oppress", "pesant", "coup de poignard", "crampe", "comme une brulure", "ca brule", "comment est cette", "comment est votre douleur", "ca fait comment", "comme quoi", "brule", "pique", "lancin", "pulsat"];
+export const INTENSITY = ["intensit", "sur 10", "sur dix", "de 0 a 10", "de 1 a 10", "echelle", "combien sur", "a quel point", "tres fort", "fort$", "forte$", "tres mal", "insupportable", "supportable"];
+export const RADIATION = ["irrad", "diffuse", "descend", "remonte", "se propage", "ailleurs", "se deplace", "va quelque part", "s etend", "propage"];
 export const DYSPNEA = ["essouffl", "souffle court", "le souffle", "du souffle", "respirer", "respiration", "respirez", "dyspn", "manquer d air", "manque d air"];
 export const NAUSEA = ["nausee", "vomi", "envie de vomir", "mal au coeur"];
 export const FEVER = ["fievre", "de la temperature", "frisson", "fievreux", "chaud"];

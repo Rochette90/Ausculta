@@ -144,7 +144,8 @@
   html { scroll-behavior: auto !important; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
-@media (min-width: 981px) { .consultation-grid.ecos-exam { grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); } }
+/* La grille n'est plus affichée pendant la station : deux colonnes, patient et entretien. */
+@media (min-width: 981px) { .consultation-grid { grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); } }
 
 .topbar .avatar { background: var(--mint); color: var(--mint-dark); }
 
@@ -165,6 +166,27 @@
 .ecos-debrief-sources a { color: var(--primary); overflow-wrap: anywhere; }
 .ecos-debrief-sources p { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
 @media (max-width: 760px) { .ecos-debrief-grid { grid-template-columns: 1fr; } }
+
+/* ECOS : relecture de la grille et bilan de communication */
+.review-badge { display: inline-block; margin-top: 6px; padding: 2px 9px; border-radius: 99px; background: var(--mint); color: var(--mint-dark); font-size: 11px; font-weight: 700; }
+.review-note { margin: 14px 0 0; padding-top: 14px; border-top: 1px solid var(--line-subtle); color: var(--muted); font-size: 13px; }
+.question-mix { margin: 4px 0 20px; }
+.question-bar { display: flex; height: 10px; overflow: hidden; border-radius: 99px; background: var(--surface-subtle); }
+.question-bar span { min-width: 6px; }
+.question-bar .is-open, .question-dot.is-open { background: var(--primary); }
+.question-bar .is-targeted, .question-dot.is-targeted { background: var(--amber); }
+.question-bar .is-closed, .question-dot.is-closed { background: var(--muted-light); }
+.question-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0 0; padding: 0 !important; list-style: none; }
+.question-legend li { display: flex; align-items: center; gap: 7px; }
+.question-legend strong { color: var(--ink); }
+.question-dot { width: 10px; height: 10px; border-radius: 50%; }
+.question-note { margin: 10px 0 0; color: var(--ink-secondary); font-size: 14px; }
+.ecos-debrief .behaviour-list { padding-left: 0; list-style: none; }
+.behaviour-list li { display: flex; align-items: baseline; gap: 10px; }
+.behaviour-list li > span[aria-hidden] { width: 18px; flex: none; text-align: center; color: var(--muted-light); font-weight: 800; }
+.behaviour-list li.is-done { color: var(--ink); }
+.behaviour-list li.is-done > span[aria-hidden] { color: var(--primary); }
+.communication-note { margin: 16px 0 0; color: var(--muted); font-size: 13px; }
 
 /* ECOS : déroulé en trois temps (anamnèse, examen clinique, synthèse) */
 .ecos-brief-steps { margin: 12px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; }

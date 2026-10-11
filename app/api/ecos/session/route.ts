@@ -12,7 +12,6 @@ import { createAdminClient } from "../../../../lib/supabase/server";
 import { getPublishedClinicalCase } from "@/lib/ecos/cases";
 import { resolveEcosStation } from "@/lib/ecos/stations";
 import { parseEcosMode } from "@/lib/ecos/timing";
-import { EXAM_CRITERION_ID } from "@/lib/ecos/grading";
 
 export async function POST(request: Request) {
   try {
@@ -51,9 +50,6 @@ export async function POST(request: Request) {
       {
         sessionId,
         mode,
-        // La grille (mots-clés, indices) ne sert qu'aux repères de l'entraînement :
-        // elle n'est pas envoyée en mode examen.
-        criteria: mode === "training" ? scenario.criteria.filter((criterion) => criterion.id !== EXAM_CRITERION_ID) : [],
         startedAt: new Date().toISOString(),
         initialMessage: scenario.opening,
       },

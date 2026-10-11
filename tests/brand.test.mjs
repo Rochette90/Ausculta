@@ -6,7 +6,9 @@ import {
   BRAND_EMAIL_FROM,
   BRAND_NAME,
   BRAND_NAME_UPPER,
+  BRAND_PLAN_LABEL,
   BRAND_PRO_PLAN,
+  LEGACY_ONBOARDING_METADATA_KEY,
   ONBOARDING_METADATA_KEY,
   PATHNAME_HEADER,
   PROGRESS_EVENT_NAME,
@@ -34,7 +36,9 @@ async function sourceFiles(roots) {
 test("la configuration de marque expose une identité cohérente", () => {
   assert.equal(BRAND_NAME_UPPER, BRAND_NAME.toLocaleUpperCase("fr-CH"));
   assert.ok(BRAND_EMAIL_FROM.endsWith(`@${BRAND_DOMAIN}`));
-  assert.equal(BRAND_PRO_PLAN, `${BRAND_NAME} Pro`);
+  assert.equal(BRAND_PRO_PLAN, `${BRAND_NAME} ${BRAND_PLAN_LABEL}`);
+  // « Pro » est réservé à un futur produit pour les soignants.
+  assert.notEqual(BRAND_PLAN_LABEL, "Pro");
   assert.equal(pageTitle("Tableau de bord"), `Tableau de bord — ${BRAND_NAME}`);
 });
 
@@ -46,19 +50,26 @@ test("le nom de marque n'apparaît en dur nulle part ailleurs que dans la config
     const source = await readFile(file, "utf8");
     const needles = [BRAND_NAME, BRAND_NAME_UPPER, BRAND_DOMAIN];
     for (const needle of needles) {
-      const index = source.toLocaleLowerCase().indexOf(needle.toLocaleLowerCase());
-      if (index >= 0) offenders.push(`${file.pathname} : ${source.slice(index, index + 60)}`);
+      // Mot entier uniquement : le nom est aussi le début d'un terme médical
+      // courant (« auscultation », « auscultatoire »), légitime dans les stations.
+      const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const match = new RegExp(`(?<!\\p{L})${escaped}(?!\\p{L})`, "iu").exec(source);
+      if (match) offenders.push(`${file.pathname} : ${source.slice(match.index, match.index + 60)}`);
     }
   }
   assert.deepEqual(offenders, [], `marque en dur :\n${offenders.join("\n")}`);
 });
 
-test("les identifiants techniques persistés ne suivent pas le renommage", () => {
-  // Changer ces clés invaliderait le thème et l'onboarding déjà enregistrés.
-  assert.equal(THEME_STORAGE_KEY, "medtrain-theme");
-  assert.equal(PROGRESS_EVENT_NAME, "medtrain:progress");
-  assert.equal(PATHNAME_HEADER, "x-medtrain-pathname");
-  assert.equal(ONBOARDING_METADATA_KEY, "medtrain_onboarding");
+test("les identifiants techniques sont figés et l'ancien onboarding reste lisible", async () => {
+  // Écrits en dur : les modifier réinitialise le thème et l'onboarding enregistrés.
+  assert.equal(THEME_STORAGE_KEY, "ausculta-theme");
+  assert.equal(PROGRESS_EVENT_NAME, "ausculta:progress");
+  assert.equal(PATHNAME_HEADER, "x-ausculta-pathname");
+  assert.equal(ONBOARDING_METADATA_KEY, "ausculta_onboarding");
+  // Les comptes créés sous l'ancien nom ne repassent pas par l'onboarding.
+  assert.equal(LEGACY_ONBOARDING_METADATA_KEY, "medtrain_onboarding");
+  const metadata = await readFile(new URL("../lib/onboarding/metadata.ts", import.meta.url), "utf8");
+  assert.match(metadata, /\[ONBOARDING_METADATA_KEY\] \?\? user\.user_metadata\?\.\[LEGACY_ONBOARDING_METADATA_KEY\]/);
 });
 
 test("les surfaces de marque consomment la configuration", async () => {

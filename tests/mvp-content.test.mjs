@@ -4,7 +4,7 @@ import test from "node:test";
 
 const readJson = async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), "utf8"));
 
-test("the MedTrain catalog contains 156 pathology entries across 15 populated specialties", async () => {
+test("the Ausculta catalog contains 156 pathology entries across 15 populated specialties", async () => {
   const catalog = await readJson("../content/pathologies/index.json");
   assert.equal(catalog.length, 156);
   assert.equal(catalog.filter((item) => item.status === "ready").length, 156);

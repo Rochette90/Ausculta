@@ -157,13 +157,15 @@ test("the marketing homepage reflects live product data and the current product 
   assert.match(page, /getMarketingStats\(\)/);
   assert.match(page, /stats=\{stats\}/);
   assert.match(stats, /\.eq\("is_published", true\)/);
-  assert.match(landing, /Pathologies claires et structurées/);
-  assert.match(landing, /Questions avec correction détaillée/);
-  assert.match(landing, /Cas cliniques/);
-  assert.match(landing, /XP, niveaux, série quotidienne/);
+  // Le lancement se concentre sur les stations ECOS (lib/features.ts).
   assert.match(landing, /Réviser moins au hasard/);
+  assert.match(landing, /patient simulé/);
+  for (const step of ["Anamnèse", "Examen clinique", "Synthèse", "Débriefing"]) assert.match(landing, new RegExp(`<h3>${step}</h3>`));
+  assert.match(landing, /MODE VOCAL/);
+  assert.match(landing, /stats\.caseCount/);
+  assert.match(landing, /EXAM_DURATION_SECONDS/);
+  assert.match(landing, /UPCOMING_FEATURE_LABELS/);
   assert.match(landing, /Conçu pour les étudiants en médecine en Suisse/);
-  assert.match(landing, /stats\.questionCount/);
   assert.doesNotMatch(landing, /Six spécialités/);
 });
 
@@ -183,8 +185,13 @@ test("public marketing pages explain the method and provide FAQ and contact rout
     read("../components/marketing/MarketingFooter.tsx"),
     read("../components/marketing/LandingPage.tsx"),
   ]);
-  for (const pillar of ["fiches", "qcm", "cas-cliniques", "progression"]) assert.match(method, new RegExp(`id: "${pillar}"`));
-  assert.match(method, /UNE ROUTINE DE 20 MINUTES/);
+  for (const step of ["anamnese", "examen", "synthese", "debriefing"]) {
+    assert.match(method, new RegExp(`id: "${step}"`));
+    assert.match(landing, new RegExp(`href="/methode#${step}"`));
+    assert.match(footer, new RegExp(`href: "/methode#${step}"`));
+  }
+  assert.match(method, /DEUX MODES/);
+  assert.match(faq, /Comment se déroule une station/);
   assert.match(faq, /<details/);
   assert.match(faq, /Comment les fiches sont-elles validées/);
   assert.match(contact, /ContactForm/);
@@ -204,7 +211,9 @@ test("public marketing pages explain the method and provide FAQ and contact rout
     assert.match(footer, new RegExp(`href: "/${route}"`));
   }
   for (const route of ["tutoriels", "qualite", "contact"]) assert.doesNotMatch(header, new RegExp(`href: "/${route}"`));
-  for (const route of ["catalogue", "tutoriels", "qualite", "nouveautes", "pricing"]) assert.match(landing, new RegExp(`href="/${route}"`));
+  for (const route of ["methode", "pricing", "faq", "a-propos", "nouveautes"]) assert.match(landing, new RegExp(`href="/${route}"`));
+  // Aucun lien de l'accueil ne mène à un module masqué.
+  for (const route of ["catalogue", "tutoriels", "qualite", "anatomie", "quiz", "sessions"]) assert.doesNotMatch(landing, new RegExp(`/${route}\\b`));
 });
 
 test("admin content workflow is role-gated and reports verify the selected source text", async () => {
@@ -427,7 +436,7 @@ test("new accounts receive a short, skippable and personalized onboarding", asyn
   assert.match(authPage, /mode === "signup"[\s\S]+\/onboarding\?next=/);
   assert.match(page, /requireUser\(`\/onboarding\?next=/);
   assert.match(page, /onboarding_completed_at \|\| profile\?\.onboarding_skipped_at/);
-  assert.match(flow, /Étape \{step\} sur 3/);
+  assert.match(flow, /Étape \{stepNumber\} sur \{steps\.length\}/);
   assert.match(flow, /Passer pour le moment/);
   assert.match(flow, /Choisis deux ou trois spécialités/);
   assert.match(route, /requireAuthenticatedUser\(\)/);
@@ -473,6 +482,7 @@ test("all mutable product APIs enforce authenticated server identity", async () 
     "../app/api/ecos/session/route.ts",
     "../app/api/ecos/session/[id]/route.ts",
     "../app/api/ecos/chat/route.ts",
+    "../app/api/ecos/speech/route.ts",
     "../app/api/ecos/session/[id]/procedure/route.ts",
     "../app/api/billing/checkout/route.ts",
     "../app/api/billing/portal/route.ts",

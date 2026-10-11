@@ -55,6 +55,15 @@ const PUBLIC_CODES: Readonly<Record<string, string>> = {
   "crise-asthme": "station-12",
 };
 
+/**
+ * Fiches citées par le débriefing d'au moins une station. Quand le catalogue
+ * de fiches est masqué, ce sont les seules fiches encore lisibles. L'ensemble
+ * est global : il ne dit pas quelle fiche appartient à quelle station.
+ */
+export const STATION_FICHE_SLUGS: ReadonlySet<string> = new Set(
+  ECOS_SCENARIOS.flatMap((scenario) => scenario.debrief.pathologySlugs),
+);
+
 const bySlug = new Map(ECOS_SCENARIOS.map((scenario) => [scenario.slug, scenario]));
 const byCode = new Map(ECOS_SCENARIOS.map((scenario) => [PUBLIC_CODES[scenario.slug], scenario]));
 

@@ -10,6 +10,7 @@ import { selectAllPages } from "../supabase/select-all";
 import { getOnboardingMetadata } from "../onboarding/metadata";
 import { activeStreak } from "../progress/streak";
 import { BRAND_NAME } from "@/lib/brand";
+import { FEATURES } from "../features";
 
 type SpecialtyRow = {
   id: string;
@@ -247,6 +248,9 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
 
   const pathologyById = new Map(pathologies.map((pathology) => [pathology.id, pathology]));
   const recentActivity = progress.flatMap((row): DashboardActivity[] => {
+    // L'historique ne renvoie jamais vers un module masqué.
+    if (row.pathology_id && !FEATURES.fiches) return [];
+    if (row.question_id && !FEATURES.quiz) return [];
     if (row.pathology_id) {
       const pathology = pathologyById.get(row.pathology_id);
       if (!pathology) return [];

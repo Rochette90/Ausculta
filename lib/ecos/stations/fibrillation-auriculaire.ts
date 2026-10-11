@@ -1,7 +1,7 @@
 import type { EcosScenario } from "../types.ts";
 import { communicationCriterion, DYSPNEA, FEVER, LABS, ONSET, planReaction, presentationCriterion, SYNCOPE, treatmentsCriterion, VITALS } from "./shared.ts";
 
-const RHYTHM = ["regulier", "irregulier", "rythme", "rapide", "vite", "tape", "cogne", "battements", "comment bat", "bat comment", "desordonne"];
+const RHYTHM = ["regulier", "irregulier", "rythme", "rapide", "vite", "tape", "cogne", "battements", "comment bat", "bat comment", "desordonne", "ca fait comment", "decri"];
 const CHEST_PAIN = ["douleur thoracique", "douleur dans la poitrine", "mal a la poitrine", "mal au thorax", "poitrine", "oppression"];
 
 export const fibrillationAuriculaire: EcosScenario = {
@@ -19,6 +19,11 @@ export const fibrillationAuriculaire: EcosScenario = {
   history: {
     identity: "Je m’appelle Paul Girard, j’ai 64 ans.",
     occupation: "Je suis comptable, toujours en activité.",
+    living: "Je vis avec ma femme, dans une maison. Nos enfants sont grands.",
+    feeling: "Fatigué, et pas tranquille avec ce cœur qui s’emballe.",
+    previousEpisodes: "Deux ou trois fois cette année, j’ai eu des palpitations de quelques minutes qui passaient toutes seules. Jamais aussi longtemps.",
+    course: "Pareil depuis le début : ça bat vite et n’importe comment, ça ne s’arrête pas.",
+    otherSymptoms: "Je suis un peu essoufflé quand je monte les escaliers.",
     medications: "De l’amlodipine pour la tension et de la metformine pour le diabète. Pas d’anticoagulant, pas d’aspirine.",
     allergies: "Pas d’allergie connue.",
     personalHistory: "Hypertension depuis dix ans et diabète de type 2 depuis cinq ans, bien équilibré. Jamais d’AVC, jamais d’infarctus ni d’insuffisance cardiaque. Je ronfle beaucoup, d’après ma femme.",
@@ -30,8 +35,7 @@ export const fibrillationAuriculaire: EcosScenario = {
   },
   rules: [
     { topic: "caractère des palpitations", keywords: RHYTHM, reply: "Ça bat très vite et de façon complètement irrégulière, comme un tambour désordonné." },
-    { topic: "circonstances", keywords: ["declench", "circonstance", "que faisiez", "ce que vous faisiez", "au moment ou", "cafe", "effort", "stress"], reply: "J’étais au lit, je venais de rentrer d’un mariage où j’avais bien bu. Je me suis réveillé vers 3 h avec le cœur qui s’emballait. Pas d’effort particulier." },
-    { topic: "épisodes antérieurs", keywords: ["deja eu", "deja ressenti", "premiere fois", "auparavant", "episode", "ca vous est deja"], reply: "Deux ou trois fois cette année, j’ai eu des palpitations de quelques minutes qui passaient toutes seules. Jamais aussi longtemps." },
+    { topic: "circonstances", keywords: ["declench", "circonstance", "que faisiez", "ce que vous faisiez", "au moment ou", "cafe", "effort", "stress"], reply: "Je dormais : je me suis réveillé vers 3 h avec le cœur qui s’emballait. Je rentrais d’un mariage. Pas d’effort particulier." },
     { topic: "douleur thoracique", keywords: CHEST_PAIN, reply: "Non, je n’ai pas mal à la poitrine." },
     { topic: "dyspnée", keywords: DYSPNEA, reply: "Un peu essoufflé quand je monte les escaliers, sinon ça va au repos." },
     { topic: "syncope", keywords: SYNCOPE, reply: "Non, pas de malaise ni de perte de connaissance. Juste un peu la tête qui tourne quand je me suis levé tout à l’heure." },
@@ -39,7 +43,7 @@ export const fibrillationAuriculaire: EcosScenario = {
     { topic: "thyroïde", keywords: ["thyro", "maigri", "poids", "chaleur", "tremble", "transpir"], reply: "Non, pas de perte de poids, je ne tremble pas et je ne transpire pas plus que d’habitude." },
     { topic: "apnées", keywords: ["ronfl", "apnee", "sommeil", "fatigue la journee", "somnolen"], reply: "Je ronfle fort et je suis souvent fatigué la journée, oui. Je n’ai jamais fait d’examen du sommeil." },
     { topic: "infection", keywords: [...FEVER, "toux", "tousse", "infection"], reply: "Non, pas de fièvre ni de toux." },
-    { topic: "début", keywords: ONSET, reply: "Ça a commencé d’un coup vers 3 heures du matin, il y a environ six heures, et ça n’a pas arrêté depuis." },
+    { topic: "début", keywords: ONSET, reply: "Ça a commencé d’un coup vers 3 heures du matin, il y a environ six heures." },
     { topic: "constantes", examiner: true, keywords: VITALS, reply: "TA 138/84 mmHg, FC 132/min irrégulière, FR 18/min, SpO₂ 97 % à l’air ambiant, T 36,7 °C." },
     { topic: "ECG", examiner: true, keywords: ["ecg", "electrocardiogramme"], reply: "ECG : fibrillation auriculaire à réponse ventriculaire rapide, environ 130/min, QRS fins, pas de trouble de la repolarisation ischémique, QTc normal." },
     { topic: "examen", examiner: true, keywords: ["auscult", "examen cardio", "examen clinique", "j examine", "je vous examine", "examen physique", "jugulaire", "oedeme", "examen neuro", "crepitant"], reply: "Pouls irrégulier et rapide. Bruits du cœur irréguliers, sans souffle. Pas de turgescence jugulaire, pas de crépitants, pas d’œdème. Examen neurologique normal." },

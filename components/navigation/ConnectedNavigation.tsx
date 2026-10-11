@@ -6,15 +6,19 @@ import { usePathname } from "next/navigation";
 import { BrandLogo } from "../brand/BrandLogo";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { BRAND_NAME } from "@/lib/brand";
+import { FEATURES, type FeatureKey } from "@/lib/features";
 
-const items = [
+// Chaque entrée dépend d'un module : un module masqué (lib/features.ts)
+// disparaît de la navigation. Les stations ECOS viennent juste après l'accueil.
+const allItems: Array<{ href: string; label: string; shortLabel: string; icon: typeof Home; feature?: FeatureKey }> = [
   { href: "/dashboard", label: "Accueil", shortLabel: "Accueil", icon: Home },
-  { href: "/specialties", label: "Fiches", shortLabel: "Fiches", icon: BookOpen },
-  { href: "/anatomie", label: "Anatomie", shortLabel: "Anatomie", icon: Bone },
-  { href: "/quiz", label: "QCM", shortLabel: "QCM", icon: ClipboardCheck },
-  { href: "/sessions", label: "Séances", shortLabel: "Séances", icon: TimerReset },
-  { href: "/cas", label: "Cas cliniques", shortLabel: "Cas", icon: Stethoscope },
+  { href: "/cas", label: "Stations ECOS", shortLabel: "Stations", icon: Stethoscope, feature: "ecos" },
+  { href: "/specialties", label: "Fiches", shortLabel: "Fiches", icon: BookOpen, feature: "fiches" },
+  { href: "/anatomie", label: "Anatomie", shortLabel: "Anatomie", icon: Bone, feature: "anatomy" },
+  { href: "/quiz", label: "QCM", shortLabel: "QCM", icon: ClipboardCheck, feature: "quiz" },
+  { href: "/sessions", label: "Séances", shortLabel: "Séances", icon: TimerReset, feature: "sessions" },
 ];
+const items = allItems.filter((item) => !item.feature || FEATURES[item.feature]);
 
 export function ConnectedNavigation({ avatarUrl, initials, streak, isAdmin = false }: { avatarUrl?: string | null; initials: string; streak: number; isAdmin?: boolean }) {
   const pathname = usePathname();
@@ -24,6 +28,8 @@ export function ConnectedNavigation({ avatarUrl, initials, streak, isAdmin = fal
   const isActive = (href: string) => pathname === href
     || pathname.startsWith(`${href}/`)
     || (href === "/specialties" && (pathname.startsWith("/specialties/") || pathname.startsWith("/pathologies/") || pathname === "/fiches"))
+    // Catalogue masqué : une fiche s'ouvre depuis le débriefing d'une station.
+    || (href === "/cas" && !FEATURES.fiches && pathname.startsWith("/pathologies/"))
     || (href === "/admin/pathologies" && pathname.startsWith("/admin/"));
   return (
     <>

@@ -1,8 +1,9 @@
 import type { EcosScenario } from "../types.ts";
 import { CHARACTER, communicationCriterion, FEVER, INTENSITY, LABS, LOCATION, NAUSEA, ONSET, planReaction, presentationCriterion, treatmentsCriterion, VITALS } from "./shared.ts";
 
-const RADIATION = ["irrad", "dos$", "ceinture", "transfix", "traverse", "diffuse"];
+const RADIATION = ["irrad", "dos$", "ceinture", "transfix", "traverse", "diffuse", "ailleurs", "se deplace", "va quelque part"];
 const BILIARY = ["calcul", "vesicule", "biliaire", "colique", "deja eu", "auparavant", "episode", "premiere fois", "repas gras"];
+const BILIARY_HISTORY = ["calcul", "vesicule", "biliaire", "colique", "repas gras"];
 const JAUNDICE = ["jaune", "ictere", "urines foncees", "urine foncee", "selles claires", "selles decolorees", "demange"];
 
 export const pancreatiteAigue: EcosScenario = {
@@ -17,10 +18,15 @@ export const pancreatiteAigue: EcosScenario = {
     "M. Rossi, 54 ans, consulte pour une douleur abdominale haute apparue après un repas.",
     "Menez une anamnèse ciblée, recherchez l’étiologie, décrivez l’examen et les examens utiles, puis proposez la prise en charge initiale.",
   ],
-  opening: "Bonjour docteur. Depuis hier soir, j’ai une douleur terrible au creux de l’estomac qui me traverse jusque dans le dos.",
+  opening: "Bonjour docteur. Depuis hier soir, j’ai une douleur terrible au creux de l’estomac.",
   history: {
     identity: "Marco Rossi, 54 ans.",
     occupation: "Je suis cuisinier dans un restaurant.",
+    living: "Je vis avec ma femme et notre fille de seize ans.",
+    feeling: "Mal, très mal. Et j’aimerais qu’on fasse vite.",
+    previousEpisodes: "Aussi fort, jamais. Mais deux ou trois fois cette année, j’ai eu des douleurs en haut à droite après des repas gras, qui passaient en quelques heures.",
+    course: "Elle ne lâche pas depuis hier soir, même avec les médicaments.",
+    otherSymptoms: "J’ai vomi plusieurs fois cette nuit.",
     medications: "Aucun traitement régulier.",
     allergies: "Pas d’allergie.",
     personalHistory: "On m’a dit il y a deux ans que j’avais des calculs dans la vésicule, mais on n’a rien fait. Un peu de surpoids. Pas de diabète.",
@@ -37,14 +43,15 @@ export const pancreatiteAigue: EcosScenario = {
     { topic: "intensité", keywords: INTENSITY, reply: "Huit sur dix, même avec les médicaments de l’ambulance." },
     { topic: "position antalgique", keywords: ["position", "penche", "calme", "soulage", "aggrave", "couche", "allonge"], reply: "Assis, penché en avant, c’est un peu mieux. Couché sur le dos, c’est insupportable." },
     { topic: "circonstances", keywords: ["repas", "manger", "mange", "que faisiez", "circonstance", "gras", "souper"], reply: "Après un gros repas de famille hier soir, avec une fondue et des desserts. La douleur a commencé environ une heure après." },
-    { topic: "épisodes biliaires", keywords: BILIARY, reply: "Oui, deux ou trois fois cette année, j’ai eu des douleurs en haut à droite après des repas gras, qui passaient en quelques heures. On m’a dit que j’avais des calculs." },
+    { topic: "épisodes biliaires", keywords: BILIARY_HISTORY, reply: "Oui, on m’a trouvé des calculs dans la vésicule il y a deux ans. Ils m’ont fait mal deux ou trois fois cette année, après des repas gras." },
     { topic: "nausées", keywords: NAUSEA, reply: "J’ai vomi plusieurs fois cette nuit, ça ne soulage pas." },
     { topic: "fièvre", keywords: FEVER, reply: "Un peu de température, 37,8, pas de frissons." },
-    { topic: "ictère", keywords: JAUNDICE, reply: "Ma femme trouve que j’ai les yeux un peu jaunes ce matin. Les urines sont un peu foncées." },
+    { topic: "ictère", keywords: ["jaune", "ictere", "selles claires", "selles decolorees", "demange"], reply: "Ma femme trouve que j’ai les yeux un peu jaunes ce matin." },
+    { topic: "urines", keywords: ["urine", "urines", "pipi", "couleur des urines", "urines foncees", "urine foncee"], reply: "Mes urines sont un peu foncées." },
     { topic: "transit", keywords: ["selles", "selle$", "a la selle", "transit", "diarrh", "constip", "gaz"], reply: "Pas de selles depuis hier, je n’ai pas de diarrhée." },
     { topic: "médicaments déclencheurs", keywords: ["medicament recemment", "nouveau medicament", "triglycer", "traumat", "coup"], reply: "Non, aucun nouveau médicament, pas de coup reçu sur le ventre." },
     { topic: "dyspnée", keywords: ["essouffl", "respirer", "respiration", "souffle"], reply: "Je respire un peu vite à cause de la douleur, sinon ça va." },
-    { topic: "début", keywords: ONSET, reply: "Hier vers 21 h, environ une heure après le repas. Ça s’est installé en quelques minutes et ça n’a plus lâché." },
+    { topic: "début", keywords: ONSET, reply: "Hier vers 21 h, environ une heure après le repas. Ça s’est installé en quelques minutes." },
     { topic: "constantes", examiner: true, keywords: VITALS, reply: "T 37,8 °C, FC 108/min, TA 134/82 mmHg, FR 20/min, SpO₂ 96 % à l’air ambiant. Diurèse conservée." },
     { topic: "examen abdominal", examiner: true, keywords: ["palp", "examen abdominal", "examen de l abdomen", "examine le ventre", "j examine", "je vous examine", "examen clinique", "examen physique", "murphy", "defense", "auscultation abdominale", "sclere", "conjonctiv"], reply: "Sensibilité épigastrique et de l’hypocondre droit, sans défense ni contracture. Murphy douteux. Bruits intestinaux diminués. Sclères discrètement ictériques. Pas d’ecchymose péri-ombilicale ni des flancs." },
     { topic: "biologie", examiner: true, keywords: [...LABS, "lipase", "amylase", "bilan hepatique", "transaminases", "alat", "bilirubine", "triglycer", "calcium", "lactate", "gazometrie"], reply: "Lipase 2 400 U/L (N < 60). ALAT 280 U/L, bilirubine 52 µmol/L, phosphatases alcalines 190 U/L. Leucocytes 13,2 G/L, hématocrite 46 %, urée 6,8 mmol/L, CRP 35 mg/L, créatinine 88 µmol/L, calcium et triglycérides normaux." },

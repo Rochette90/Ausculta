@@ -10,13 +10,17 @@ import { MenuToggleIcon } from "./menu-toggle-icon";
 import { useScroll } from "./use-scroll";
 import { BrandLogo } from "../brand/BrandLogo";
 import { BRAND_NAME } from "@/lib/brand";
+import { FEATURES, type FeatureKey } from "@/lib/features";
 
-const links = [
+// Une entrée liée à un module masqué (lib/features.ts) disparaît du menu.
+const allLinks: Array<{ label: string; href: string; feature?: FeatureKey }> = [
   { label: "Méthode", href: "/methode" },
-  { label: "Catalogue", href: "/catalogue" },
+  { label: "Catalogue", href: "/catalogue", feature: "fiches" },
   { label: "Tarifs", href: "/pricing" },
   { label: "FAQ", href: "/faq" },
+  { label: "À propos", href: "/a-propos" },
 ];
+const links = allLinks.filter((link) => !link.feature || FEATURES[link.feature]);
 
 export function Header({ signedIn }: { signedIn: boolean }) {
   const [open, setOpen] = useState(false);

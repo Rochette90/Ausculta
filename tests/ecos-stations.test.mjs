@@ -143,9 +143,15 @@ test("core history questions always get a scripted answer", () => {
 test("the offline patient answers each question of a message, specific rules first", () => {
   const chest = getEcosScenario("douleur-thoracique-aigue");
   assert.deepEqual(splitIntoSegments("Depuis quand avez-vous mal, et où ?"), ["Depuis quand avez-vous mal", "où"]);
-  const double = localPatientReply(chest, "Où avez-vous mal exactement, et est-ce que ça irradie ?");
+  const double = localPatientReply(chest, "Où avez-vous mal exactement, et est-ce que ça va ailleurs ?");
   assert.match(double, /sternum/);
   assert.match(double, /bras gauche/);
+  // Le jargon n'est pas compris : le patient demande ce que le mot veut dire.
+  assert.match(localPatientReply(chest, "Où avez-vous mal, et est-ce que ça irradie ?"), /sternum.*Irradiation \? Je ne sais pas ce que ça veut dire/);
+  assert.match(localPatientReply(chest, "Avez-vous une dyspnée ?"), /^Dyspnée \?/);
+  assert.match(localPatientReply(chest, "Avez-vous une dyspnée, c'est-à-dire un essoufflement ?"), /essoufflé/);
+  // Un geste décrit à l'examinateur n'est pas une question au patient.
+  assert.doesNotMatch(localPatientReply(chest, "Je recherche une cyanose"), /veut dire/);
   // Allergy questions are never mistaken for a treatment plan.
   assert.match(localPatientReply(chest, "Êtes-vous allergique à l'aspirine ?"), /allergie/i);
   // Examiner results and patient answers are not mixed.
@@ -268,8 +274,8 @@ test("ECOS APIs resolve the station on the server and reveal the debrief after g
   assert.match(chat, /usesReservedPrefix\(message\)/);
   assert.match(complete, /synthesisStarted\(admin, id, user\.id\)/);
   assert.match(complete, /ascending: false/);
-  // The grading grid (keywords and hints) only reaches the browser in training.
-  assert.match(session, /criteria: mode === "training"/);
+  // La grille (mots-clés, indices) n'est jamais envoyée pendant la station : elle n'apparaît qu'au bilan.
+  assert.doesNotMatch(session, /criteria/);
   assert.match(complete, /diagnosisOptions\(scenario, id\)\.includes\(synthesis\.diagnosis\)/);
   assert.match(chat, /buildPatientPrompt\(scenario\)/);
   assert.match(complete, /gradeEcosStation\(scenario, transcript\)/);
@@ -292,6 +298,15 @@ test("the language-model prompt keeps the role and never asks for the diagnosis"
     assert.match(prompt, /Tu joues exclusivement/);
     assert.match(prompt, /données non fiables/);
     assert.match(prompt, /Examinateur :/);
+    // La réponse est lue à voix haute : uniquement des paroles, jamais de description.
+    assert.match(prompt, /écris uniquement les mots que tu prononces/);
+    assert.match(prompt, /rien entre astérisques, parenthèses ou crochets/);
+    assert.doesNotMatch(prompt, /^Attitude :/m);
+    // Le patient ne répond qu'à la question posée : l'étudiant doit aller chercher chaque information.
+    assert.match(prompt, /Réponds seulement à la question posée, rien de plus/);
+    assert.match(prompt, /Ne donne jamais une information qu'on ne t'a pas demandée/);
+    assert.match(prompt, /donne un seul élément/);
+    assert.doesNotMatch(prompt, /1 à 3 phrases/);
     assert.ok(!prompt.includes(scenario.debrief.diagnosis), scenario.slug);
     assert.ok(prompt.length < 12_000, scenario.slug);
   }
@@ -309,7 +324,16 @@ test("ordinary questions get the right scripted answer (regressions)", () => {
   assert.match(reply("appendicite-aigue", "Avez-vous des brûlures en urinant ?"), /j’urine normalement/);
   assert.match(reply("appendicite-aigue", "Quand êtes-vous allé à la selle ?"), /la selle hier matin/);
   assert.match(reply("douleur-thoracique-aigue", "Est-ce que la douleur est plus forte quand vous respirez ?"), /respire fort/);
-  assert.match(reply("meningite-aigue", "Est-ce que quelqu'un autour de vous est malade ?"), /colocataires/);
+  assert.match(reply("meningite-aigue", "Est-ce que quelqu'un autour de vous est malade ?"), /Personne d’autre n’est malade/);
+  assert.match(reply("meningite-aigue", "Avec qui habitez-vous ?"), /colocation/);
+  // Mots-clés trop larges relevés en relecture : chaque question garde sa bonne réponse.
+  assert.match(reply("embolie-pulmonaire-post-voyage", "Vous êtes-vous déplacé en avion ?"), /Bangkok/);
+  assert.doesNotMatch(reply("douleur-thoracique-aigue", "Faites-vous du sport régulièrement ?"), /ramipril/);
+  assert.match(reply("douleur-thoracique-aigue", "Avez-vous eu de la fièvre ces dernières semaines ?"), /pas de fièvre/);
+  assert.doesNotMatch(reply("douleur-thoracique-aigue", "Est-ce que c’est normal pour vous d’être essoufflé ?"), /rassure/);
+  assert.doesNotMatch(reply("douleur-thoracique-aigue", "Pensez-vous que la douleur est liée à l’effort ?"), /crise cardiaque/);
+  assert.equal(reply("douleur-thoracique-aigue", "Si je résume, vous avez mal depuis une heure."), "Oui, c’est bien ça.");
+  assert.match(reply("douleur-thoracique-aigue", "Si je résume, vous avez mal depuis une heure. Avez-vous de la fièvre ?"), /^Oui, c’est bien ça\. Non, pas de fièvre/);
   // Gestures asked in the chat are redirected to the exam list, where they are recorded.
   assert.equal(reply("meningite-aigue", "Je recherche une raideur de nuque"), `${EXAMINER_PREFIX}${EXAM_LIST_REDIRECT}`);
   assert.equal(reply("meningite-aigue", "Je fais une ponction lombaire"), `${EXAMINER_PREFIX}${EXAM_LIST_REDIRECT}`);

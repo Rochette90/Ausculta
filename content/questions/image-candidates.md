@@ -1,4 +1,4 @@
-# Candidats image — banque de quiz MedTrain
+# Candidats image — banque de quiz Ausculta
 
 88 questions identifiees par les agents de generation comme pertinentes pour une image (ECG, radio, photo clinique, coupe scanner/IRM), sur la base des elements visuels explicitement decrits dans les fiches. Aucune image n'est attachee : ce fichier sert de liste de travail pour qui va sourcer/creer les images puis les attacher via le formulaire admin (Question > Image).
 

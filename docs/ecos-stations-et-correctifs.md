@@ -23,7 +23,7 @@
 
 - `lib/ecos/stations/*.ts` : une station par fichier (patient, réponses, résultats d’examens, grille, débriefing, sources). `lib/ecos/stations/index.ts` est le registre et attribue les codes publics.
 - `lib/ecos/engine.ts` : patient hors ligne. Chaque question d’un message reçoit sa réponse la plus spécifique ; les antécédents sans ambiguïté (allergies, tabac, famille…) sont prioritaires ; un symptôme non scripté est nié comme le ferait un vrai patient ; un examen non prévu reçoit une réponse neutre de l’examinateur.
-- Si `GROQ_API_KEY` est défini, le modèle reçoit une consigne construite à partir des mêmes faits (sans le diagnostic) ; en cas d’erreur, le moteur local prend le relais. Vérifier que `GROQ_MODEL` désigne un modèle encore proposé par Groq.
+- Si `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY` ou `GROQ_API_KEY` est défini (voir `lib/ecos/patient-ai.ts`), le modèle reçoit une consigne construite à partir des mêmes faits (sans le diagnostic) ; en cas d’erreur, le moteur local prend le relais. Vérifier que `GROQ_MODEL` désigne un modèle encore proposé par Groq.
 - `lib/ecos/scoring.ts` : grille partagée entre l’affichage en direct (mode entraînement) et la correction serveur. Elle repère des thèmes par mots-clés ; ce n’est pas une évaluation clinique validée.
 
 ### Ajouter ou modifier une station

@@ -1,5 +1,5 @@
 import type { EcosScenario } from "../types.ts";
-import { communicationCriterion, FEVER, INTENSITY, LOCATION, NAUSEA, ONSET, planReaction, presentationCriterion, VITALS } from "./shared.ts";
+import { CHARACTER, communicationCriterion, FEVER, INTENSITY, LOCATION, NAUSEA, ONSET, planReaction, presentationCriterion, VITALS } from "./shared.ts";
 
 const THIRST = ["soif", "boire beaucoup", "buvez beaucoup", "polydips", "bouche seche", "combien buvez", "quantite d eau", "litres"];
 const URINE = ["urin", "pipi", "polyur", "toilettes", "levez la nuit", "nocturne"];
@@ -24,6 +24,11 @@ export const acidocetoseDiabetique: EcosScenario = {
   history: {
     identity: "Nicola Rossi, j’ai 19 ans.",
     occupation: "Je suis au gymnase, en dernière année.",
+    living: "J’habite chez mes parents, avec ma petite sœur.",
+    feeling: "Épuisé… je n’ai plus de force.",
+    previousEpisodes: "Non, je n’ai jamais été comme ça.",
+    course: "Depuis hier, ça va de plus en plus mal : je vomis tout ce que je bois.",
+    otherSymptoms: "J’ai tout le temps soif.",
     medications: "Aucun traitement.",
     allergies: "Pas d’allergie.",
     personalHistory: "Rien du tout, je n’ai jamais été malade. On ne m’a jamais parlé de diabète.",
@@ -38,14 +43,18 @@ export const acidocetoseDiabetique: EcosScenario = {
     { topic: "urines", keywords: URINE, reply: "Je vais aux toilettes sans arrêt, même la nuit : je me lève trois ou quatre fois." },
     { topic: "poids", keywords: WEIGHT, reply: "J’ai perdu six kilos en un mois sans faire de régime." },
     { topic: "fatigue", keywords: FATIGUE, reply: "Je suis épuisé depuis plusieurs semaines, et depuis hier je tiens à peine debout." },
-    { topic: "douleur abdominale", keywords: [...LOCATION, ...INTENSITY, "irrad", "ventre", "abdo", "douleur", "mal au ventre"], reply: "Mal partout dans le ventre, surtout au milieu, environ cinq sur dix. Ça ne va nulle part ailleurs et ça a commencé en même temps que les vomissements." },
+    { topic: "douleur abdominale", keywords: [...LOCATION, "ventre", "abdo", "douleur", "mal au ventre", "avez vous mal"], reply: "Partout dans le ventre, surtout au milieu." },
+    { topic: "intensité", keywords: INTENSITY, reply: "Environ cinq sur dix." },
+    { topic: "caractère", keywords: CHARACTER, reply: "Comme des crampes." },
+    { topic: "irradiation", keywords: ["irrad", "ailleurs", "se deplace", "descend", "diffuse"], reply: "Non, ça ne va nulle part ailleurs." },
     { topic: "vomissements", keywords: NAUSEA, reply: "J’ai vomi cinq ou six fois depuis hier, je n’arrive plus à rien garder." },
-    { topic: "respiration", keywords: ["essouffl", "respir", "souffle", "haleine"], reply: "J’ai l’impression de devoir respirer très fort. Ma mère dit que mon haleine sent bizarre, comme du vernis." },
+    { topic: "respiration", keywords: ["essouffl", "respir", "souffle"], reply: "J’ai l’impression de devoir respirer très fort." },
+    { topic: "haleine", keywords: ["haleine", "odeur", "mauvaise bouche", "sent bizarre"], reply: "Ma mère dit que mon haleine sent bizarre, comme du vernis." },
     { topic: "infection", keywords: [...FEVER, "toux", "tousse", "gorge", "brulure", "infection", "grippe"], reply: "J’ai eu une grippe il y a dix jours, avec de la fièvre. Là, je n’ai plus de fièvre." },
     { topic: "vision", keywords: ["vision", "voir", "flou", "yeux"], reply: "Je vois un peu flou depuis quelques jours." },
     { topic: "conscience", keywords: ["confus", "somnol", "endormi", "quel jour", "orientation", "malaise"], reply: "Je suis très fatigué, j’ai envie de dormir, mais je sais où je suis." },
     { topic: "diabète (question directe)", keywords: ["diabet"], reply: "Non, on ne m’a jamais dit que j’étais diabétique. Ma tante l’est." },
-    { topic: "début", keywords: ONSET, reply: "La soif et les urines, depuis environ trois semaines. Le mal de ventre et les vomissements, depuis hier matin." },
+    { topic: "début", keywords: ONSET, reply: "Le mal de ventre et les vomissements, depuis hier matin." },
     { topic: "constantes", examiner: true, keywords: VITALS, reply: "FC 118/min, TA 106/64 mmHg, FR 28/min (respiration ample et profonde), SpO₂ 98 % à l’air ambiant, T 37,1 °C. Glasgow 15." },
     { topic: "glycémie capillaire", examiner: true, keywords: GLUCOSE, reply: "Glycémie capillaire : 28,4 mmol/L." },
     { topic: "cétones et gazométrie", examiner: true, keywords: KETONES, reply: "Cétonémie capillaire 5,8 mmol/L. Gazométrie veineuse : pH 7,18, bicarbonates 8 mmol/L, pCO₂ 2,8 kPa, trou anionique 27 mmol/L." },

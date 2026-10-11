@@ -1,7 +1,7 @@
 import type { EcosScenario } from "../types.ts";
 import { CHARACTER, communicationCriterion, DYSPNEA, INTENSITY, LOCATION, FEVER, LABS, ONSET, planReaction, presentationCriterion, SYNCOPE, VITALS } from "./shared.ts";
 
-const TRAVEL = ["voyage", "avion", "vol long", "long vol", "votre vol", "long trajet", "immobilis", "alite"];
+const TRAVEL = ["voyage", "deplacement", "avion", "vol long", "long vol", "votre vol", "long trajet", "immobilis", "alite"];
 const HORMONES = ["pilule", "contracept", "hormon", "oestrog", "sterilet", "patch"];
 const LEG = ["jambe", "mollet", "gonfl", "oedeme", "phlebite"];
 const PREGNANCY = ["enceinte", "grossesse", "regles", "test de grossesse", "hcg"];
@@ -22,7 +22,12 @@ export const emboliePulmonairePostVoyage: EcosScenario = {
   opening: "Bonjour docteur. Depuis hier, je suis essoufflée au moindre effort et j’ai mal sur le côté gauche quand je respire.",
   history: {
     identity: "Claire Leroy, 34 ans.",
-    occupation: "Je suis architecte. Je rentre d’un voyage de trois semaines en Thaïlande.",
+    occupation: "Je suis architecte.",
+    living: "Je vis avec mon compagnon, en appartement.",
+    feeling: "Inquiète… et j’ai l’impression de manquer d’air.",
+    previousEpisodes: "Non, jamais. C’est la première fois.",
+    course: "Ça s’aggrave : depuis ce matin, je suis essoufflée même en marchant doucement.",
+    otherSymptoms: "Mon cœur bat vite, je le sens.",
     medications: "Je prends la pilule, une pilule combinée, depuis des années. Rien d’autre.",
     allergies: "Pas d’allergie, ni aux médicaments ni au produit de contraste à ma connaissance.",
     personalHistory: "Rien de particulier. Jamais de phlébite ni d’embolie, pas d’opération récente, pas de cancer.",
@@ -38,12 +43,16 @@ export const emboliePulmonairePostVoyage: EcosScenario = {
     { topic: "jambe", keywords: LEG, reply: "Maintenant que vous le dites, mon mollet gauche est douloureux et un peu gonflé depuis le vol." },
     { topic: "grossesse (test)", examiner: true, keywords: ["beta hcg", "b hcg", "hcg", "test de grossesse"], reply: "β-hCG négatif." },
     { topic: "grossesse", keywords: PREGNANCY, reply: "Je ne pense pas être enceinte, mes dernières règles datent d’il y a deux semaines. Mais je veux bien faire un test." },
-    { topic: "douleur thoracique", keywords: [...CHEST_PAIN, ...LOCATION, ...CHARACTER, "avez vous mal", "douleur", "irrad"], reply: "Une douleur à gauche, sur le côté, qui fait mal quand j’inspire profondément." },
-    { topic: "intensité", keywords: INTENSITY, reply: "Cinq sur dix au repos, plus quand j’inspire." },
-    { topic: "caractère de la douleur", keywords: ["respir profond", "inspir", "en respirant", "quand vous respirez", "plus forte quand", "position", "calme", "soulage", "aggrave"], reply: "Elle augmente quand je respire à fond. Rien ne la calme vraiment." },
+    { topic: "douleur thoracique", keywords: [...CHEST_PAIN, ...LOCATION, "avez vous mal", "douleur"], reply: "À gauche, sur le côté de la poitrine." },
+    { topic: "caractère", keywords: CHARACTER, reply: "Ça pique, comme un point." },
+    { topic: "irradiation", keywords: ["irrad", "ailleurs", "se deplace", "descend", "diffuse"], reply: "Non, ça reste au même endroit." },
+    { topic: "intensité", keywords: INTENSITY, reply: "Cinq sur dix." },
+    { topic: "facteurs modifiants", keywords: ["respir profond", "inspir", "en respirant", "quand vous respirez", "plus forte quand", "position", "calme", "soulage", "aggrave"], reply: "Elle augmente quand je respire à fond. Rien ne la calme vraiment." },
     { topic: "dyspnée", keywords: DYSPNEA, reply: "Je suis essoufflée en montant un étage, alors que d’habitude je fais du sport. Au repos, un peu aussi." },
-    { topic: "hémoptysie", keywords: ["crach", "du sang", "hemopt", "toux", "tousse"], reply: "Je tousse un peu. Ce matin, j’ai craché une ou deux fois des filets de sang." },
-    { topic: "syncope", keywords: [...SYNCOPE, "palpitation"], reply: "Pas de malaise. Mon cœur bat vite, ça oui." },
+    { topic: "toux", keywords: ["toux", "tousse", "tousser"], reply: "Je tousse un peu, oui." },
+    { topic: "hémoptysie", keywords: ["crach", "du sang", "hemopt"], reply: "Ce matin, j’ai craché une ou deux fois des filets de sang." },
+    { topic: "syncope", keywords: SYNCOPE, reply: "Non, pas de malaise." },
+    { topic: "palpitations", keywords: ["palpitation", "coeur bat", "coeur qui bat", "battements", "coeur qui s emball"], reply: "Oui, mon cœur bat vite." },
     { topic: "fièvre", keywords: FEVER, reply: "Non, pas vraiment de fièvre, 37,4 ce matin." },
     { topic: "début", keywords: ONSET, reply: "Hier matin, d’abord un peu essoufflée, puis la douleur sur le côté est apparue dans l’après-midi." },
     { topic: "constantes", examiner: true, keywords: VITALS, reply: "FC 108/min, TA 122/76 mmHg, FR 24/min, SpO₂ 92 % à l’air ambiant, T 37,4 °C." },

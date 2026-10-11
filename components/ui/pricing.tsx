@@ -9,6 +9,7 @@ import { useMediaQuery } from "../../hooks/use-media-query";
 import { cn } from "../../lib/utils";
 import { Label } from "./label";
 import { Switch } from "./switch";
+import { BRAND_PLAN_LABEL } from "@/lib/brand";
 
 export type PricingPlan = {
   name: string;
@@ -32,7 +33,7 @@ type PricingProps = {
 export function Pricing({
   plans,
   title = "Un tarif simple pour apprendre à votre rythme.",
-  description = "Commencez gratuitement, puis passez à Pro lorsque vous avez besoin d’un entraînement plus intensif.",
+  description = `Commencez gratuitement, puis passez à ${BRAND_PLAN_LABEL} lorsque vous avez besoin d’un entraînement plus intensif.`,
 }: PricingProps) {
   const [isAnnual, setIsAnnual] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 900px)");

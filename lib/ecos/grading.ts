@@ -1,6 +1,19 @@
 import type { EcosCriterion, EcosCriterionDefinition, EcosMessage, EcosProcedure, EcosScenario } from "./types.ts";
+import { storedReview } from "./review.ts";
 import { calculateEcosCriteria, ecosXp, maxEcosScore } from "./scoring.ts";
 import { DIAGNOSIS_PREFIX, normalizeEcosText, PROCEDURE_PREFIX } from "./text.ts";
+
+/**
+ * Transcript enregistré relu depuis la base : seuls les messages bien formés
+ * sont gardés, pour qu'une ligne abîmée ne bloque pas la réouverture du bilan.
+ */
+export function storedTranscript(value: unknown): EcosMessage[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is EcosMessage => {
+    const message = item as { role?: unknown; content?: unknown } | null;
+    return typeof message?.content === "string" && (message.role === "student" || message.role === "patient" || message.role === "system");
+  });
+}
 
 /** Points of the final diagnosis line, added to every station's grid. */
 export const DIAGNOSIS_POINTS = 2;
@@ -84,6 +97,8 @@ export function examCriterion(scenario: EcosScenario, definition: EcosCriterionD
 /**
  * Full server-side grading: the keyword grid (history, exam, plan,
  * communication) plus the final diagnosis, and feedback on the gestures.
+ * A review stored with the transcript (lib/ecos/review.ts) adds the grid
+ * items the model found phrased differently.
  */
 export function gradeEcosStation(scenario: EcosScenario, messages: readonly EcosMessage[]) {
   const chosen = chosenDiagnosis(messages);
@@ -100,7 +115,8 @@ export function gradeEcosStation(scenario: EcosScenario, messages: readonly Ecos
   // An expected test ordered in the exam phase (hémocultures, angio-CT…) also
   // counts on the management lines; unhelpful gestures never earn keyword points.
   const expectedGestures = performed.filter((procedure) => procedure.pertinent).map((procedure) => ({ role: "student" as const, content: procedure.label }));
-  const keywordCriteria = calculateEcosCriteria(scenario.criteria, [...messages, ...expectedGestures]);
+  const reviewed = storedReview(scenario, messages, EXAM_CRITERION_ID);
+  const keywordCriteria = calculateEcosCriteria(scenario.criteria, [...messages, ...expectedGestures], reviewed ?? undefined);
   const criteria = [
     ...scenario.criteria.map((definition, index) => definition.id === EXAM_CRITERION_ID ? examCriterion(scenario, definition, performed) : keywordCriteria[index]),
     diagnosisCriterion,
@@ -112,6 +128,8 @@ export function gradeEcosStation(scenario: EcosScenario, messages: readonly Ecos
     maxScore: stationMaxScore(scenario),
     xp: ecosXp(score),
     synthesis: { chosen, correct },
+    /** La grille a-t-elle été relue par le modèle, et combien de points cette relecture a-t-elle ajoutés ? */
+    review: { done: reviewed !== null, added: criteria.reduce((total, criterion) => total + (criterion.reviewed ?? 0), 0) },
     procedures: {
       missed: scenario.examination.filter((procedure) => procedure.pertinent && !performedIds.has(procedure.id)).map((procedure) => procedure.label),
       unhelpful: performed.filter((procedure) => !procedure.pertinent).map((procedure) => procedure.label),

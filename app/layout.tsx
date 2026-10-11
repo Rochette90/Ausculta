@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ThemeInitializer } from "../components/theme/ThemeInitializer";
 import "./globals.css";
 import "./learning.css";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 function metadataOrigin() {
   try {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${BRAND_NAME} — Maîtrisez vos ECOS`,
     description: "Entraînez votre raisonnement clinique avec des patients simulés interactifs.",
-    images: [{ url: "/og-home.png", width: 1536, height: 1024, alt: `${BRAND_NAME} — Apprenez la médecine en la pratiquant` }],
+    images: [{ url: "/og-home.png", width: 1536, height: 1024, alt: `${BRAND_NAME} — ${BRAND_TAGLINE}` }],
     locale: "fr_CH",
     type: "website",
   },

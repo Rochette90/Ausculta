@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SpecialtyIcon } from "../content/SpecialtyIcon";
 import { BRAND_NAME } from "@/lib/brand";
+import { isLearningPriorityAvailable } from "@/lib/features";
 
 type SpecialtyOption = {
   id: string;
@@ -29,27 +30,34 @@ type OnboardingFlowProps = {
   specialties: SpecialtyOption[];
 };
 
-const priorities = [
+const allPriorities = [
   { id: "fiches", label: "Réviser les fiches", detail: "Consolider rapidement les notions essentielles.", icon: BookOpenCheck },
   { id: "qcm", label: "Faire des QCM", detail: "Tester mes connaissances et corriger mes erreurs.", icon: BrainCircuit },
   { id: "cas_cliniques", label: "Travailler des cas", detail: "Développer mon raisonnement clinique.", icon: Stethoscope },
   { id: "seances", label: "Suivre des séances", detail: "Avancer avec un entraînement guidé de 30 minutes.", icon: TimerReset },
 ] as const;
+// Seules les priorités dont le module est actif sont proposées. S'il n'en
+// reste qu'une, elle est retenue d'office et l'étape disparaît.
+const priorities = allPriorities.filter((priority) => isLearningPriorityAvailable(priority.id));
+const steps = (priorities.length > 1 ? ["studies", "priority", "specialties"] : ["studies", "specialties"]) as ReadonlyArray<"studies" | "priority" | "specialties">;
 
 export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: OnboardingFlowProps) {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [stepIndex, setStepIndex] = useState(0);
+  const step = steps[stepIndex];
+  const stepNumber = stepIndex + 1;
+  const isLastStep = stepIndex === steps.length - 1;
   const [university, setUniversity] = useState("lausanne");
   const [studyYear, setStudyYear] = useState("b3");
   const [examDate, setExamDate] = useState("");
-  const [learningPriority, setLearningPriority] = useState("");
+  const [learningPriority, setLearningPriority] = useState<string>(priorities.length === 1 ? priorities[0].id : "");
   const [specialtyIds, setSpecialtyIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canContinue = step === 1
+  const canContinue = step === "studies"
     ? Boolean(university && studyYear)
-    : step === 2
+    : step === "priority"
       ? Boolean(learningPriority)
       : specialtyIds.length >= 2 && specialtyIds.length <= 3;
 
@@ -89,7 +97,7 @@ export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: Onboa
   function continueToNextStep() {
     if (!canContinue) return;
     setError(null);
-    if (step < 3) setStep((current) => current + 1);
+    if (!isLastStep) setStepIndex((current) => current + 1);
     else void submit("complete");
   }
 
@@ -104,20 +112,20 @@ export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: Onboa
           <button className="text-sm font-semibold text-slate-500 transition hover:text-slate-900" disabled={busy} onClick={() => void submit("skip")} type="button">Passer pour le moment</button>
         </header>
 
-        <div className="mt-7 grid grid-cols-3 gap-2" aria-label={`Étape ${step} sur 3`}>
-          {[1, 2, 3].map((item) => <span className={`h-1.5 rounded-full transition ${item <= step ? "bg-teal-600" : "bg-slate-200"}`} key={item} />)}
+        <div className="mt-7 grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label={`Étape ${stepNumber} sur ${steps.length}`}>
+          {steps.map((item, index) => <span className={`h-1.5 rounded-full transition ${index <= stepIndex ? "bg-teal-600" : "bg-slate-200"}`} key={item} />)}
         </div>
 
         <section className="mt-5 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
           <div className="border-b border-slate-100 px-6 py-7 sm:px-10 sm:py-9">
-            <p className="mb-2 text-xs font-extrabold uppercase tracking-[.16em] text-teal-700">Étape {step} sur 3</p>
-            {step === 1 && <><h1 className="m-0 !text-3xl sm:!text-4xl">Où en es-tu dans tes études ?</h1><p className="mb-0 mt-3 text-slate-500">Ces informations nous aident à proposer un rythme adapté.</p></>}
-            {step === 2 && <><h1 className="m-0 !text-3xl sm:!text-4xl">Quelle est ta priorité actuelle ?</h1><p className="mb-0 mt-3 text-slate-500">Ton tableau de bord commencera par l’activité la plus utile pour toi.</p></>}
-            {step === 3 && <><h1 className="m-0 !text-3xl sm:!text-4xl">Que veux-tu travailler en premier ?</h1><p className="mb-0 mt-3 text-slate-500">Choisis deux ou trois spécialités. Tu pourras les modifier plus tard.</p></>}
+            <p className="mb-2 text-xs font-extrabold uppercase tracking-[.16em] text-teal-700">Étape {stepNumber} sur {steps.length}</p>
+            {step === "studies" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Où en es-tu dans tes études ?</h1><p className="mb-0 mt-3 text-slate-500">Ces informations nous aident à proposer un rythme adapté.</p></>}
+            {step === "priority" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Quelle est ta priorité actuelle ?</h1><p className="mb-0 mt-3 text-slate-500">Ton tableau de bord commencera par l’activité la plus utile pour toi.</p></>}
+            {step === "specialties" && <><h1 className="m-0 !text-3xl sm:!text-4xl">Que veux-tu travailler en premier ?</h1><p className="mb-0 mt-3 text-slate-500">Choisis deux ou trois spécialités. Tu pourras les modifier plus tard.</p></>}
           </div>
 
           <div className="px-6 py-7 sm:px-10 sm:py-9">
-            {step === 1 && (
+            {step === "studies" && (
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="grid gap-2 text-sm font-bold text-slate-700">Université
                   <select className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15" onChange={(event) => setUniversity(event.target.value)} value={university}>
@@ -135,7 +143,7 @@ export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: Onboa
               </div>
             )}
 
-            {step === 2 && (
+            {step === "priority" && (
               <div className="grid gap-3 sm:grid-cols-2">
                 {priorities.map(({ id, label, detail, icon: Icon }) => {
                   const selected = learningPriority === id;
@@ -144,7 +152,7 @@ export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: Onboa
               </div>
             )}
 
-            {step === 3 && (
+            {step === "specialties" && (
               <div>
                 <div className="mb-4 flex items-center justify-between gap-4"><span className="text-sm font-semibold text-slate-500">{specialtyIds.length}/3 sélectionnées</span>{specialtyIds.length >= 2 && <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700"><Check size={15} /> Sélection suffisante</span>}</div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -159,8 +167,8 @@ export function OnboardingFlow({ minimumExamDate, nextPath, specialties }: Onboa
             {error && <p className="mt-5 rounded-xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700" role="alert">{error}</p>}
 
             <footer className="mt-8 flex items-center justify-between gap-4 border-t border-slate-100 pt-6">
-              <button className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-2 text-sm font-bold ${step === 1 ? "invisible" : "text-slate-600 hover:text-slate-950"}`} disabled={busy || step === 1} onClick={() => setStep((current) => Math.max(1, current - 1))} type="button"><ArrowLeft size={17} /> Retour</button>
-              <button className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-teal-600 px-6 text-sm font-extrabold text-white shadow-lg shadow-teal-600/20 transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-45" disabled={busy || !canContinue} onClick={continueToNextStep} type="button">{busy ? <><LoaderCircle className="animate-spin" size={17} /> Enregistrement…</> : step === 3 ? <><Sparkles size={17} /> Personnaliser mon espace</> : <>Continuer <ArrowRight size={17} /></>}</button>
+              <button className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-2 text-sm font-bold ${stepIndex === 0 ? "invisible" : "text-slate-600 hover:text-slate-950"}`} disabled={busy || stepIndex === 0} onClick={() => setStepIndex((current) => Math.max(0, current - 1))} type="button"><ArrowLeft size={17} /> Retour</button>
+              <button className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-teal-600 px-6 text-sm font-extrabold text-white shadow-lg shadow-teal-600/20 transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-45" disabled={busy || !canContinue} onClick={continueToNextStep} type="button">{busy ? <><LoaderCircle className="animate-spin" size={17} /> Enregistrement…</> : isLastStep ? <><Sparkles size={17} /> Personnaliser mon espace</> : <>Continuer <ArrowRight size={17} /></>}</button>
             </footer>
           </div>
         </section>
