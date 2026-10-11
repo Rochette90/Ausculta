@@ -18,6 +18,8 @@
   --line-subtle: #f1f5f9;
   
   --primary: #0d9488;
+  /* Texte posé sur --primary : blanc en clair, sombre en thème sombre (contraste AA). */
+  --on-primary: #ffffff;
   --primary-hover: #0f766e;
   --primary-subtle: #f0fdf4;
   --primary-glow: rgba(13, 148, 136, 0.18);
@@ -59,6 +61,7 @@ html[data-theme="dark"] {
   --line: #2b3a4c;
   --line-subtle: #1e293b;
   --primary: #2dd4bf;
+  --on-primary: #042f2e;
   --primary-hover: #5eead4;
   --primary-subtle: #102f2d;
   --primary-glow: rgba(45, 212, 191, 0.2);
@@ -357,7 +360,7 @@ html[data-theme="dark"] .theme-icon-dark { display: block; }
 }
 
 .button.primary {
-  color: white;
+  color: var(--on-primary);
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   box-shadow: var(--shadow-glow);
 }
@@ -565,7 +568,7 @@ html[data-theme="dark"] .theme-icon-dark { display: block; }
 
 .demo-dialogue .student p {
   background: var(--primary);
-  color: white;
+  color: var(--on-primary);
   border-radius: 16px 4px 16px 16px;
 }
 
@@ -1011,7 +1014,7 @@ html[data-theme="dark"] .patient-portrait i { border-color: var(--surface); }
   top: -12px;
   left: 24px;
   background: var(--primary);
-  color: white;
+  color: var(--on-primary);
   padding: 4px 12px;
   border-radius: 6px;
   font-size: 11px;
@@ -1081,6 +1084,7 @@ html[data-theme="dark"] .patient-portrait i { border-color: var(--surface); }
 /* Station Page (ECOS Session) */
 .station-page {
   min-height: calc(100vh - 72px);
+  min-height: calc(100dvh - 72px);
   display: flex;
   flex-direction: column;
   background: var(--surface-subtle);
@@ -1259,6 +1263,7 @@ html[data-theme="dark"] .conversation-panel { background: var(--paper); }
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 150px);
+  min-height: calc(100dvh - 150px);
 }
 
 .transcript {
@@ -1266,6 +1271,7 @@ html[data-theme="dark"] .conversation-panel { background: var(--paper); }
   overflow-y: auto;
   padding: 32px clamp(20px, 4vw, 60px);
   max-height: calc(100vh - 300px);
+  max-height: calc(100dvh - 300px);
 }
 
 .message {
@@ -1303,7 +1309,7 @@ html[data-theme="dark"] .conversation-panel { background: var(--paper); }
 
 .message.student p {
   background: var(--primary);
-  color: white;
+  color: var(--on-primary);
   border-color: transparent;
   border-radius: 16px 4px 16px 16px;
 }
@@ -1357,7 +1363,7 @@ html[data-theme="dark"] .conversation-panel { background: var(--paper); }
 
 .send-button {
   background: var(--primary);
-  color: white;
+  color: var(--on-primary);
   font-size: 18px;
   font-weight: 700;
 }
@@ -2458,4 +2464,21 @@ html[data-theme="dark"] :is(.fiche-document, .pathology-document) .callout-examp
   .fiche-head, .fiche-essentials { break-inside: avoid; }
   :is(.fiche-document, .pathology-document) :is(.callout, .table-scroll) { break-inside: avoid; }
   :is(.fiche-document, .pathology-document) :is(h2, h3) { break-after: avoid; }
+}
+
+/* Texte des utilitaires posés sur la couleur principale, en thème sombre. */
+html[data-theme="dark"] .bg-\[var\(--primary\)\].text-white { color: var(--on-primary) !important; }
+
+/* Champ de saisie de la station : focus visible au clavier. */
+.composer:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Téléphone : consigne et bilan de la station sur une colonne. */
+@media (max-width: 760px) {
+  .briefing-grid,
+  .report-hero { grid-template-columns: minmax(0, 1fr); }
+  .briefing-grid { gap: 28px; }
+  .report-hero { gap: 24px; }
+  .brief-aside { position: static; padding: 24px; }
+  /* Sous 16 px, iOS zoome à chaque saisie. */
+  input, select, textarea { font-size: 16px !important; }
 }

@@ -197,7 +197,7 @@
 .ecos-phases button { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink-secondary); font-size: 13px; font-weight: 600; cursor: pointer; }
 .ecos-phases button span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--surface-subtle); font-size: 12px; }
 .ecos-phases button.active { border-color: var(--primary); color: var(--primary); }
-.ecos-phases button.active span { background: var(--primary); color: #fff; }
+.ecos-phases button.active span { background: var(--primary); color: var(--on-primary); }
 .ecos-phases button.done span { background: var(--mint); color: var(--mint-dark); }
 .ecos-phases button[aria-disabled="true"] { cursor: not-allowed; }
 .ecos-phases button[aria-disabled="true"]:not(.active) { opacity: .7; }
