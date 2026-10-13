@@ -18,12 +18,12 @@ export function DeleteAccountButton() {
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as { error?: string; code?: string } | null;
         const readable = body?.code === "billing_cancellation_failed" || response.status === 429;
-        throw new Error(readable && body?.error ? body.error : "La suppression a échoué. Réessayez plus tard.");
+        throw new Error(readable && body?.error ? body.error : "La suppression a échoué. Réessaie plus tard.");
       }
       router.push("/");
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "La suppression a échoué. Réessayez plus tard.");
+      setError(cause instanceof Error ? cause.message : "La suppression a échoué. Réessaie plus tard.");
       setPending(false);
     }
   }
@@ -39,7 +39,7 @@ export function DeleteAccountButton() {
   return (
     <div className="danger-confirm" role="group" aria-label="Confirmer la suppression du compte">
       <p><strong>Cette action est définitive.</strong></p>
-      <p>Progression, badges et abonnement seront supprimés immédiatement.</p>
+      <p>Ta progression, tes bilans et ton abonnement seront supprimés immédiatement.</p>
       {error && <p role="alert"><strong>{error}</strong></p>}
       <div className="danger-confirm-actions">
         <button className="button danger small" disabled={pending} onClick={() => void deleteAccount()} type="button">

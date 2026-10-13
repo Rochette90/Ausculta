@@ -8,14 +8,14 @@ import { ecosPublicCode } from "./stations/index.ts";
  * diagnostic) restent sur le serveur : seuls les codes publics en sortent.
  */
 const ECOS3_TYPES = [
-  { id: "cardio-pulmonaire", label: "Cardio-pulmonaire", grid: "cardio-pulmonaire", slugs: ["douleur-thoracique-aigue", "fibrillation-auriculaire", "pneumonie-communautaire", "pneumothorax-spontane", "embolie-pulmonaire-post-voyage", "crise-asthme", "insuffisance-cardiaque-decompensee"] },
-  { id: "neurologique", label: "Neurologique", grid: "neurologique", slugs: ["avc-ischemique-sylvien-gauche", "hemorragie-sous-arachnoidienne"] },
-  { id: "abdominal", label: "Abdominal", grid: "abdominal", slugs: ["appendicite-aigue", "pancreatite-aigue", "cholecystite-aigue", "colique-nephretique", "acidocetose-diabetique"] },
-  { id: "fievre", label: "Fièvre", grid: "fievre", slugs: ["meningite-aigue", "endocardite-infectieuse", "pyelonephrite-aigue"] },
-  { id: "psychosocial", label: "Psychosocial", grid: "psychosocial", slugs: ["humeur-depressive-idees-suicidaires"] },
-  { id: "pediatrie", label: "Pédiatrie", grid: "pediatrie", slugs: ["convulsion-febrile"] },
+  { id: "cardio-pulmonaire", label: "Cardio-pulmonaire", grid: "cardio-pulmonaire", slugs: ["douleur-thoracique-aigue", "fibrillation-auriculaire", "pneumonie-communautaire", "pneumothorax-spontane", "embolie-pulmonaire-post-voyage", "crise-asthme", "insuffisance-cardiaque-decompensee", "stenose-aortique"] },
+  { id: "neurologique", label: "Neurologique", grid: "neurologique", slugs: ["avc-ischemique-sylvien-gauche", "hemorragie-sous-arachnoidienne", "accident-ischemique-transitoire", "paralysie-faciale-peripherique"] },
+  { id: "abdominal", label: "Abdominal", grid: "abdominal", slugs: ["appendicite-aigue", "pancreatite-aigue", "cholecystite-aigue", "colique-nephretique", "acidocetose-diabetique", "hemorragie-digestive-haute"] },
+  { id: "fievre", label: "Fièvre", grid: "fievre", slugs: ["meningite-aigue", "endocardite-infectieuse", "pyelonephrite-aigue", "paludisme-retour-voyage"] },
+  { id: "psychosocial", label: "Psychosocial", grid: "psychosocial", slugs: ["humeur-depressive-idees-suicidaires", "trouble-adaptation-epuisement"] },
+  { id: "pediatrie", label: "Pédiatrie", grid: "pediatrie", slugs: ["convulsion-febrile", "gastro-enterite-deshydratation"] },
   { id: "bls", label: "BLS", grid: "bls", slugs: [] },
-  { id: "dermatologie", label: "Dermatologie", grid: "dermatologie", slugs: ["erysipele-jambe"] },
+  { id: "dermatologie", label: "Dermatologie", grid: "dermatologie", slugs: ["erysipele-jambe", "melanome-lesion-pigmentee"] },
 ] as const;
 
 export type Ecos3Type = { id: string; label: string; grid: string; codes: string[] };

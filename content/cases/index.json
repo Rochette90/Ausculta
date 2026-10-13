@@ -392,5 +392,249 @@
       "Prise en charge"
     ],
     "interactive": true
+  },
+  {
+    "slug": "accident-ischemique-transitoire",
+    "title": "Accident ischémique transitoire",
+    "candidateTitle": "M. Rapin, 72 ans, se présente aux urgences car ce matin sa main droite a lâché et il a eu du mal à parler pendant une vingtaine de minutes ; tout est rentré dans l’ordre.",
+    "diagnosis": "Accident ischémique transitoire du territoire carotidien gauche sur sténose symptomatique de l’artère carotide interne gauche (70–80 %)",
+    "specialty": "Neurologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Rapin, 72 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "paralysie-faciale-peripherique",
+    "title": "Paralysie faciale périphérique",
+    "candidateTitle": "Mme Kohler, 38 ans, consulte au cabinet car depuis ce matin la moitié gauche de son visage ne bouge plus.",
+    "diagnosis": "Paralysie faciale périphérique gauche a frigore (paralysie de Bell), House-Brackmann IV",
+    "specialty": "Neurologie",
+    "difficulty": "Facile",
+    "setting": "cabinet",
+    "patient": "Mme Kohler, 38 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "stenose-aortique",
+    "title": "Sténose aortique serrée",
+    "candidateTitle": "M. Aebischer, 78 ans, consulte au cabinet pour un essoufflement à l’effort et un malaise survenu en montant un escalier.",
+    "diagnosis": "Sténose aortique serrée calcifiée (dégénérative), symptomatique : dyspnée d’effort, angor d’effort et syncope d’effort",
+    "specialty": "Cardiologie",
+    "difficulty": "Intermédiaire",
+    "setting": "cabinet",
+    "patient": "M. Aebischer, 78 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "hemorragie-digestive-haute",
+    "title": "Hémorragie digestive haute",
+    "candidateTitle": "M. Clerc, 64 ans, se présente aux urgences pour des selles noires et un malaise ce matin.",
+    "diagnosis": "Hémorragie digestive haute sur ulcère duodénal (Forrest IIa), favorisée par l’ibuprofène et l’aspirine, avec retentissement hémodynamique (Glasgow-Blatchford 16)",
+    "specialty": "Gastro-entérologie",
+    "difficulty": "Difficile",
+    "setting": "urgences",
+    "patient": "M. Clerc, 64 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "paludisme-retour-voyage",
+    "title": "Paludisme au retour de voyage",
+    "candidateTitle": "M. Oberson, 41 ans, se présente aux urgences pour de la fièvre et des frissons depuis trois jours.",
+    "diagnosis": "Paludisme à Plasmodium falciparum non compliqué, au retour du Cameroun, sans chimioprophylaxie",
+    "specialty": "Infectiologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "M. Oberson, 41 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "trouble-adaptation-epuisement",
+    "title": "Trouble de l’adaptation et épuisement professionnel",
+    "candidateTitle": "Mme Muller, 45 ans, consulte au cabinet pour de la fatigue et des troubles du sommeil.",
+    "diagnosis": "Trouble de l’adaptation avec épuisement professionnel (burnout), sans idée suicidaire",
+    "specialty": "Psychiatrie",
+    "difficulty": "Facile",
+    "setting": "cabinet",
+    "patient": "Mme Muller, 45 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "gastro-enterite-deshydratation",
+    "title": "Gastro-entérite avec déshydratation",
+    "candidateTitle": "Elio, 18 mois, accompagné de sa mère, Mme Ferrari, 32 ans, se présente aux urgences pour des vomissements et de la diarrhée depuis deux jours.",
+    "diagnosis": "Gastro-entérite aiguë, probablement virale, avec déshydratation modérée (environ 6 %)",
+    "specialty": "Pédiatrie",
+    "difficulty": "Facile",
+    "setting": "urgences",
+    "patient": "Elio, 18 mois",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "melanome-lesion-pigmentee",
+    "title": "Mélanome",
+    "candidateTitle": "Mme Brunner, 52 ans, consulte au cabinet pour un grain de beauté du dos qui a changé d’aspect.",
+    "diagnosis": "Lésion pigmentée suspecte de mélanome à extension superficielle du dos (région scapulaire gauche)",
+    "specialty": "Dermatologie",
+    "difficulty": "Facile",
+    "setting": "cabinet",
+    "patient": "Mme Brunner, 52 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "grossesse-extra-uterine",
+    "title": "Grossesse extra-utérine",
+    "candidateTitle": "Mme Rey, 31 ans, se présente aux urgences pour des saignements et une douleur dans le bas du ventre à droite depuis hier.",
+    "diagnosis": "Grossesse extra-utérine tubaire droite non rompue, avec un petit épanchement dans le Douglas, chez une patiente hémodynamiquement stable et rhésus négatif",
+    "specialty": "Gynécologie-obstétrique",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mme Rey, 31 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "invagination-intestinale",
+    "title": "Invagination intestinale aiguë",
+    "candidateTitle": "M. Baumann, 34 ans, se présente aux urgences avec sa fille Mia, 9 mois, qui pleure par crises et vomit depuis cette nuit.",
+    "diagnosis": "Invagination intestinale aiguë iléo-colique chez un nourrisson de 9 mois, sans signe de perforation, avec une déshydratation légère",
+    "specialty": "Pédiatrie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mia, 9 mois",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "fracture-radius-distal",
+    "title": "Fracture du radius distal",
+    "candidateTitle": "Mme Morand, 72 ans, se présente aux urgences pour une douleur au poignet gauche après une chute dans la rue.",
+    "diagnosis": "Fracture extra-articulaire du radius distal gauche à déplacement dorsal (type Pouteau-Colles), avec arrachement de la pointe de la styloïde ulnaire, fracture de fragilité chez une patiente à risque d’ostéoporose",
+    "specialty": "Orthopédie",
+    "difficulty": "Facile",
+    "setting": "urgences",
+    "patient": "Mme Morand, 72 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "luxation-epaule",
+    "title": "Luxation antérieure de l’épaule",
+    "candidateTitle": "M. Bonvin, 24 ans, se présente aux urgences pour une douleur à l’épaule gauche après une chute à snowboard.",
+    "diagnosis": "Luxation antéro-interne (sous-coracoïdienne) de l’épaule gauche, premier épisode, avec encoche de Hill-Sachs, sans fracture associée et sans atteinte du nerf axillaire",
+    "specialty": "Orthopédie",
+    "difficulty": "Facile",
+    "setting": "urgences",
+    "patient": "M. Bonvin, 24 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "hernie-discale-sciatique",
+    "title": "Lombosciatique par hernie discale",
+    "candidateTitle": "M. Roulin, 44 ans, consulte au cabinet pour une douleur dans le bas du dos qui descend dans la jambe gauche depuis plusieurs semaines.",
+    "diagnosis": "Lombosciatique gauche par hernie discale L5-S1 postéro-latérale gauche, radiculopathie S1 sans déficit moteur, sans syndrome de la queue de cheval",
+    "specialty": "Orthopédie",
+    "difficulty": "Intermédiaire",
+    "setting": "cabinet",
+    "patient": "M. Roulin, 44 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "occlusion-intestinale",
+    "title": "Occlusion du grêle",
+    "candidateTitle": "Mme Zbinden, 69 ans, se présente aux urgences pour des douleurs au ventre et des vomissements depuis hier soir.",
+    "diagnosis": "Occlusion mécanique du grêle sur bride (adhérences post-appendicectomie et post-hystérectomie), sans signe de strangulation, avec déshydratation, insuffisance rénale aiguë pré-rénale et alcalose métabolique hypokaliémique",
+    "specialty": "Gastro-entérologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mme Zbinden, 69 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
   }
 ]

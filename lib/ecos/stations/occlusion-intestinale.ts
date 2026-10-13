@@ -1,0 +1,193 @@
+import type { EcosScenario } from "../types.ts";
+import type { StationDiagnoses } from "./diagnoses.ts";
+import { communicationCriterion, FEVER, INTENSITY, LABS, LOCATION, NAUSEA, ONSET, planReaction, presentationCriterion, treatmentsCriterion, VITALS } from "./shared.ts";
+
+const CRAMPS = ["type de douleur", "quel type", "quel genre", "decri", "comment est la douleur", "a quoi ressemble", "ressemble", "crampe", "colique", "par vague", "vague", "contraction", "va et vient", "continue", "permanente", "par moments", "par crises"];
+const BOWEL = ["gaz", "selles", "selle$", "a la selle", "transit", "matieres", "constip", "diarrh", "aller aux toilettes", "derniere fois", "pet", "vent"];
+const VOMIT_DETAIL = ["couleur", "aspect", "vert", "bile", "sang", "combien de fois", "quoi ressemblait", "odeur"];
+const SURGERY = ["opere", "operation", "chirurg", "intervention", "cicatrice", "appendic", "hysterect", "uterus", "laparo", "ventre ouvert"];
+const COLON_SCREEN = ["coloscop", "sang dans les selles", "sang dans", "perte de poids", "maigri", "amaigr", "cancer", "hernie", "boule", "grosseur"];
+const ABDOMINAL_EXAM = ["palp", "inspect", "percu", "tympan", "examen abdominal", "examen de l abdomen", "examine le ventre", "examiner le ventre", "examiner votre ventre", "defense", "blumberg", "rebond", "detente", "distension"];
+
+export const occlusionIntestinale: EcosScenario = {
+  slug: "occlusion-intestinale",
+  version: 1,
+  setting: "urgences",
+  patient: { name: "Mme Zbinden", age: 69, sex: "F" },
+  painful: true,
+  persona: "Dame de 69 ans, ancienne employée de bureau, allongée sur le côté, le ventre gonflé, un haricot à portée de main. Elle est fatiguée et un peu inquiète, répond poliment et précisément. Elle ne parle de ses opérations anciennes que si on lui demande ses antécédents ou si elle a déjà été opérée.",
+  brief: [
+    "Vous êtes médecin assistant·e aux urgences.",
+    "Mme Zbinden, 69 ans, se présente aux urgences pour des douleurs au ventre et des vomissements depuis hier soir.",
+    "Menez l’anamnèse et l’examen clinique ciblés, demandez les examens complémentaires utiles et interprétez-les, puis posez un diagnostic et proposez une prise en charge.",
+  ],
+  opening: "Bonjour docteur… J’ai des crampes terribles dans le ventre depuis hier soir, et je n’arrête pas de vomir.",
+  history: {
+    identity: "Monique Zbinden, 69 ans.",
+    occupation: "Je suis retraitée, j’étais secrétaire dans une fiduciaire.",
+    living: "Je vis avec mon mari dans un appartement à Fribourg. Je suis tout à fait autonome.",
+    feeling: "Épuisée. J’ai soif, mais tout ce que je bois ressort.",
+    previousEpisodes: "Non, jamais comme ça. Parfois un peu de ballonnements, mais ça passait toujours.",
+    course: "Ça empire depuis cette nuit, et mon ventre gonfle de plus en plus.",
+    otherSymptoms: "Mon ventre est tout gonflé, tendu comme un ballon.",
+    medications: "De l’amlodipine 5 mg pour la tension, de l’atorvastatine 20 mg pour le cholestérol, et du calcium avec de la vitamine D.",
+    allergies: "Je suis allergique à la pénicilline : j’ai fait des plaques sur tout le corps.",
+    personalHistory: "De la tension et du cholestérol. Et puis des opérations du ventre autrefois, si ça vous intéresse.",
+    familyHistory: "Ma mère a eu un cancer du sein. Rien de particulier pour le ventre.",
+    tobacco: "J’ai arrêté il y a trente ans.",
+    alcohol: "Un verre de vin rouge le dimanche.",
+    drugs: "Non.",
+    concerns: "Est-ce que c’est grave ? Est-ce qu’on va devoir m’opérer encore une fois ?",
+  },
+  rules: [
+    { topic: "début", keywords: ONSET, reply: "Hier vers 18 heures, après le souper, c’est venu assez vite, en une heure ou deux. Rien de spécial ce jour-là." },
+    { topic: "localisation", keywords: [...LOCATION, "ou avez vous mal", "ou ca fait mal"], reply: "Autour du nombril, dans tout le milieu du ventre." },
+    { topic: "caractère", keywords: CRAMPS, reply: "Ce sont des crampes qui viennent par vagues, toutes les cinq minutes à peu près : ça se serre très fort, ça gargouille, puis ça se relâche un peu. Entre les crises, j’ai moins mal." },
+    { topic: "intensité", keywords: INTENSITY, reply: "Pendant les crampes, 8 sur 10. Entre deux, 3 ou 4." },
+    { topic: "irradiation", keywords: ["irrad", "dos$", "epaule", "descend", "ailleurs", "va quelque part"], reply: "Non, ça reste dans le ventre." },
+    { topic: "vomissements", keywords: NAUSEA, reply: "J’ai vomi six ou sept fois depuis cette nuit. Au début le repas, maintenant c’est vert foncé, liquide, avec une drôle d’odeur." },
+    { topic: "aspect des vomissements", keywords: VOMIT_DETAIL, reply: "C’est vert foncé, et ça sent mauvais depuis ce matin. Pas de sang, pas de marc de café." },
+    { topic: "transit", keywords: BOWEL, reply: "Ma dernière selle, c’était hier matin, normale. Depuis cette nuit, plus rien : ni selles, ni gaz. J’ai essayé de pousser, rien ne sort." },
+    { topic: "distension", keywords: ["gonfl", "ballonn", "tendu", "gros ventre", "volume"], reply: "Il gonfle depuis cette nuit, maintenant mon pantalon ne ferme plus." },
+    { topic: "fièvre", keywords: FEVER, reply: "Je ne crois pas, j’ai un peu froid, c’est tout." },
+    { topic: "urines et boissons", keywords: ["urin", "pipi", "soif", "boire", "bu$", "hydrat", "manger", "mange", "appetit"], reply: "Je n’ai presque pas fait pipi depuis ce matin, et c’était foncé. J’ai très soif mais je vomis tout." },
+    { topic: "opérations", keywords: SURGERY, reply: "On m’a enlevé l’appendice à 20 ans, avec une cicatrice en bas à droite. Et à 48 ans, on m’a enlevé l’utérus à cause de fibromes, par une cicatrice au milieu du ventre, sous le nombril." },
+    { topic: "dépistage", keywords: COLON_SCREEN, reply: "J’ai fait une coloscopie il y a trois ans, on m’a enlevé deux petits polypes, rien de méchant. Je n’ai pas maigri, pas de sang dans les selles. Je n’ai pas de boule dans l’aine." },
+    { topic: "transit habituel", keywords: ["habituel", "d habitude", "changement", "alternance"], reply: "D’habitude, je vais à la selle tous les jours, sans problème." },
+    { topic: "constantes", examiner: true, keywords: VITALS, reply: "T 37,4 °C, FC 106/min régulière, TA 112/68 mmHg, FR 20/min, SpO₂ 96 % à l’air ambiant. Glasgow 15." },
+    { topic: "état général et hydratation", examiner: true, keywords: ["etat general", "hydratation", "muqueuses", "pli cutane", "recoloration"], reply: "Patiente fatiguée, consciente et orientée. Muqueuses sèches, langue rôtie, pli cutané persistant, temps de recoloration 3 secondes." },
+    { topic: "examen abdominal", examiner: true, keywords: ABDOMINAL_EXAM, reply: "Abdomen distendu de façon symétrique, avec deux cicatrices : incision en fosse iliaque droite et laparotomie médiane sous-ombilicale, sans éventration. Ondulations péristaltiques visibles par moments. Tympanisme diffus à la percussion. Sensibilité diffuse péri-ombilicale à la palpation, sans défense ni contracture, signe de Blumberg négatif. Pas de masse palpable." },
+    { topic: "auscultation", examiner: true, keywords: ["auscult", "bruits intestinaux", "bruits hydro", "stethoscope"], reply: "Bruits intestinaux augmentés, aigus, à timbre métallique, par salves contemporaines des crampes." },
+    { topic: "orifices herniaires", examiner: true, keywords: ["orifices herniaires", "orifice herniaire", "inguinal", "crural", "femoral", "ombilic"], reply: "Orifices inguinaux, cruraux et ombilical libres, sans masse ni douleur. Cicatrices sans éventration." },
+    { topic: "toucher rectal", examiner: true, keywords: ["toucher rectal", "ampoule rectale", "fecalome"], reply: "Toucher rectal : ampoule rectale vide, pas de fécalome, pas de masse, indolore, pas de sang au doigtier." },
+    { topic: "bilan sanguin", examiner: true, keywords: [...LABS, "lactate", "gazometrie", "gaz du sang", "potassium", "lipase"], reply: "Hb 151 g/L, leucocytes 12,8 G/L, CRP 34 mg/L. Na⁺ 133 mmol/L, K⁺ 3,1 mmol/L, Cl⁻ 91 mmol/L. Créatinine 132 µmol/L (valeur habituelle 78 µmol/L), urée 12,4 mmol/L. Gazométrie veineuse : pH 7,48, bicarbonates 32 mmol/L. Lactate 1,6 mmol/L. Lipase et tests hépatiques normaux." },
+    planReaction("Un tuyau dans le nez ? Et si ça ne passe pas, il faudra m’opérer ?", ["sonde", "sng", "aspiration", "a jeun", "perfusion", "chirurg", "operer", "operation", "gastrografine"]),
+  ],
+  examination: [
+    { id: "constantes", label: "Constantes vitales et état d’hydratation", category: "constantes", pertinent: true, result: "T 37,4 °C, FC 106/min régulière, TA 112/68 mmHg, FR 20/min, SpO₂ 96 % à l’air ambiant. Glasgow 15. Muqueuses sèches, langue rôtie, pli cutané persistant, temps de recoloration 3 secondes.", covers: ["constantes", "hydratation", "etat-general"], key: ["constantes"] },
+    { id: "abdomen", label: "Inspection, percussion et palpation du ventre", category: "examen", pertinent: true, topic: "examen abdominal", covers: ["palpation-abdominale", "signes-peritoneaux"], key: ["palpation-abdominale"] },
+    { id: "auscultation", label: "Auscultation du ventre", category: "examen", pertinent: true, topic: "auscultation", covers: ["auscultation-abdominale"] },
+    { id: "orifices", label: "Examen des régions inguinales, crurales et ombilicale", category: "examen", pertinent: true, topic: "orifices herniaires", covers: ["orifices-herniaires"] },
+    { id: "toucher-rectal", label: "Toucher rectal", category: "examen", pertinent: true, topic: "toucher rectal" },
+    { id: "bilan-sanguin", label: "Bilan sanguin (FSC, CRP, électrolytes, créatinine, gazométrie, lactate)", category: "complementaire", pertinent: true, topic: "bilan sanguin", covers: ["fsc", "crp", "ionogramme", "creatinine", "gazometrie", "lactate"], key: ["fsc", "ionogramme", "creatinine", "lactate"] },
+    { id: "radio-abdomen", label: "Radiographie de l’abdomen debout et couché", category: "complementaire", pertinent: true, result: "Radiographie de l’abdomen sans préparation, debout et couché. Multiples anses grêles dilatées, centrales, jusqu’à 4,5 cm de diamètre, disposées en série, avec des valvules conniventes qui traversent toute la lumière. Sur le cliché debout, nombreux niveaux hydro-aériques étagés, plus larges que hauts, centraux. Très peu de gaz dans le cadre colique, pas de gaz dans l’ampoule rectale. Pas de croissant gazeux sous les coupoles diaphragmatiques. Pas de calcification ni de corps étranger radio-opaque.", covers: ["radio-abdomen"], image: { src: "/ecos/imagerie/station-37-radio-abdomen.jpg", alt: "Radiographie de l’abdomen de face", credit: { author: "Hellerhoff", license: "CC BY-SA 3.0" } } },
+    { id: "ct-abdominal", label: "CT abdominal injecté", category: "complementaire", pertinent: true, result: "CT abdomino-pelvien avec injection de produit de contraste, temps portal. Anses grêles jéjunales et iléales proximales dilatées jusqu’à 4 cm, remplies de liquide, avec niveaux hydro-aériques. Changement brusque de calibre dans la fosse iliaque droite, au contact de la paroi antérieure sous la cicatrice médiane, sans masse ni épaississement pariétal à cet endroit ; en aval, les dernières anses iléales sont plates. Contenu d’aspect fécal dans l’anse grêle juste en amont du changement de calibre. Côlon plat sur tout son trajet. Paroi des anses grêles fine, rehaussement normal et symétrique ; pas de pneumatose pariétale, pas de gaz portal, vaisseaux mésentériques perméables sans image d’enroulement. Fine lame de liquide entre les anses. Pas de pneumopéritoine. Orifices herniaires libres. Absence d’utérus, appendice non visualisé.", covers: ["ct-abdominal"] },
+    { id: "gastroscopie", label: "Gastroscopie", category: "complementaire", pertinent: false, result: "Non indiquée : pas de saignement digestif, et l’examen expose ici à l’inhalation chez une patiente qui vomit.", covers: ["gastroscopie"] },
+    { id: "ct-low-dose", label: "CT abdominal low-dose sans injection", category: "complementaire", pertinent: false, result: "Anses grêles dilatées. Sans injection, l’examen ne permet pas d’évaluer la vascularisation des anses ; il faut un CT injecté.", covers: ["ct-low-dose"] },
+    { id: "d-dimeres", label: "D-dimères", category: "complementaire", pertinent: false, result: "1,1 mg/L : non spécifiques chez une patiente de 69 ans, déshydratée et inflammatoire ; ils n’orientent pas la prise en charge.", covers: ["d-dimeres"] },
+    { id: "ponction-lombaire", label: "Ponction lombaire", category: "complementaire", pertinent: false, result: "Non indiquée : ni signe méningé ni trouble de conscience.", covers: ["ponction-lombaire"] },
+  ],
+  catalogResults: {
+    "fsc": "Hb 151 g/L, leucocytes 12,8 G/L.",
+    "crp": "CRP 34 mg/L.",
+    "ionogramme": "Na⁺ 133 mmol/L, K⁺ 3,1 mmol/L, Cl⁻ 91 mmol/L.",
+    "creatinine": "Créatinine 132 µmol/L (valeur habituelle 78 µmol/L), urée 12,4 mmol/L.",
+    "gazometrie": "Gazométrie veineuse : pH 7,48, bicarbonates 32 mmol/L.",
+    "lactate": "Lactate 1,6 mmol/L.",
+    "ecg": "Tachycardie sinusale à 104/min, axe normal, QRS fins, ondes T aplaties avec ondes U visibles en V2–V3, QTc 460 ms.",
+    "echo-abdominale": "Anses grêles dilatées, remplies de liquide, avec un péristaltisme de va-et-vient ; fine lame de liquide entre les anses. Vésicule, foie et reins sans particularité.",
+    "bandelette": "Densité urinaire élevée, pas de leucocytes ni de nitrites.",
+  },
+  acceptable: ["ecg", "lipase", "tests-hepatiques", "crase", "groupe", "echo-abdominale", "bandelette", "troponine"],
+  diagnosisChoice: { correct: "Occlusion du grêle sur bride", distractors: ["Hernie crurale étranglée", "Occlusion colique sur tumeur du sigmoïde", "Ischémie mésentérique aiguë"] },
+  criteria: [
+    presentationCriterion,
+    {
+      id: "symptoms",
+      label: "Caractérise le syndrome occlusif",
+      hint: "Début, douleurs crampoïdes par vagues, vomissements et leur aspect, arrêt des matières et des gaz",
+      points: 4,
+      groups: [ONSET, CRAMPS, [...NAUSEA, ...VOMIT_DETAIL], BOWEL],
+    },
+    {
+      id: "terrain",
+      label: "Recherche la cause",
+      hint: "Antécédents de chirurgie abdominale, hernie, signes d’une tumeur colique (coloscopie, sang, amaigrissement)",
+      points: 2,
+      groups: [SURGERY, COLON_SCREEN],
+    },
+    treatmentsCriterion,
+    {
+      id: "exam",
+      label: "Examen ciblé",
+      hint: "Constantes et hydratation, distension et cicatrices, signes péritonéaux, auscultation, orifices herniaires, toucher rectal",
+      points: 2,
+      groups: [VITALS, ["palp", "orifices herniaires", "toucher rectal", "auscult"]],
+    },
+    {
+      id: "analysis",
+      label: "Interprète la radiographie et le CT",
+      hint: "Dilatation du grêle avec niveaux hydro-aériques, zone de transition, côlon plat, pas de signe de souffrance ni de pneumopéritoine",
+      points: 4,
+      groups: [
+        ["grele", "anses grele", "intestin grele", "jejun", "ileal", "ileo"],
+        ["niveaux hydro", "niveau hydro", "hydro aer", "niveaux liquid"],
+        ["zone de transition", "transition", "changement de calibre", "bride", "adherence", "obstacle", "mecanique"],
+        ["colon plat", "colon vide", "colon collabe", "pas de gaz dans le colon", "peu de gaz dans le colon", "colon non dilate", "colon de calibre normal"],
+        ["pas de pneumoperitoine", "pas de perforation", "pas d air libre", "pas de souffrance", "pas de signe de souffrance", "pas d ischemie", "pas de signe d ischemie", "rehaussement normal", "pas de strangulation", "paroi normale"],
+      ],
+    },
+    {
+      id: "management",
+      label: "Propose une prise en charge adaptée",
+      hint: "À jeun, sonde nasogastrique en aspiration, réhydratation et correction du potassium, avis chirurgical, traitement conservateur surveillé (produit de contraste hydrosoluble), chirurgie si signes de souffrance",
+      points: 4,
+      groups: [
+        ["sonde naso", "sng", "sonde gastrique", "aspiration", "a jeun", "rien par la bouche", "decompression"],
+        ["perfusion", "hydrat", "remplissage", "cristallo", "ringer", "nacl", "potassium", "kalium", "electrolyt", "sonde urinaire", "diurese"],
+        ["chirurg", "visceral", "avis chirurgical"],
+        ["gastrografine", "contraste hydrosoluble", "surveillance", "conservateur", "signes de souffrance", "strangulation", "operer si", "ischemie", "laparoscop", "adhesiolyse"],
+      ],
+    },
+    communicationCriterion,
+  ],
+  debrief: {
+    diagnosis: "Occlusion mécanique du grêle sur bride (adhérences post-appendicectomie et post-hystérectomie), sans signe de strangulation, avec déshydratation, insuffisance rénale aiguë pré-rénale et alcalose métabolique hypokaliémique",
+    summary: "Dame de 69 ans aux antécédents d’appendicectomie et d’hystérectomie par laparotomie, avec depuis la veille des douleurs crampoïdes péri-ombilicales, des vomissements devenus fécaloïdes, un arrêt des matières et des gaz et une distension. L’examen montre un abdomen distendu, tympanique, avec des bruits de lutte, sans défense, orifices herniaires libres, ampoule rectale vide. Le bilan révèle une déshydratation avec insuffisance rénale aiguë, hypokaliémie et alcalose métabolique. Radiographie et CT montrent une dilatation du grêle avec niveaux hydro-aériques, une zone de transition sans masse et un côlon plat, sans signe de souffrance ni de perforation. Traitement conservateur sous avis chirurgical : à jeun, sonde nasogastrique, réhydratation, correction du potassium, test au produit de contraste hydrosoluble ; chirurgie en cas de signes de souffrance ou d’échec.",
+    keyFindings: [
+      "Tétrade occlusive : douleurs crampoïdes par vagues, vomissements (précoces et abondants, devenus fécaloïdes), arrêt des matières et des gaz, distension.",
+      "Deux laparotomies anciennes : les brides sont la première cause d’occlusion du grêle chez l’adulte opéré.",
+      "Bruits de lutte métalliques, tympanisme, pas de défense, orifices herniaires libres, ampoule rectale vide.",
+      "Déshydratation : tachycardie, muqueuses sèches, oligurie, créatinine à 132 µmol/L ; vomissements : K⁺ 3,1 mmol/L, alcalose métabolique.",
+    ],
+    redFlags: [
+      "Signes de strangulation : douleur devenue continue, fièvre, tachycardie persistante malgré la réhydratation, défense ou contracture, lactate élevé ; CT : paroi non rehaussée, pneumatose, gaz portal, épanchement abondant, image en tourbillon. Chirurgie urgente.",
+      "Pneumopéritoine ou péritonite : perforation, chirurgie immédiate.",
+      "Hernie étranglée à éliminer systématiquement (orifices inguinaux, cruraux, ombilical) chez la femme âgée.",
+      "Inhalation des vomissements : sonde nasogastrique sans délai.",
+    ],
+    management: [
+      "À jeun, sonde nasogastrique en aspiration, réhydratation IV (cristalloïdes) avec correction du potassium, sonde urinaire et bilan entrées-sorties.",
+      "Antalgie IV (paracétamol, opioïdes titrés), antiémétique ; éviter les médicaments qui ralentissent le transit au-delà du nécessaire.",
+      "Avis chirurgical viscéral d’emblée. Sans signe de strangulation : traitement conservateur, test au produit de contraste hydrosoluble (Gastrografine) par la sonde avec radiographie à 8–24 h, à visée diagnostique et thérapeutique.",
+      "Chirurgie (adhésiolyse, de préférence laparoscopique si possible) si signes de souffrance, aggravation clinique, ou échec du traitement conservateur après 72 heures.",
+      "Réévaluations cliniques et biologiques rapprochées (douleur, défense, FC, lactate, diurèse).",
+    ],
+    differentials: [
+      "Hernie inguinale ou crurale étranglée (masse douloureuse irréductible à un orifice herniaire).",
+      "Occlusion colique sur tumeur ou volvulus du sigmoïde (installation plus progressive, vomissements tardifs, côlon dilaté).",
+      "Ischémie mésentérique aiguë (douleur intense contrastant avec un abdomen souple, FA, lactate élevé).",
+      "Iléus réflexe ou paralytique : pancréatite, diverticulite, hypokaliémie, opioïdes (pas de zone de transition, bruits absents).",
+    ],
+    examReading: [
+      "Radiographie : anses grêles dilatées, centrales, à valvules conniventes, avec niveaux hydro-aériques plus larges que hauts : occlusion du grêle.",
+      "Radiographie et CT : peu de gaz colique, côlon plat : l’obstacle est sur le grêle, et l’occlusion est complète ou de haut grade.",
+      "CT : changement brusque de calibre en fosse iliaque droite sous la cicatrice, sans masse : zone de transition, compatible avec une bride ; signe des fèces dans le grêle en amont.",
+      "CT : paroi des anses fine et bien rehaussée, pas de pneumatose ni de gaz portal, pas d’enroulement du mésentère, pas de pneumopéritoine : pas de signe de strangulation ni de perforation, donc traitement conservateur possible.",
+    ],
+    sources: [
+      { label: "Ten Broek RPG et al. World J Emerg Surg 2018 — Bologna guidelines for adhesive small bowel obstruction (WSES 2017 update)", url: "https://wjes.biomedcentral.com/articles/10.1186/s13017-018-0185-2" },
+    ],
+    pathologySlugs: ["occlusion-intestinale"],
+  },
+};
+
+export const occlusionIntestinaleDiagnoses: StationDiagnoses = {
+  accepted: ["occlusion-intestinale"],
+  differentials: [
+    { label: "Hernie étranglée", ids: ["hernie-etranglee"] },
+    { label: "Occlusion colique sur cancer", ids: ["cancer-colorectal"] },
+    { label: "Ischémie mésentérique aiguë", ids: ["ischemie-mesenterique"] },
+    { label: "Iléus réflexe (pancréatite, diverticulite) ou gastro-entérite", ids: ["pancreatite-aigue", "diverticulite", "gastro-enterite"] },
+  ],
+};

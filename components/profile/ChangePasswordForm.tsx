@@ -47,12 +47,8 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <form className="mt-5" onSubmit={(event) => void changePassword(event)}>
-      <strong className="block text-sm">Mot de passe</strong>
-      <p className="mb-0 mt-1 text-sm text-[var(--muted)]">
-        Compte créé avec Google ? Utilise plutôt <Link className="text-link" href="/mot-de-passe-oublie">le lien de réinitialisation</Link> pour en définir un.
-      </p>
-      <div className="mt-4 grid gap-4">
+    <form className="mt-6" onSubmit={(event) => void changePassword(event)}>
+      <div className="profile-password-grid">
         <div>
           <Label htmlFor="current-password">Mot de passe actuel</Label>
           <Input autoComplete="current-password" className="mt-2" id="current-password" onChange={(event) => setCurrentPassword(event.target.value)} required type="password" value={currentPassword} />
@@ -67,6 +63,9 @@ export function ChangePasswordForm() {
           <Input autoComplete="new-password" className="mt-2" id="new-password-confirmation" maxLength={PASSWORD_MAX_LENGTH} minLength={PASSWORD_MIN_LENGTH} onChange={(event) => setConfirmation(event.target.value)} required type="password" value={confirmation} />
         </div>
       </div>
+      <p className="mb-0 mt-4 text-sm text-[var(--muted)]">
+        Compte créé avec Google ? Utilise plutôt <Link className="text-link" href="/mot-de-passe-oublie">le lien de réinitialisation</Link> pour définir un mot de passe.
+      </p>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Button disabled={saving} type="submit" variant="outline">
           {saving && <LoaderCircle className="animate-spin" size={17} />}

@@ -131,11 +131,15 @@ export function ProfileSettings({
   }
 
   return (
-    <section className="profile-card">
-      <h2>Ton profil</h2>
-      <p>Ce que {BRAND_NAME} affiche de toi{FEATURES.quiz ? ", et la cadence proposée" : ""}.</p>
+    <section className="profile-card" id="infos" aria-labelledby="infos-title">
+      <div className="profile-card-head">
+        <div>
+          <h2 id="infos-title">Informations</h2>
+          <p>Ton nom et ta photo dans {BRAND_NAME}{FEATURES.quiz ? ", et la cadence proposée" : ""}. Ils ne sont visibles que par toi.</p>
+        </div>
+      </div>
 
-      <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
+      <div className="profile-avatar-row">
         <span
           aria-label={avatarUrl ? `Photo de profil de ${fullName}` : `Initiales de ${fullName}`}
           className="profile-head-avatar"
@@ -146,7 +150,7 @@ export function ProfileSettings({
         </span>
         <div className="min-w-0 flex-1">
           <strong className="block text-base">Photo de profil</strong>
-          <p className="mb-4 mt-1 text-sm leading-5 text-[var(--muted)]">JPG, PNG ou WebP, 2 Mo maximum. La photo reste privée à ton compte.</p>
+          <p className="mb-3 mt-1 text-sm leading-5 text-[var(--muted)]">JPG, PNG ou WebP, 2 Mo maximum.</p>
           <div className="flex flex-wrap gap-2">
             <input
               ref={fileInputRef}
@@ -175,7 +179,7 @@ export function ProfileSettings({
 
       <form className="mt-7" onSubmit={(event) => void saveProfile(event)}>
         <div className="grid gap-5 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+          <div>
             <Label htmlFor="profile-full-name">Nom affiché</Label>
             <Input
               autoComplete="name"
@@ -188,10 +192,10 @@ export function ProfileSettings({
               value={fullName}
             />
           </div>
-          <div className="sm:col-span-2">
+          <div>
             <Label htmlFor="profile-email">Adresse e-mail</Label>
             <Input className="mt-2" disabled id="profile-email" value={email} />
-            <p className="mb-0 mt-1.5 text-sm text-[var(--muted)]">Ton adresse de connexion n’est pas affichée publiquement.</p>
+            <p className="mb-0 mt-1.5 text-sm text-[var(--muted)]">Adresse de connexion, non modifiable ici.</p>
           </div>
         </div>
 

@@ -28,7 +28,7 @@ export default function LegalNoticePage() {
       <p>Les stations, grilles, fiches, textes, illustrations et le code de {BRAND_NAME} sont protégés par le droit d’auteur. Toute reproduction, diffusion ou réutilisation en dehors d’un usage personnel d’apprentissage nécessite une autorisation écrite préalable.</p>
 
       <h2>Images médicales de tiers</h2>
-      <p>Certaines images d’examen proviennent de Wikimedia Commons et restent régies par leur licence d’origine (réutilisation libre avec attribution). Elles sont reprises sans modification. Les ECG sont des tracés synthétiques créés pour {BRAND_NAME}.</p>
+      <p>Certaines images d’examen proviennent de Wikimedia Commons et restent régies par leur licence d’origine (réutilisation libre avec attribution). Elles sont reprises sans modification, sauf une photographie réduite et convertie en JPEG. Les ECG sont des tracés synthétiques créés pour {BRAND_NAME}.</p>
       <ul>
         {THIRD_PARTY_IMAGES.map((image) => (
           <li key={image.title}><a href={image.source} target="_blank" rel="noopener noreferrer">{image.title}</a>, {image.author}, <a href={LICENSE_URLS[image.license]} target="_blank" rel="noopener noreferrer">{image.license}</a></li>

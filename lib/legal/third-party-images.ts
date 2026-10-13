@@ -12,6 +12,11 @@ export const THIRD_PARTY_IMAGES: ReadonlyArray<ImageCredit & { title: string; so
   { title: "Basale Subarachnoidalblutung bei Anterioraneurysma 43M - CT axial - 001.jpg", author: "Hellerhoff", license: "CC BY-SA 4.0" },
   { title: "Chest radiograph of a lung with Kerley B lines.jpg", author: "Mikael Häggström", license: "CC0 1.0" },
   { title: "Chest x-ray - posteroanterior view.jpg", author: "O’Dea", license: "CC BY-SA 3.0" },
+  { title: "Duenndarmileus Chiasamen - Roe - 0001.jpg", author: "Hellerhoff", license: "CC BY-SA 3.0" },
+  { title: "Herpes zoster chest.png", author: "Fisle", license: "CC BY-SA 3.0" },
+  { title: "Invagination Sonografie.jpg", author: "Kalumet", license: "CC BY-SA 3.0" },
+  { title: "Shoulder dislocation, anteroposterior before reduction.jpg", author: "Mikael Häggström", license: "CC0 1.0" },
+  { title: "Érysipèle jambe- Leg erysipelas - profil.jpg", author: "Grook Da Oger", license: "CC BY-SA 3.0" },
   { title: "Mediale Schenkelhalsfraktur links 83W - CR ap - 001.jpg", author: "Hellerhoff", license: "CC BY-SA 4.0" },
   { title: "Segond-Fraktur mit Ruptur des vorderen Kreuzbandes 18M - CR ap - 001.jpg", author: "Hellerhoff", license: "CC BY-SA 4.0" },
 ].map((item) => ({ ...item, license: item.license as ImageLicense, source: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(item.title.replace(/ /g, "_"))}` }));

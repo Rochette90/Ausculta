@@ -26,6 +26,20 @@ import { pneumonieCommunautaire } from "./pneumonie-communautaire.ts";
 import { pneumothoraxSpontane } from "./pneumothorax-spontane.ts";
 import { pyelonephriteAigue } from "./pyelonephrite-aigue.ts";
 import { ruptureLigamentCroiseAnterieur } from "./rupture-ligament-croise-anterieur.ts";
+import { accidentIschemiqueTransitoire } from "./accident-ischemique-transitoire.ts";
+import { paralysieFacialePeripherique } from "./paralysie-faciale-peripherique.ts";
+import { stenoseAortique } from "./stenose-aortique.ts";
+import { hemorragieDigestiveHaute } from "./hemorragie-digestive-haute.ts";
+import { paludismeRetourVoyage } from "./paludisme-retour-voyage.ts";
+import { troubleAdaptationEpuisement } from "./trouble-adaptation-epuisement.ts";
+import { gastroEnteriteDeshydratation } from "./gastro-enterite-deshydratation.ts";
+import { melanomeLesionPigmentee } from "./melanome-lesion-pigmentee.ts";
+import { grossesseExtraUterine } from "./grossesse-extra-uterine.ts";
+import { invaginationIntestinale } from "./invagination-intestinale.ts";
+import { fractureRadiusDistal } from "./fracture-radius-distal.ts";
+import { luxationEpaule } from "./luxation-epaule.ts";
+import { hernieDiscaleSciatique } from "./hernie-discale-sciatique.ts";
+import { occlusionIntestinale } from "./occlusion-intestinale.ts";
 import { MOCK_CODES, MOCK_STATIONS } from "./mock/index.ts";
 
 /**
@@ -58,6 +72,20 @@ export const ECOS_SCENARIOS: readonly EcosScenario[] = [
   ruptureLigamentCroiseAnterieur,
   fractureColFemoral,
   fractureChevilleWeberB,
+  accidentIschemiqueTransitoire,
+  paralysieFacialePeripherique,
+  stenoseAortique,
+  hemorragieDigestiveHaute,
+  paludismeRetourVoyage,
+  troubleAdaptationEpuisement,
+  gastroEnteriteDeshydratation,
+  melanomeLesionPigmentee,
+  grossesseExtraUterine,
+  invaginationIntestinale,
+  fractureRadiusDistal,
+  luxationEpaule,
+  hernieDiscaleSciatique,
+  occlusionIntestinale,
 ];
 
 /**
@@ -89,6 +117,20 @@ const PUBLIC_CODES: Readonly<Record<string, string>> = {
   "rupture-ligament-croise-anterieur": "station-21",
   "fracture-col-femoral": "station-22",
   "fracture-cheville-weber-b": "station-23",
+  "accident-ischemique-transitoire": "station-24",
+  "paralysie-faciale-peripherique": "station-25",
+  "stenose-aortique": "station-26",
+  "hemorragie-digestive-haute": "station-27",
+  "paludisme-retour-voyage": "station-28",
+  "trouble-adaptation-epuisement": "station-29",
+  "gastro-enterite-deshydratation": "station-30",
+  "melanome-lesion-pigmentee": "station-31",
+  "grossesse-extra-uterine": "station-32",
+  "invagination-intestinale": "station-33",
+  "fracture-radius-distal": "station-34",
+  "luxation-epaule": "station-35",
+  "hernie-discale-sciatique": "station-36",
+  "occlusion-intestinale": "station-37",
 };
 
 /**

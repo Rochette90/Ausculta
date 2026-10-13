@@ -14,6 +14,20 @@ export type StationDiagnoses = {
 };
 
 import { MOCK_STATION_DIAGNOSES } from "./mock/diagnoses.ts";
+import { accidentIschemiqueTransitoireDiagnoses } from "./accident-ischemique-transitoire.ts";
+import { paralysieFacialePeripheriqueDiagnoses } from "./paralysie-faciale-peripherique.ts";
+import { stenoseAortiqueDiagnoses } from "./stenose-aortique.ts";
+import { hemorragieDigestiveHauteDiagnoses } from "./hemorragie-digestive-haute.ts";
+import { paludismeRetourVoyageDiagnoses } from "./paludisme-retour-voyage.ts";
+import { troubleAdaptationEpuisementDiagnoses } from "./trouble-adaptation-epuisement.ts";
+import { gastroEnteriteDeshydratationDiagnoses } from "./gastro-enterite-deshydratation.ts";
+import { melanomeLesionPigmenteeDiagnoses } from "./melanome-lesion-pigmentee.ts";
+import { grossesseExtraUterineDiagnoses } from "./grossesse-extra-uterine.ts";
+import { invaginationIntestinaleDiagnoses } from "./invagination-intestinale.ts";
+import { fractureRadiusDistalDiagnoses } from "./fracture-radius-distal.ts";
+import { luxationEpauleDiagnoses } from "./luxation-epaule.ts";
+import { hernieDiscaleSciatiqueDiagnoses } from "./hernie-discale-sciatique.ts";
+import { occlusionIntestinaleDiagnoses } from "./occlusion-intestinale.ts";
 
 const d = (label: string, ...ids: string[]) => ({ label, ids });
 
@@ -41,5 +55,19 @@ export const STATION_DIAGNOSES: Readonly<Record<string, StationDiagnoses>> = {
   "rupture-ligament-croise-anterieur": { accepted: ["rupture-lca"], differentials: [d("Lésion du ligament collatéral médial", "lesion-lli"), d("Luxation de la rotule", "luxation-rotule"), d("Lésion méniscale isolée", "lesion-meniscale"), d("Lésion ostéochondrale ou fracture du plateau tibial", "lesion-osteochondrale", "fracture-plateau-tibial")] },
   "fracture-col-femoral": { accepted: ["fracture-col-femur"], differentials: [d("Fracture pertrochantérienne", "fracture-pertrochanterienne"), d("Fracture des branches pubiennes", "fracture-branches-pubiennes"), d("Luxation de hanche ou de prothèse", "luxation-hanche")] },
   "fracture-cheville-weber-b": { accepted: ["fracture-malleole-laterale"], differentials: [d("Entorse du ligament talo-fibulaire antérieur", "entorse-cheville"), d("Fracture de Maisonneuve", "fracture-maisonneuve"), d("Fracture de la base du 5e métatarsien", "fracture-5e-metatarsien"), d("Fracture bimalléolaire ou instable", "fracture-bimalleolaire")] },
+  "accident-ischemique-transitoire": accidentIschemiqueTransitoireDiagnoses,
+  "paralysie-faciale-peripherique": paralysieFacialePeripheriqueDiagnoses,
+  "stenose-aortique": stenoseAortiqueDiagnoses,
+  "hemorragie-digestive-haute": hemorragieDigestiveHauteDiagnoses,
+  "paludisme-retour-voyage": paludismeRetourVoyageDiagnoses,
+  "trouble-adaptation-epuisement": troubleAdaptationEpuisementDiagnoses,
+  "gastro-enterite-deshydratation": gastroEnteriteDeshydratationDiagnoses,
+  "melanome-lesion-pigmentee": melanomeLesionPigmenteeDiagnoses,
+  "grossesse-extra-uterine": grossesseExtraUterineDiagnoses,
+  "invagination-intestinale": invaginationIntestinaleDiagnoses,
+  "fracture-radius-distal": fractureRadiusDistalDiagnoses,
+  "luxation-epaule": luxationEpauleDiagnoses,
+  "hernie-discale-sciatique": hernieDiscaleSciatiqueDiagnoses,
+  "occlusion-intestinale": occlusionIntestinaleDiagnoses,
   ...MOCK_STATION_DIAGNOSES,
 };

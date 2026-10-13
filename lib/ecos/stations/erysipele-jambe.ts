@@ -57,7 +57,7 @@ export const erysipeleJambe: EcosScenario = {
   ],
   examination: [
     { id: "constantes", label: "Constantes vitales", category: "constantes", pertinent: true, topic: "constantes" },
-    { id: "jambe", label: "Inspection et palpation de la jambe", category: "examen", pertinent: true, topic: "examen de la jambe", covers: ["membres-inferieurs", "mollets", "adenopathies"] },
+    { id: "jambe", label: "Inspection et palpation de la jambe", category: "examen", pertinent: true, topic: "examen de la jambe", covers: ["membres-inferieurs", "mollets", "adenopathies"], image: { src: "/ecos/imagerie/station-15-jambe.jpg", alt: "Photographie de la jambe", credit: { author: "Grook Da Oger", license: "CC BY-SA 3.0" } } },
     { id: "pieds", label: "Examen des pieds et des espaces interorteils", category: "examen", pertinent: true, topic: "examen des pieds", covers: ["pieds-interorteils"] },
     { id: "marquage", label: "Délimitation de l’érythème au marqueur", category: "examen", pertinent: true, result: "Limites de l’érythème tracées au stylo, datées, pour suivre l’évolution.", covers: ["marquage-erytheme"] },
     { id: "bilan-sanguin", label: "Bilan sanguin (FSC, CRP, créatinine)", category: "complementaire", pertinent: true, topic: "bilan sanguin", covers: ["fsc", "crp", "creatinine"] },

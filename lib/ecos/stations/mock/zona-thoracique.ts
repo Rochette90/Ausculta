@@ -21,10 +21,10 @@ export const zonaThoracique: EcosScenario = {
   persona: "Retraité calme et précis, un peu inquiet parce qu’il a d’abord cru à un problème de cœur. Coopératif, il montre volontiers l’endroit douloureux et répond simplement aux questions.",
   brief: [
     "Vous êtes médecin assistant·e en cabinet de médecine générale.",
-    "M. Delacrétaz, 67 ans, consulte au cabinet pour une douleur qui brûle sur le côté gauche et des boutons apparus depuis deux jours.",
+    "M. Delacrétaz, 67 ans, consulte au cabinet pour une douleur qui brûle sur le côté droit et des boutons apparus depuis deux jours.",
     "Menez l’anamnèse et l’examen clinique (status) ciblés, demandez les examens utiles, puis proposez une hypothèse diagnostique et la suite.",
   ],
-  opening: "Bonjour docteur. Depuis quelques jours, j’ai une douleur qui brûle sur le côté gauche, et maintenant il y a des boutons.",
+  opening: "Bonjour docteur. Depuis quelques jours, j’ai une douleur qui brûle sur le côté droit, et maintenant il y a des boutons.",
   history: {
     identity: "Pierre Delacrétaz, 67 ans.",
     occupation: "Je suis retraité, j’étais facteur.",
@@ -43,7 +43,7 @@ export const zonaThoracique: EcosScenario = {
     concerns: "Au début, j’ai eu peur que ce soit le cœur. Et est-ce que c’est contagieux pour mes petits-enfants ?",
   },
   rules: [
-    { topic: "localisation", keywords: [...LOCATION, "ou avez vous mal", "quel cote"], reply: "Ici, sur le côté gauche : ça part du dos, sous l’omoplate, et ça fait le tour jusque sous le sein, comme une ceinture. Seulement à gauche." },
+    { topic: "localisation", keywords: [...LOCATION, "ou avez vous mal", "quel cote"], reply: "Ici, sur le côté droit : ça part du dos, sous l’omoplate, et ça fait le tour jusque sous le sein, comme une ceinture. Seulement à droit." },
     { topic: "type de douleur", keywords: CHARACTER, reply: "Ça brûle, avec des coups de décharge électrique de temps en temps. Même le frottement du t-shirt me fait mal." },
     { topic: "intensité", keywords: INTENSITY, reply: "Six sur dix la journée, plus la nuit." },
     { topic: "irradiation", keywords: RADIATION, reply: "Non, ça ne va pas dans le bras ni dans la mâchoire. Ça reste sur cette bande-là." },
@@ -60,17 +60,17 @@ export const zonaThoracique: EcosScenario = {
     { topic: "alcool", keywords: ALCOHOL, reply: "Un verre de vin au repas, pas plus." },
     { topic: "début", keywords: ONSET, reply: "La douleur il y a quatre jours, d’abord comme un coup de froid dans le dos. Les boutons sont sortis avant-hier." },
     { topic: "constantes", examiner: true, keywords: VITALS, reply: "TA 142/84 mmHg, FC 76/min, FR 14/min, SpO₂ 97 % à l’air ambiant, T 37,4 °C. Patient en bon état général." },
-    { topic: "peau", examiner: true, keywords: ["inspect", "regarde la peau", "examen de la peau", "examen cutane", "vitropression"], reply: "Sur l’hémithorax gauche, bande unilatérale allant de la colonne (niveau T5) jusque sous le mamelon : vésicules claires groupées en bouquets sur fond érythémateux, quelques vésicules ombiliquées et croûtes débutantes. L’éruption s’arrête net à la ligne médiane, en avant comme en arrière. Pas de lésion à distance, pas de signe de surinfection (pas de pus, pas d’extension de la rougeur)." },
-    { topic: "examen neurologique", examiner: true, keywords: ["sensibilit", "dermatome", "examen neuro", "neurolog", "reflexe"], reply: "Allodynie au simple effleurement et hypoesthésie dans le territoire T5 gauche. Force, réflexes et nerfs crâniens normaux, pas de déficit moteur." },
+    { topic: "peau", examiner: true, keywords: ["inspect", "regarde la peau", "examen de la peau", "examen cutane", "vitropression"], reply: "Sur l’hémithorax droit, bande unilatérale allant de la colonne (niveau T5) jusque sous le mamelon : vésicules claires groupées en bouquets sur fond érythémateux, quelques vésicules ombiliquées et croûtes débutantes. L’éruption s’arrête net à la ligne médiane, en avant comme en arrière. Pas de lésion à distance, pas de signe de surinfection (pas de pus, pas d’extension de la rougeur)." },
+    { topic: "examen neurologique", examiner: true, keywords: ["sensibilit", "dermatome", "examen neuro", "neurolog", "reflexe"], reply: "Allodynie au simple effleurement et hypoesthésie dans le territoire T5 droit. Force, réflexes et nerfs crâniens normaux, pas de déficit moteur." },
     { topic: "examen ophtalmologique", examiner: true, keywords: ["hutchinson", "ophtalm", "examen des yeux", "pupille", "conjonctiv", "cornee"], reply: "Pas de vésicule sur le front, la paupière ni le bout du nez (signe de Hutchinson négatif). Conjonctives calmes, cornées claires, pupilles égales et réactives, acuité visuelle conservée." },
-    { topic: "adénopathies", examiner: true, keywords: ["adenopathie", "ganglion", "aisselle", "axillaire"], reply: "Petite adénopathie axillaire gauche d’environ 1 cm, mobile et un peu sensible. Pas d’autre adénopathie." },
+    { topic: "adénopathies", examiner: true, keywords: ["adenopathie", "ganglion", "aisselle", "axillaire"], reply: "Petite adénopathie axillaire droit d’environ 1 cm, mobile et un peu sensible. Pas d’autre adénopathie." },
     { topic: "auscultation", examiner: true, keywords: ["auscult", "stethoscope", "j ecoute"], reply: "Bruits du cœur réguliers, sans souffle ni frottement. Murmure vésiculaire symétrique, sans bruit surajouté." },
     { topic: "ECG", examiner: true, keywords: ["ecg", "electrocardiogramme"], reply: "ECG : rythme sinusal à 76/min, axe normal, conduction normale, pas de trouble de la repolarisation." },
     planReaction("Ces médicaments, ça va faire passer la douleur ? Et pour les petits-enfants, je fais comment ?", ["valaciclovir", "aciclovir", "antiviral", "zona", "contagi", "a la maison"]),
   ],
   examination: [
     { id: "constantes", label: "Constantes vitales", category: "constantes", pertinent: true, topic: "constantes" },
-    { id: "inspection-eruption", label: "Inspection du tronc avec vitropression", category: "examen", pertinent: true, topic: "peau", covers: ["peau"] },
+    { id: "inspection-eruption", label: "Inspection du tronc avec vitropression", category: "examen", pertinent: true, topic: "peau", covers: ["peau"], image: { src: "/ecos/imagerie/blanc-13-zona.jpg", alt: "Photographie du thorax", credit: { author: "Fisle", license: "CC BY-SA 3.0" } } },
     { id: "sensibilite-territoire", label: "Sensibilité du territoire atteint et examen neurologique", category: "examen", pertinent: true, topic: "examen neurologique", covers: ["examen-neurologique"] },
     { id: "examen-ophtalmo", label: "Examen ophtalmologique simple (signe de Hutchinson)", category: "examen", pertinent: true, topic: "examen ophtalmologique", covers: ["pupilles", "fond-oeil"] },
     { id: "adenopathies", label: "Recherche d’adénopathies", category: "examen", pertinent: true, topic: "adénopathies", covers: ["adenopathies"] },
@@ -84,10 +84,10 @@ export const zonaThoracique: EcosScenario = {
   catalogResults: {
     "fond-oeil": "Fond d’œil sans particularité.",
     "marquage-erytheme": "Peu utile : il s’agit de vésicules groupées dans une bande, pas d’un érythème qui s’étend.",
-    "rachis": "Rachis dorsal indolore à la percussion, mobilité conservée. La peau du dos à gauche est très sensible au toucher.",
+    "rachis": "Rachis dorsal indolore à la percussion, mobilité conservée. La peau du dos à droit est très sensible au toucher.",
   },
   acceptable: ["fsc", "crp", "creatinine", "hba1c", "percussion-thoracique"],
-  diagnosisChoice: { correct: "Zona intercostal T5 gauche, sans atteinte ophtalmique", distractors: ["Eczéma de contact", "Herpès simplex cutané", "Syndrome coronarien aigu sans sus-décalage ST"] },
+  diagnosisChoice: { correct: "Zona intercostal T5 droit, sans atteinte ophtalmique", distractors: ["Eczéma de contact", "Herpès simplex cutané", "Syndrome coronarien aigu sans sus-décalage ST"] },
   diagnosisPoints: 1,
   criteria: [
     presentationCriterion,
@@ -137,12 +137,12 @@ export const zonaThoracique: EcosScenario = {
     communicationCriterion,
   ],
   debrief: {
-    diagnosis: "Zona intercostal (dermatome T5 gauche), sans atteinte ophtalmique ni signe de gravité",
-    summary: "Homme de 67 ans, immunocompétent, avec une douleur unilatérale en brûlure et décharges, en bande de la colonne au sternum, suivie deux jours plus tard d’une éruption de vésicules groupées sur fond érythémateux limitée au dermatome T5 gauche, ne dépassant pas la ligne médiane. Allodynie dans le territoire, pas d’atteinte du visage ni de l’œil, ECG normal. Éruption depuis moins de 72 h chez un patient de plus de 50 ans : antiviral oral et antalgie.",
+    diagnosis: "Zona intercostal (dermatome T5 droit), sans atteinte ophtalmique ni signe de gravité",
+    summary: "Homme de 67 ans, immunocompétent, avec une douleur unilatérale en brûlure et décharges, en bande de la colonne au sternum, suivie deux jours plus tard d’une éruption de vésicules groupées sur fond érythémateux limitée au dermatome T5 droit, ne dépassant pas la ligne médiane. Allodynie dans le territoire, pas d’atteinte du visage ni de l’œil, ECG normal. Éruption depuis moins de 72 h chez un patient de plus de 50 ans : antiviral oral et antalgie.",
     keyFindings: [
       "Prodrome douloureux (brûlure, décharges, allodynie) précédant l’éruption de 2 à 3 jours.",
       "Vésicules groupées en bouquets sur fond érythémateux, unilatérales, dans un seul dermatome, s’arrêtant à la ligne médiane.",
-      "Hypoesthésie et allodynie dans le territoire T5 gauche, sans déficit moteur.",
+      "Hypoesthésie et allodynie dans le territoire T5 droit, sans déficit moteur.",
       "Signe de Hutchinson négatif, pas de lésion du visage ; pas d’immunosuppression.",
     ],
     redFlags: [

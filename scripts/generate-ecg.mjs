@@ -8,8 +8,8 @@
  *   node scripts/generate-ecg.mjs
  *
  * Chaque cas décrit le rythme (`sinus` ou `fa`), la fréquence, et par
- * dérivation les décalages du segment ST et du PR (mV), l'amplitude de
- * l'onde T (facteur) et les ondes Q pathologiques. Les résultats texte des
+ * dérivation les décalages du segment ST et du PR (mV), l'amplitude des
+ * ondes R, S et T (facteurs) et les ondes Q pathologiques. Les résultats texte des
  * stations doivent rester cohérents avec ces paramètres.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -45,6 +45,10 @@ const CASES = {
   // Séquelle d'infarctus antérieur : QS de V1 à V3, petite onde q en V4.
   "station-20": { rhythm: "sinus", rate: 96, q: { V1: 0.4, V2: 0.6, V3: 0.5, V4: 0.2 }, r: { V1: 0, V2: 0, V3: 0.1, V4: 0.6 }, t: { V2: 0.5, V3: 0.6 } },
   "station-22": { rhythm: "fa", rate: 90 },
+  // Hypertrophie ventriculaire gauche électrique discrète (Sokolow-Lyon 37 mm).
+  "station-24": { rhythm: "sinus", rate: 74, r: { V5: 1.7, V6: 1.8, aVL: 1.4 }, s: { V1: 1.6, V2: 1.3 } },
+  // HVG avec troubles de repolarisation (« strain ») en V5, V6, DI et aVL.
+  "station-26": { rhythm: "sinus", rate: 72, r: { V5: 2.1, V6: 2.4, aVL: 2.2, I: 1.6 }, s: { V1: 2, V2: 1.7 }, st: { V5: -0.1, V6: -0.1, I: -0.08, aVL: -0.1 }, t: { V5: -0.9, V6: -1, I: -0.8, aVL: -1.2 } },
   // Péricardite : sus-décalage ST diffus concave, PR abaissé ; aVR en miroir.
   "blanc-01": {
     rhythm: "sinus", rate: 98,
@@ -110,7 +114,7 @@ function voltage(lead, spec, beatTimes, t, phases) {
       const q = qDeep ? -qDeep : base.q;
       v += q * gauss(x, 0.012, qDeep ? 0.014 : 0.007);
       v += r * gauss(x, 0.04, 0.0105);
-      v += base.s * gauss(x, 0.066, 0.011);
+      v += (spec.s?.[lead] ?? 1) * base.s * gauss(x, 0.066, 0.011);
     }
     // Segment ST décalé, qui rejoint l'onde T (concave).
     v += st * smooth(x, 0.07, 0.1) * (1 - smooth(x, tCenter + 0.02, tCenter + 0.14));

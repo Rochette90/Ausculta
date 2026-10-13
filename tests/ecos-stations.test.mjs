@@ -17,14 +17,14 @@ const FALLBACKS = [
 
 test("every catalog station has exactly one scripted scenario", async () => {
   const catalog = JSON.parse(await read("../content/cases/index.json"));
-  assert.equal(ECOS_SCENARIOS.length, 23);
+  assert.equal(ECOS_SCENARIOS.length, 37);
   assert.deepEqual(new Set(ECOS_SCENARIOS.map((item) => item.slug)), new Set(catalog.map((item) => item.slug)));
   assert.ok(catalog.every((item) => item.interactive && item.duration === "13 min"));
   for (const item of catalog) {
     const scenario = getEcosScenario(item.slug);
     assert.ok(scenario, item.slug);
     // The catalog label and the scripted patient describe the same person.
-    assert.equal(item.patient, `${scenario.patient.name}, ${scenario.patient.age} ans`, item.slug);
+    assert.equal(item.patient, `${scenario.patient.name}, ${scenario.patient.ageLabel ?? `${scenario.patient.age} ans`}`, item.slug);
   }
   assert.equal(getEcosScenario("../etc/passwd"), null);
   assert.equal(getEcosScenario("toString"), null);
@@ -384,7 +384,7 @@ test("stations 13 to 20 are published by their migration with a neutral code", a
 
 test("orthopaedic stations 21 to 23 are published by their migration with a neutral code", async () => {
   const sql = await read("../supabase/migrations/20261013120000_ecos_stations_orthopedie.sql");
-  const added = ECOS_SCENARIOS.slice(20);
+  const added = ECOS_SCENARIOS.slice(20, 23);
   assert.equal(added.length, 3);
   added.forEach((scenario, index) => {
     assert.equal(ecosPublicCode(scenario.slug), `station-${21 + index}`);
@@ -396,9 +396,23 @@ test("orthopaedic stations 21 to 23 are published by their migration with a neut
   assert.match(sql, /on conflict \(slug\) do nothing/);
 });
 
+test("stations 24 to 37 are published by their migration with a neutral code", async () => {
+  const sql = await read("../supabase/migrations/20261013200000_ecos_stations_24_37.sql");
+  const added = ECOS_SCENARIOS.slice(23);
+  assert.equal(added.length, 14);
+  added.forEach((scenario, index) => {
+    assert.equal(ecosPublicCode(scenario.slug), `station-${24 + index}`);
+    assert.match(sql, new RegExp(`'${scenario.slug}'`));
+    assert.ok(!sql.includes(scenario.diagnosisChoice.correct), scenario.slug);
+    assert.ok(!sql.includes(scenario.debrief.diagnosis), scenario.slug);
+  });
+  assert.match(sql, /on conflict \(slug\) do nothing/);
+});
+
 test("the analysis step is graded on the written analysis of the tests that were ordered", () => {
   const analysed = ECOS_SCENARIOS.filter(hasAnalysisStep);
-  assert.deepEqual(analysed.map((scenario) => scenario.slug), ECOS_SCENARIOS.slice(20).map((scenario) => scenario.slug));
+  // Stations de 5ᵉ année : orthopédie 21 à 23, puis 32 à 37.
+  assert.deepEqual(analysed.map((scenario) => scenario.slug), [...ECOS_SCENARIOS.slice(20, 23), ...ECOS_SCENARIOS.slice(31)].map((scenario) => scenario.slug));
   const gesture = (procedure) => ({ role: "student", content: `${PROCEDURE_PREFIX}${procedure.label}` });
   for (const scenario of ECOS_SCENARIOS) {
     const view = ecosStationView(scenario, { candidateTitle: "", specialty: null });

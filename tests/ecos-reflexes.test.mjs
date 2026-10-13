@@ -56,8 +56,8 @@ test("le parcours ECOS de 3ᵉ année range les stations par type, sans jamais e
   const payload = JSON.stringify(types);
   for (const scenario of ECOS_SCENARIOS) assert.ok(!payload.includes(scenario.slug), scenario.slug);
   assert.ok(types.flatMap((type) => type.codes).every((code) => /^station-\d{2}$/.test(code)));
-  // Les stations de 5ᵉ année (orthopédie, 21 à 23) n'y figurent pas.
-  assert.equal(types.flatMap((type) => type.codes).length, 20);
+  // Les stations de 5ᵉ année (21 à 23, 32 à 37) n'y figurent pas.
+  assert.equal(types.flatMap((type) => type.codes).length, 28);
   const component = await read("../components/ecos/Ecos3Parcours.tsx");
   assert.doesNotMatch(component, /from "@\/lib\/ecos\/(stations|engine|cases)"/);
 });
