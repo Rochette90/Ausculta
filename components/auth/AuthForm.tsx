@@ -21,9 +21,11 @@ export function AuthForm({ nextPath, switchNextPath = nextPath, mode, initialSta
     setStatus(null);
     try {
       const supabase = createClient();
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+      // Le lien de confirmation revient sur /auth/callback (sans paramètre : le gabarit
+      // Supabase y ajoute `token_hash` et `type`, et le callback choisit la page d'arrivée).
+      const emailRedirectTo = `${window.location.origin}/auth/callback`;
       const result = isSignup
-        ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo } })
+        ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo } })
         : await supabase.auth.signInWithPassword({ email, password });
       const { error } = result;
       if (error) throw error;

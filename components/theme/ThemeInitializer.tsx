@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { THEME_STORAGE_KEY } from "@/lib/brand";
 
 export function ThemeInitializer() {
-  useEffect(() => {
+  // Avant la première peinture qui suit l'hydratation : le thème enregistré
+  // remplace le thème clair du serveur sans flash visible sur connexion rapide.
+  // (Un script synchrone dans le <head> irait plus tôt, mais la CSP à nonce
+  // le bloquerait sur les pages statiques.)
+  useLayoutEffect(() => {
     try {
       const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
       const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";

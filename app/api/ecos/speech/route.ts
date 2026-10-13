@@ -2,7 +2,7 @@ import { EXAMINER_PREFIX } from "@/lib/ecos/engine";
 import { ecosQuotasForUser } from "@/lib/ecos/plan";
 import { DAY_SECONDS } from "@/lib/ecos/quotas";
 import { getEcosScenario } from "@/lib/ecos/stations";
-import { elevenLabsSpeechRequest, isPermanentVoiceFailure, SPEECH_MAX_CHARACTERS, speechConfig, speechErrorReason } from "@/lib/ecos/voice";
+import { cachedSpeech, elevenLabsSpeechRequest, isPermanentVoiceFailure, SPEECH_MAX_CHARACTERS, speechConfig, speechErrorReason, storeSpeech } from "@/lib/ecos/voice";
 import { UUID_PATTERN } from "@/lib/validation";
 import { BRAND_NAME } from "@/lib/brand";
 import {
@@ -47,12 +47,17 @@ export async function POST(request: Request) {
     const admin = createAdminClient();
     // La route ne lit que la phrase d'ouverture : quelques appels par minute suffisent.
     await enforceRateLimit(admin, user.id, "ecos-speech", 10, 60);
-    const { data: session, error: sessionError } = await admin
-      .from("ecos_sessions")
-      .select("id, status, station_slug")
-      .eq("id", sessionId)
-      .eq("user_id", user.id)
-      .maybeSingle();
+    // Session et offre du compte sont indépendantes : un seul aller-retour.
+    const [sessionResult, { quotas }] = await Promise.all([
+      admin
+        .from("ecos_sessions")
+        .select("id, status, station_slug")
+        .eq("id", sessionId)
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      ecosQuotasForUser(admin, user.id),
+    ]);
+    const { data: session, error: sessionError } = sessionResult;
     if (sessionError) throw sessionError;
     if (!session) throw new ApiError(404, "session_not_found", "Session introuvable");
     if (session.status !== "active") throw new ApiError(409, "session_not_active", "Session déjà clôturée");
@@ -62,7 +67,6 @@ export async function POST(request: Request) {
     const config = speechConfig(scenario);
     if (!config) throw new ApiError(503, "speech_unavailable", "Voix réaliste non configurée");
     // Quota du jour atteint (compte, puis plafond global) : même réponse, le navigateur lit avec sa propre voix.
-    const { quotas } = await ecosQuotasForUser(admin, user.id);
     if (!(await withinRateLimit(admin, user.id, "ecos-voice-day", quotas.dailyVoiceReplies, DAY_SECONDS))
       || !(await withinGlobalLimit(admin, "ecos-voice-day", quotas.globalDailyVoiceReplies, DAY_SECONDS))) {
       throw new ApiError(503, "speech_unavailable", "Voix réaliste indisponible pour aujourd’hui");
@@ -79,6 +83,21 @@ export async function POST(request: Request) {
     if (linesError) throw linesError;
     if (!(lines ?? []).some((line) => String(line.content).trim() === text)) {
       throw new ApiError(403, "unknown_line", "Cette réplique n’appartient pas à la session");
+    }
+
+    // Déjà synthétisée (phrase d'ouverture rejouée à chaque séance) : aucun
+    // appel ElevenLabs, le son part immédiatement.
+    const cached = cachedSpeech(config, text);
+    if (cached) {
+      timing.mark("voice-cache");
+      timing.done(`text=${text.length}chars audio=${cached.byteLength}bytes cached`);
+      return new Response(new Blob([cached as BlobPart], { type: "audio/mpeg" }), {
+        headers: {
+          "content-type": "audio/mpeg",
+          "cache-control": "private, no-store",
+          "x-content-type-options": "nosniff",
+        },
+      });
     }
 
     timing.mark("checks");
@@ -103,11 +122,22 @@ export async function POST(request: Request) {
     }
 
     timing.mark("voice-first-byte");
-    // Mesure aussi la durée totale de la génération, sans retarder le flux.
+    // Mesure aussi la durée totale de la génération, sans retarder le flux,
+    // et retient l'audio pour le resservir sans nouvel appel payant.
     let bytes = 0;
+    const chunks: Uint8Array[] = [];
     const measured = upstream.body.pipeThrough(new TransformStream<Uint8Array, Uint8Array>({
-      transform(chunk, controller) { bytes += chunk.byteLength; controller.enqueue(chunk); },
-      flush() { timing.mark("voice-stream"); timing.done(`text=${text.length}chars audio=${bytes}bytes`); },
+      transform(chunk, controller) { bytes += chunk.byteLength; if (bytes <= 2_000_000) chunks.push(chunk); controller.enqueue(chunk); },
+      flush() {
+        timing.mark("voice-stream");
+        timing.done(`text=${text.length}chars audio=${bytes}bytes`);
+        if (chunks.length && bytes <= 2_000_000) {
+          const all = new Uint8Array(bytes);
+          let offset = 0;
+          for (const chunk of chunks) { all.set(chunk, offset); offset += chunk.byteLength; }
+          storeSpeech(config, text, all);
+        }
+      },
     }));
     return new Response(measured, {
       headers: {

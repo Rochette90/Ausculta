@@ -68,7 +68,7 @@ test("password routes are guarded and never leak account existence", async () =>
   assert.match(reset, /createHash\("sha256"\)\.update\(`email:\$\{email\}`\)/);
   assert.match(reset, /return apiJson\(\{ ok: true \}\)/);
   assert.doesNotMatch(reset, /throw error/);
-  assert.match(reset, /\/auth\/callback\?next=/);
+  assert.match(reset, /\/auth\/callback`/);
 
   assert.match(update, /assertSameOrigin\(request\)/);
   assert.match(update, /requireAuthenticatedUser\(\)/);
@@ -113,5 +113,38 @@ test("auth and legal pages exist and are linked", async () => {
   }
   for (const page of ["mot-de-passe-oublie", "reinitialiser-mot-de-passe"]) {
     assert.match(await read(`../app/(auth)/${page}/page.tsx`), /<AuthShell>/);
+  }
+});
+
+test("e-mail links carry a token hash so they open a session from any device", async () => {
+  const { emailLinkDefaultPath, emailLinkErrorCode, parseEmailLinkType } = await import("../lib/auth/email-link.ts");
+  assert.equal(parseEmailLinkType("signup"), "signup");
+  assert.equal(parseEmailLinkType("constructor"), null);
+  assert.equal(parseEmailLinkType(undefined), null);
+  assert.equal(emailLinkDefaultPath("signup"), "/onboarding");
+  assert.equal(emailLinkDefaultPath("recovery"), "/reinitialiser-mot-de-passe");
+  assert.equal(emailLinkErrorCode("recovery"), "recovery");
+  assert.equal(emailLinkErrorCode("signup"), "callback");
+
+  const [callback, authForm, passwordReset, proxy] = await Promise.all([
+    read("../app/auth/callback/route.ts"),
+    read("../components/auth/AuthForm.tsx"),
+    read("../app/api/auth/password-reset/route.ts"),
+    read("../proxy.ts"),
+  ]);
+  // Le jeton est vérifié côté serveur ; le code PKCE reste pour Google OAuth.
+  assert.match(callback, /verifyOtp\(\{ type, token_hash: tokenHash \}\)/);
+  assert.match(callback, /exchangeCodeForSession\(code\)/);
+  // Les e-mails reviennent sur le callback nu : le gabarit ajoute les paramètres.
+  assert.match(authForm, /emailRedirectTo = `\$\{window\.location\.origin\}\/auth\/callback`/);
+  assert.match(passwordReset, /redirectTo = `\$\{appOrigin\(request\)\}\/auth\/callback`/);
+  // Filet de sécurité si Supabase replie sur la Site URL.
+  assert.match(proxy, /searchParams\.has\("token_hash"\)/);
+
+  const templates = { confirmation: "signup", recovery: "recovery", email_change: "email_change", invite: "invite", magic_link: "magiclink" };
+  for (const [file, type] of Object.entries(templates)) {
+    const html = await read(`../supabase/templates/${file}.html`);
+    assert.doesNotMatch(html, /ConfirmationURL/, file);
+    assert.match(html, new RegExp(`\\?token_hash=\\{\\{ \\.TokenHash \\}\\}&amp;type=${type}`), file);
   }
 });

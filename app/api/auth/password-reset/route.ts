@@ -11,9 +11,6 @@ import { appOrigin } from "@/app/lib/stripe";
 import { isPlausibleEmail } from "@/lib/auth/password";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 
-/** Page où le lien de réinitialisation dépose l'étudiant, une fois la session ouverte par `/auth/callback`. */
-const PASSWORD_RESET_NEXT_PATH = "/reinitialiser-mot-de-passe";
-
 /**
  * Demande d'e-mail de réinitialisation. La réponse est toujours `{ ok: true }`
  * pour une adresse plausible, que le compte existe ou non (pas d'énumération).
@@ -43,7 +40,9 @@ export async function POST(request: Request) {
       });
     }
 
-    const redirectTo = `${appOrigin(request)}/auth/callback?next=${encodeURIComponent(PASSWORD_RESET_NEXT_PATH)}`;
+    // Le gabarit `supabase/templates/recovery.html` ajoute `token_hash` et `type=recovery` ;
+    // `/auth/callback` dépose ensuite l'étudiant sur `/reinitialiser-mot-de-passe` (lib/auth/email-link.ts).
+    const redirectTo = `${appOrigin(request)}/auth/callback`;
     const supabase = await createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
     // Une erreur Supabase (compte inconnu, fréquence d'envoi) ne doit pas

@@ -2,7 +2,7 @@ project_id = "ausculta"
 
 [api]
 enabled = true
-schemas = ["public", "storage", "graphql_public"]
+schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
@@ -39,7 +39,9 @@ anonymous_users = 0
 enable_signup = true
 # Un changement d'adresse doit être confirmé depuis l'ancienne ET la nouvelle.
 double_confirm_changes = true
-enable_confirmations = true
+# Phase de test (2026-10-13) : pas de confirmation d'e-mail, l'expéditeur par défaut de Supabase
+# n'envoie qu'aux membres de l'organisation. Remettre `true` dès qu'un SMTP est configuré.
+enable_confirmations = false
 # Un mot de passe ne peut être changé que par une session récente ou un lien
 # de réinitialisation (voir `POST /api/account/password`).
 secure_password_change = true
@@ -71,12 +73,10 @@ content_path = "./supabase/templates/email_change.html"
 subject = "Vous êtes invité·e"
 content_path = "./supabase/templates/invite.html"
 
-[auth.external.google]
-enabled = true
-client_id = "env(SUPABASE_AUTH_GOOGLE_CLIENT_ID)"
-secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
-skip_nonce_check = false
+# Google OAuth : client_id et secret sont gérés dans le dashboard Supabase (Authentication >
+# Providers). Bloc volontairement absent d'ici pour que `supabase config push` ne les écrase pas.
 
 [storage]
 enabled = true
-file_size_limit = "2MiB"
+# Limite globale du projet distant ; le bucket `avatars` a sa propre limite de 2 Mo.
+file_size_limit = "50MiB"

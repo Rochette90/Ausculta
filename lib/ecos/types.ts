@@ -43,6 +43,12 @@ export type EcosProcedure = {
   /** Result text; defaults to the reply of the examiner rule with this topic. */
   result?: string;
   topic?: string;
+  /**
+   * Image révélée quand le geste est réalisé (ECG, radio…) : fichier déposé
+   * dans `public/ecos/`, chemin commençant par `/ecos/`. Elle n'atteint le
+   * navigateur qu'après le choix du geste, comme le texte du résultat.
+   */
+  image?: { src: string; alt: string };
 };
 
 /** Final question of the station: the correct diagnosis and three distractors. */

@@ -104,12 +104,12 @@ test("seules les paroles du patient sont gardées, jamais sa description", () =>
   assert.equal(words("Huit sur dix : c’est vraiment fort."), "Huit sur dix : c’est vraiment fort.");
 });
 
-test("la première phrase part seule, la suite à la fin", () => {
+test("chaque phrase part dès qu'elle est complète", () => {
   const segmenter = createSpeechSegmenter();
   assert.deepEqual(segmenter.push("Oui. "), []);
   assert.deepEqual(segmenter.push("Ça serre comme un étau. Et ça "), ["Oui. Ça serre comme un étau."]);
-  assert.deepEqual(segmenter.push("descend dans le bras. Depuis ce matin."), []);
-  assert.deepEqual(segmenter.flush(), ["Et ça descend dans le bras. Depuis ce matin."]);
+  assert.deepEqual(segmenter.push("descend dans le bras. Depuis ce matin."), ["Et ça descend dans le bras."]);
+  assert.deepEqual(segmenter.flush(), ["Depuis ce matin."]);
 
   const single = createSpeechSegmenter();
   assert.deepEqual(single.push("Depuis ce matin, docteur"), []);
@@ -197,6 +197,27 @@ test("un délai dépassé passe au fournisseur suivant", async () => {
   assert.deepEqual(result.logs, ["anthropic délai dépassé"]);
 });
 
+test("un premier mot trop lent passe au fournisseur suivant sans attendre le délai total", async () => {
+  const started = Date.now();
+  const result = await run((url, init) => (url.includes("anthropic.com")
+    ? new Promise((_, reject) => init.signal.addEventListener("abort", () => reject(Object.assign(new Error("aborted"), { name: "AbortError" }))))
+    : Promise.resolve(sseResponse(openAiSse(["Non, pas de fièvre."])))), { firstTokenTimeoutMs: 50 });
+  assert.equal(result.source, "openrouter");
+  assert.ok(Date.now() - started < 1_000, "la bascule doit suivre le délai de premier mot, pas le délai total");
+});
+
+test("une synthèse déjà faite n'est pas repayée, une autre oui", async () => {
+  const config = { apiKey: "k", voiceId: "v-cache", modelId: "eleven_flash_v2_5" };
+  let calls = 0;
+  const fetchImpl = async () => { calls += 1; return new Response(new Uint8Array([calls])); };
+  const first = await synthesizeSpeech(config, "Phrase mise en cache.", { fetchImpl });
+  const second = await synthesizeSpeech(config, "Phrase mise en cache.", { fetchImpl });
+  assert.deepEqual([...second], [...first]);
+  assert.equal(calls, 1, "même texte, même voix : un seul appel ElevenLabs");
+  await synthesizeSpeech(config, "Autre phrase.", { fetchImpl });
+  assert.equal(calls, 2);
+});
+
 test("une description glissée par le modèle n'est ni dite ni enregistrée", async () => {
   const result = await run(async () => sseResponse(anthropicSse(["M. Favre : *Anxi", "eux, se tient la poi", "trine* J’ai une douleur ", "très forte. (grimace) ", "Ça serre."])), {
     speakers: ["M. Favre", "Favre"],
@@ -244,15 +265,15 @@ test("la synthèse distingue les refus définitifs des pannes passagères", asyn
   const audio = await synthesizeSpeech(config, "Bonjour.", { fetchImpl: async () => new Response(new Uint8Array([1, 2, 3])) });
   assert.deepEqual([...audio], [1, 2, 3]);
   await assert.rejects(
-    synthesizeSpeech(config, "Bonjour.", { fetchImpl: async () => new Response(JSON.stringify({ detail: { status: "invalid_api_key", message: "Invalid API key" } }), { status: 401 }) }),
+    synthesizeSpeech(config, "Clé refusée.", { fetchImpl: async () => new Response(JSON.stringify({ detail: { status: "invalid_api_key", message: "Invalid API key" } }), { status: 401 }) }),
     (error) => error instanceof VoiceProviderError && error.permanent && error.message === "401 — invalid_api_key : Invalid API key",
   );
   await assert.rejects(
-    synthesizeSpeech(config, "Bonjour.", { fetchImpl: async () => new Response("{}", { status: 429 }) }),
+    synthesizeSpeech(config, "Trop de demandes.", { fetchImpl: async () => new Response("{}", { status: 429 }) }),
     (error) => error instanceof VoiceProviderError && !error.permanent,
   );
   await assert.rejects(
-    synthesizeSpeech(config, "Bonjour.", { fetchImpl: async () => { throw new TypeError("fetch failed"); } }),
+    synthesizeSpeech(config, "Réseau coupé.", { fetchImpl: async () => { throw new TypeError("fetch failed"); } }),
     (error) => error instanceof VoiceProviderError && !error.permanent,
   );
   for (const status of [400, 401, 403, 404]) assert.equal(isPermanentVoiceFailure(status), true);

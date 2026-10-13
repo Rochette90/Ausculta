@@ -82,7 +82,12 @@ export async function POST(
       }
     }
 
-    return apiJson({ procedureId: procedure.id, label: procedure.label, result });
+    // L'image ne part qu'avec le résultat, une fois le geste choisi, et
+    // seulement pour un fichier du site (jamais une URL externe).
+    const image = procedure.image && procedure.image.src.startsWith("/ecos/") && !procedure.image.src.startsWith("//")
+      ? procedure.image
+      : null;
+    return apiJson({ procedureId: procedure.id, label: procedure.label, result, image });
   } catch (error) {
     return handleApiError(error);
   }

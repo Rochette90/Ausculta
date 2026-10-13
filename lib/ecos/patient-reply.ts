@@ -18,6 +18,8 @@ export type StreamPatientReplyOptions = {
   history: readonly TranscriptMessage[];
   /** Délai accordé à chaque fournisseur, lecture du flux comprise. */
   timeoutMs: number;
+  /** Délai d'attente du premier mot : au-delà, le fournisseur suivant est essayé (rien n'a encore été dit). */
+  firstTokenTimeoutMs?: number;
   /** Réponse du moteur local, quand aucun modèle ne répond. */
   fallback: () => string;
   /** Morceau de réponse prêt à être dit à voix haute, transmis dans l'ordre. */
@@ -59,6 +61,11 @@ export async function streamPatientReply(options: StreamPatientReplyOptions): Pr
     const decoder = new TextDecoder();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), options.timeoutMs);
+    // Premier mot trop lent : on coupe avant tout segment, le fournisseur
+    // suivant prend le relais sans silence interminable.
+    const firstTimer = options.firstTokenTimeoutMs
+      ? setTimeout(() => { if (!accepted) controller.abort(); }, options.firstTokenTimeoutMs)
+      : undefined;
     let accepted = "";
     let spoke = false;
     let full = false;
@@ -118,6 +125,7 @@ export async function streamPatientReply(options: StreamPatientReplyOptions): Pr
       }
     } finally {
       clearTimeout(timer);
+      if (firstTimer) clearTimeout(firstTimer);
       // Libère la connexion si la lecture s'est arrêtée avant la fin du flux.
       controller.abort();
     }

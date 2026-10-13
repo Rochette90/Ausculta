@@ -140,7 +140,7 @@ test("the connected app exposes a persistent accessible dark theme", async () =>
   assert.doesNotMatch(layout, /<script|next\/script|dangerouslySetInnerHTML/);
   assert.match(initializer, /THEME_STORAGE_KEY/);
   assert.match(initializer, /prefers-color-scheme: dark/);
-  assert.match(initializer, /useEffect/);
+  assert.match(initializer, /useLayoutEffect/);
   assert.match(navigation, /ThemeToggle/);
   assert.match(toggle, /localStorage\.setItem\(THEME_STORAGE_KEY/);
   assert.match(toggle, /Basculer entre le mode clair et le mode nuit/);

@@ -8,7 +8,7 @@ import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { usesReservedPrefix } from "@/lib/ecos/text";
 import { sessionDeadline } from "@/lib/ecos/timing";
-import { speechConfig, synthesizeSpeech, VoiceProviderError } from "@/lib/ecos/voice";
+import { SPEECH_SYNTHESIS_MAX_CHARACTERS, speechConfig, synthesizeSpeech, VoiceProviderError } from "@/lib/ecos/voice";
 import { UUID_PATTERN } from "@/lib/validation";
 import { BRAND_NAME } from "@/lib/brand";
 import {
@@ -26,6 +26,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 const HISTORY_WINDOW = 12;
 /** Délai de synthèse d'un morceau : au-delà, le navigateur le dit avec sa propre voix. */
 const SEGMENT_SPEECH_TIMEOUT_MS = 8_000;
+/** Premier mot du modèle attendu sous ce délai, sinon le fournisseur suivant est essayé. */
+const FIRST_TOKEN_TIMEOUT_MS = 2_500;
 
 /** Ligne de l'examinateur : affichée, jamais dite par la voix du patient. */
 function isExaminerLine(text: string) {
@@ -154,6 +156,7 @@ export async function POST(request: Request) {
         // Chaque morceau est synthétisé dès qu'il existe ; l'envoi garde l'ordre.
         let audioSent: Promise<void> = Promise.resolve();
         let segments = 0;
+        let spokenCharacters = 0;
         const onSegment = (text: string) => {
           const index = segments;
           segments += 1;
@@ -161,6 +164,13 @@ export async function POST(request: Request) {
           send({ type: "segment", index, text });
           // Navigateur parti : inutile de payer une synthèse que personne n'entendra.
           if (!voice || request.signal.aborted) return;
+          // Plafond de caractères facturés par réplique : la fin est lue par
+          // la voix du navigateur, sans nouvel appel ElevenLabs.
+          if (spokenCharacters + text.length > SPEECH_SYNTHESIS_MAX_CHARACTERS) {
+            audioSent = audioSent.then(() => send({ type: "audio-error", index, disable: false }));
+            return;
+          }
+          spokenCharacters += text.length;
           const audio = synthesizeSpeech(voice, text, { timeoutMs: SEGMENT_SPEECH_TIMEOUT_MS })
             .then((bytes) => ({ bytes, error: null }), (error: unknown) => ({ bytes: null, error }));
           audioSent = audioSent.then(async () => {
@@ -183,6 +193,7 @@ export async function POST(request: Request) {
             systemPrompt: chain.length ? buildPatientPrompt(scenario) : "",
             history,
             timeoutMs: patientAiTimeoutMs(chain.length),
+            firstTokenTimeoutMs: FIRST_TOKEN_TIMEOUT_MS,
             fallback: () => localPatientReply(scenario, message, turn),
             onSegment,
             silent: isExaminerLine,

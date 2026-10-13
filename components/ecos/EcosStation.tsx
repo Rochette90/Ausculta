@@ -1,19 +1,21 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- images d’examens déposées dans public/ecos/, dimensions inconnues : le composant Image de Next exige largeur et hauteur. */
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BookOpen, Check, Mic, SendHorizontal, Square } from "lucide-react";
 import { EXAMINER_PREFIX, isExamTransition, PROCEDURE_PREFIX } from "@/lib/ecos/text";
-import type { EcosCriterion, EcosMessage, EcosMode, EcosProcedureCategory, EcosStationView } from "@/lib/ecos/types";
+import type { EcosCriterion, EcosMessage, EcosMode, EcosProcedure, EcosProcedureCategory, EcosStationView } from "@/lib/ecos/types";
 import type { EcosDebriefView } from "@/lib/ecos/debrief";
-import type { EcosCommunicationReport, QuestionKind } from "@/lib/ecos/communication";
+import type { EcosCommunicationReport } from "@/lib/ecos/communication";
 import { BRAND_NAME } from "@/lib/brand";
 import { ListeningBars } from "@/components/brand/BrandLogo";
 import { remainingSeconds } from "@/lib/ecos/timing";
 import { readChatEvents } from "@/lib/ecos/chat-stream";
 import { base64AudioBlob, PatientVoicePlayer } from "./patient-voice";
 import { StationFeedback } from "./StationFeedback";
+import { CommunicationReport, DebriefList, messageView } from "./StationReport";
 
 type Screen = "briefing" | "station" | "report";
 type Phase = "anamnese" | "examen" | "analyse" | "synthese";
@@ -32,6 +34,27 @@ type CompletionResponse = {
 };
 
 const SETTING_LABEL = { urgences: "Urgences", cabinet: "Cabinet" } as const;
+
+type ProcedureImage = NonNullable<EcosProcedure["image"]>;
+type ProcedureResult = { label: string; result: string; image: ProcedureImage | null };
+
+/** Image d'un examen (ECG, radio…), reçue avec son résultat. */
+function ProcedureFigure({ image }: { image: ProcedureImage | null }) {
+  if (!image) return null;
+  return (
+    <figure className="ecos-procedure-image">
+      <img src={image.src} alt={image.alt} loading="lazy" />
+      <figcaption>{image.alt}</figcaption>
+    </figure>
+  );
+}
+
+/**
+ * Sans audio réaliste après ce délai pour un morceau, la voix du navigateur
+ * le lit. Volontairement large : une première synthèse met couramment
+ * 2 à 3 s, et un seuil trop court la masquerait à chaque fois.
+ */
+const VOICE_AUDIO_FALLBACK_MS = 4_000;
 
 /** Chronos de l'échange vocal, visibles en développement seulement. */
 function logTiming(label: string, since: number) {
@@ -68,98 +91,10 @@ function formatTime(seconds: number) {
   return `${minutes}:${rest}`;
 }
 
-/** Examiner results and gestures are stored with a prefix; show them with their own label. */
-function messageView(message: EcosMessage) {
-  if (message.role === "patient" && message.content.startsWith(EXAMINER_PREFIX)) {
-    return { label: "Examinateur", className: "message examiner", text: message.content.slice(EXAMINER_PREFIX.length) };
-  }
-  if (message.role === "student" && message.content.startsWith(PROCEDURE_PREFIX)) {
-    return { label: "Geste", className: "message student procedure", text: message.content.slice(PROCEDURE_PREFIX.length) };
-  }
-  const label = message.role === "patient" ? "Patient" : message.role === "student" ? "Vous" : BRAND_NAME;
-  return { label, className: `message ${message.role}`, text: message.content };
-}
-
 /** Error text sent by the API for expected refusals (time over, synthesis started…). */
 async function apiErrorMessage(response: Response, fallback: string) {
   const data = await response.json().catch(() => null) as { error?: string } | null;
   return response.status === 400 || response.status === 409 || response.status === 429 ? data?.error ?? fallback : fallback;
-}
-
-function DebriefList({ title, items }: { title: string; items: string[] }) {
-  if (!items.length) return null;
-  return (
-    <div className="ecos-debrief-block">
-      <h3>{title}</h3>
-      <ul>{items.map((item, index) => <li key={`${index}-${item}`}>{item}</li>)}</ul>
-    </div>
-  );
-}
-
-const QUESTION_KINDS: ReadonlyArray<{ kind: QuestionKind; label: string }> = [
-  { kind: "open", label: "Ouvertes" },
-  { kind: "targeted", label: "Ciblées" },
-  { kind: "closed", label: "Fermées" },
-];
-
-const BEHAVIOURS: ReadonlyArray<{ key: keyof EcosCommunicationReport["behaviours"]; label: string }> = [
-  { key: "empathy", label: "Accueille l’émotion du patient" },
-  { key: "concerns", label: "Explore ses inquiétudes et ses attentes" },
-  { key: "summary", label: "Résume ce que le patient a dit" },
-  { key: "understanding", label: "Vérifie la compréhension, invite aux questions" },
-];
-
-const FIRST_QUESTION_NOTE: Record<QuestionKind, string> = {
-  open: "Entretien ouvert par une question ouverte.",
-  targeted: "Première question : ciblée. Commence plutôt par une question ouverte.",
-  closed: "Première question : fermée. Commence plutôt par une question ouverte.",
-};
-
-/** Bilan de communication : types de questions, attitudes, jargon et conseils. */
-function CommunicationReport({ report }: { report: EcosCommunicationReport }) {
-  const total = QUESTION_KINDS.reduce((sum, { kind }) => sum + report.questions[kind], 0);
-  const notes = [
-    report.firstQuestion ? FIRST_QUESTION_NOTE[report.firstQuestion] : "",
-    report.stacked.count ? `${report.stacked.count} message${report.stacked.count > 1 ? "s" : ""} avec plusieurs questions à la fois.` : "",
-  ].filter(Boolean).join(" ");
-  return (
-    <section className="ecos-debrief communication-report" aria-labelledby="communication-title">
-      <h2 id="communication-title">Ta façon de mener l’entretien</h2>
-      {total > 0 && (
-        <div className="question-mix">
-          <div className="question-bar" aria-hidden="true">
-            {QUESTION_KINDS.filter(({ kind }) => report.questions[kind] > 0).map(({ kind }) => <span className={`is-${kind}`} key={kind} style={{ flexGrow: report.questions[kind] }} />)}
-          </div>
-          <ul className="question-legend">
-            {QUESTION_KINDS.map(({ kind, label }) => <li key={kind}><span className={`question-dot is-${kind}`} aria-hidden="true" />{label} <strong>{report.questions[kind]}</strong></li>)}
-          </ul>
-          {notes && <p className="question-note">{notes}</p>}
-        </div>
-      )}
-      <div className="ecos-debrief-grid">
-        <div className="ecos-debrief-block">
-          <h3>Attitudes repérées</h3>
-          <ul className="behaviour-list">
-            {BEHAVIOURS.map(({ key, label }) => (
-              <li className={report.behaviours[key] ? "is-done" : ""} key={key}>
-                <span aria-hidden="true">{report.behaviours[key] ? "✓" : "·"}</span>{label}
-                <span className="sr-only">{report.behaviours[key] ? " : repéré" : " : non repéré"}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <DebriefList title="Pour la prochaine station" items={report.tips} />
-        {report.jargon.length > 0 && (
-          <div className="ecos-debrief-block">
-            <h3>Jargon à traduire</h3>
-            <ul>{report.jargon.map((item) => <li key={item.term}><strong>{item.term}</strong> → {item.plain}</li>)}</ul>
-          </div>
-        )}
-        <DebriefList title="Questions posées à la chaîne" items={report.stacked.examples} />
-      </div>
-      <p className="communication-note">Repérage automatique de tes formulations : un repère pour progresser, sans effet sur la note.</p>
-    </section>
-  );
 }
 
 export function EcosStation({ station }: { station: EcosStationView }) {
@@ -174,6 +109,9 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  // Source réelle de la voix entendue : un repli silencieux ferait croire à une panne.
+  const [voiceSource, setVoiceSource] = useState<"realiste" | "navigateur" | null>(null);
+  const [voiceLatencyMs, setVoiceLatencyMs] = useState<number | null>(null);
   const [speaking, setSpeaking] = useState(false);
   // Mode conversation : le micro se rouvre seul après chaque réponse du patient.
   const [conversation, setConversation] = useState(false);
@@ -185,7 +123,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const [stationError, setStationError] = useState<string | null>(null);
   const [performed, setPerformed] = useState<string[]>([]);
   const [pendingProcedure, setPendingProcedure] = useState<string | null>(null);
-  const [lastResult, setLastResult] = useState<{ label: string; result: string } | null>(null);
+  const [lastResult, setLastResult] = useState<ProcedureResult | null>(null);
   const [confirmingSynthesis, setConfirmingSynthesis] = useState(false);
   const [openingSynthesis, setOpeningSynthesis] = useState(false);
   const [options, setOptions] = useState<string[] | null>(null);
@@ -193,7 +131,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const [diagnosis, setDiagnosis] = useState("");
   const [plan, setPlan] = useState("");
   const [analysis, setAnalysis] = useState("");
-  const [examResults, setExamResults] = useState<Array<{ id: string; label: string; result: string }>>([]);
+  const [examResults, setExamResults] = useState<Array<ProcedureResult & { id: string }>>([]);
   const [result, setResult] = useState<CompletionResponse | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const deadline = useRef(0);
@@ -265,6 +203,24 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   }, [markSpeaking]);
 
   /**
+   * Coupe la parole du patient, à tout moment. En mode conversation, le
+   * micro se rouvre de lui-même dès que l'état « parle » tombe.
+   */
+  const interruptPatient = useCallback(() => {
+    stopSpeaking();
+  }, [stopSpeaking]);
+
+  // Échap interrompt aussi le patient, sans chercher le bouton.
+  useEffect(() => {
+    if (screen !== "station" || !speaking) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") interruptPatient();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [screen, speaking, interruptPatient]);
+
+  /**
    * Phrase d'ouverture du patient : déjà enregistrée en base, elle est lue
    * par /api/ecos/speech. Les réponses suivantes arrivent avec leur audio.
    * `session` est passé explicitement : l'état n'est pas encore à jour.
@@ -283,12 +239,14 @@ export function EcosStation({ station }: { station: EcosStationView }) {
         // 503 : la voix réaliste n'est pas configurée, inutile de la redemander.
         if (response.status === 503) player.serverVoice = false;
         if (response.ok) {
+          setVoiceSource("realiste");
           player.pushAudio(reply, await response.blob(), text);
           player.end(reply);
           return;
         }
       } catch { /* la voix du navigateur prend le relais */ }
     }
+    setVoiceSource("navigateur");
     player.pushText(reply, text);
     player.end(reply);
   }
@@ -298,7 +256,10 @@ export function EcosStation({ station }: { station: EcosStationView }) {
     if (!playerRef.current) {
       playerRef.current = new PatientVoicePlayer({
         onSpeakingChange: markSpeaking,
-        onAudible: () => logTiming("question→audible", replyStartedAt.current),
+        onAudible: () => {
+          logTiming("question→audible", replyStartedAt.current);
+          setVoiceLatencyMs(Math.round(performance.now() - replyStartedAt.current));
+        },
       });
     }
     playerRef.current.unlock();
@@ -386,6 +347,16 @@ export function EcosStation({ station }: { station: EcosStationView }) {
       let reply: number | null = null;
       let serverAudio = false;
       const segments: string[] = [];
+      // Audio réaliste trop lent pour un morceau : la voix du navigateur le lit
+      // sans attendre l'échec, et l'audio arrivé ensuite est ignoré.
+      const voiceTimers = new Map<number, number>();
+      const voiceSettled = new Set<number>();
+      const settleVoice = (index: number) => {
+        voiceSettled.add(index);
+        const timer = voiceTimers.get(index);
+        if (timer !== undefined) window.clearTimeout(timer);
+        voiceTimers.delete(index);
+      };
       const outcome: { reply?: string; error?: string } = {};
       try {
         const response = await fetch("/api/ecos/chat", {
@@ -399,20 +370,41 @@ export function EcosStation({ station }: { station: EcosStationView }) {
           switch (event.type) {
             case "start":
               serverAudio = event.voice;
+              if (player) setVoiceSource(event.voice ? "realiste" : "navigateur");
               break;
-            case "segment":
+            case "segment": {
               segments[event.index] = event.text;
               if (event.index === 0) logTiming("question→first-sentence", askedAt);
               setStreamingText((current) => (current ? `${current} ${event.text}` : event.text));
               if (player && reply !== null && !serverAudio) player.pushText(reply, event.text);
+              else if (player && reply !== null) {
+                const index = event.index;
+                const spokenReply = reply;
+                voiceTimers.set(index, window.setTimeout(() => {
+                  voiceTimers.delete(index);
+                  if (voiceSettled.has(index)) return;
+                  voiceSettled.add(index);
+                  setVoiceSource("navigateur");
+                  player.pushText(spokenReply, segments[index] ?? "");
+                }, VOICE_AUDIO_FALLBACK_MS));
+              }
               break;
+            }
             case "audio":
-              if (player && reply !== null) player.pushAudio(reply, base64AudioBlob(event.audio), segments[event.index] ?? "");
+              if (player && reply !== null && !voiceSettled.has(event.index)) {
+                settleVoice(event.index);
+                setVoiceSource("realiste");
+                player.pushAudio(reply, base64AudioBlob(event.audio), segments[event.index] ?? "");
+              }
               break;
             case "audio-error":
               // Refus définitif (clé, voix) : les réponses suivantes passeront par la voix du navigateur.
               if (player && event.disable) player.serverVoice = false;
-              if (player && reply !== null) player.pushText(reply, segments[event.index] ?? "");
+              if (player && reply !== null && !voiceSettled.has(event.index)) {
+                settleVoice(event.index);
+                setVoiceSource("navigateur");
+                player.pushText(reply, segments[event.index] ?? "");
+              }
               break;
             case "done":
               outcome.reply = event.reply;
@@ -463,11 +455,12 @@ export function EcosStation({ station }: { station: EcosStationView }) {
           body: JSON.stringify({ procedureId }), signal: AbortSignal.timeout(20_000),
         });
         if (!response.ok) throw new Error(await apiErrorMessage(response, "Le résultat de ce geste n’a pas pu être obtenu. Réessaie."));
-        const data = await response.json() as { label: string; result: string };
+        const data = await response.json() as { label: string; result: string; image?: ProcedureImage | null };
+        const image = data.image ?? null;
         setPerformed((current) => [...current, procedureId]);
-        setLastResult({ label: data.label, result: data.result });
+        setLastResult({ label: data.label, result: data.result, image });
         if (station.procedures.some((procedure) => procedure.id === procedureId && procedure.category === "complementaire")) {
-          setExamResults((current) => [...current, { id: procedureId, label: data.label, result: data.result }]);
+          setExamResults((current) => [...current, { id: procedureId, label: data.label, result: data.result, image }]);
         }
         setMessages((current) => [...current, { role: "student", content: `${PROCEDURE_PREFIX}${data.label}` }, { role: "patient", content: `${EXAMINER_PREFIX}${data.result}` }]);
       } catch (error) {
@@ -609,6 +602,56 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   function startListening() {
     if (recognitionRef.current) { recognitionRef.current.abort(); recognitionRef.current = null; setListening(false); return; }
     beginListening();
+  }
+
+  // Dictée dans un champ libre (analyse, prise en charge) : le texte reconnu
+  // s'ajoute au champ, rien n'est envoyé au patient.
+  const [dictatingField, setDictatingField] = useState<"analysis" | "plan" | null>(null);
+  const [dictationNote, setDictationNote] = useState<string | null>(null);
+  const fieldRecognitionRef = useRef<SpeechRecognition | null>(null);
+
+  function toggleFieldDictation(field: "analysis" | "plan") {
+    if (fieldRecognitionRef.current) {
+      fieldRecognitionRef.current.abort();
+      fieldRecognitionRef.current = null;
+      setDictatingField(null);
+      return;
+    }
+    const BrowserRecognition = (window as typeof window & { webkitSpeechRecognition?: new () => SpeechRecognition; SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition
+      ?? (window as typeof window & { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
+    if (!BrowserRecognition) {
+      setDictationNote("La dictée vocale n’est pas disponible dans ce navigateur. Tu peux écrire au clavier.");
+      return;
+    }
+    setDictationNote(null);
+    const recognition = new BrowserRecognition();
+    fieldRecognitionRef.current = recognition;
+    recognition.lang = "fr-FR";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.onend = () => { fieldRecognitionRef.current = null; setDictatingField(null); };
+    recognition.onerror = (event) => {
+      fieldRecognitionRef.current = null;
+      setDictatingField(null);
+      if (event.error === "no-speech" || event.error === "aborted") return;
+      setDictationNote(event.error === "not-allowed" || event.error === "service-not-allowed"
+        ? "Le navigateur n’a pas accès au micro. Autorise-le pour ce site, puis réessaie."
+        : "La dictée s’est interrompue. Réessaie, ou écris au clavier.");
+    };
+    recognition.onresult = (event) => {
+      let heard = "";
+      for (let index = 0; index < event.results.length; index += 1) {
+        const result = event.results[index];
+        if (result.isFinal) heard += result[0]?.transcript ?? "";
+      }
+      const text = heard.trim();
+      if (!text) return;
+      const append = (current: string) => `${current ? `${current.replace(/\s+$/, "")} ` : ""}${text}`.slice(0, 1200);
+      if (field === "analysis") setAnalysis(append);
+      else setPlan(append);
+    };
+    setDictatingField(field);
+    try { recognition.start(); } catch { fieldRecognitionRef.current = null; setDictatingField(null); }
   }
 
   function startConversation() {
@@ -777,15 +820,26 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                 <span className="patient-mark"><ListeningBars state={patientState} /></span>
                 <div>
                   <p className="patient-name voice">{station.patientLabel}</p>
-                  <p className="patient-status">{speaking ? "Vous répond…" : loading ? "Réfléchit…" : listening ? "Vous écoute…" : phase === "examen" ? "Examen en cours" : !chatPhase(phase) ? "Attend vos conclusions" : "En consultation"}</p>
+                  <p className="patient-status" role="status">{speaking ? "Vous répond…" : loading && streamingText ? "Prépare sa réponse…" : loading ? "Réfléchit…" : listening ? "Vous écoute…" : phase === "examen" ? "Examen en cours" : !chatPhase(phase) ? "Attend vos conclusions" : "En consultation"}</p>
                 </div>
               </div>
+              {speaking && (
+                <button className="interrupt-button" onClick={interruptPatient} type="button">
+                  <Square aria-hidden="true" size={14} /> Interrompre le patient
+                </button>
+              )}
               {chatPhase(phase) && (
                 <button className={`conversation-toggle${conversation ? " active" : ""}`} onClick={() => (conversation ? stopConversation() : startConversation())} aria-pressed={conversation} type="button">
                   {conversation ? <><Square aria-hidden="true" size={15} /> Arrêter la conversation</> : <><Mic aria-hidden="true" size={17} /> Conversation vocale</>}
                 </button>
               )}
               {!conversation && <button className="voice-toggle" onClick={toggleVoice} aria-pressed={voiceEnabled} type="button">{voiceEnabled ? "Voix du patient activée" : "Voix du patient coupée"}</button>}
+              {voiceEnabled && voiceSource && (
+                <p className="voice-source" role="status">
+                  {voiceSource === "realiste" ? "Voix réaliste" : "Voix du navigateur — la voix réaliste n’a pas pris le relais"}
+                  {process.env.NODE_ENV === "development" && voiceLatencyMs !== null ? ` · premier son à ${voiceLatencyMs} ms` : ""}
+                </p>
+              )}
               <p className="privacy-note">Les échanges de cette simulation servent uniquement à ton entraînement.</p>
             </aside>
 
@@ -793,7 +847,12 @@ export function EcosStation({ station }: { station: EcosStationView }) {
               {conversation && (
                 <div className="voice-stage">
                   <span className="voice-stage-mic"><ListeningBars state={patientState} /></span>
-                  <p className="voice-stage-status" role="status">{speaking ? "Le patient vous répond…" : loading ? "Le patient réfléchit…" : listening ? "À vous : je vous écoute." : "Un instant…"}</p>
+                  <p className="voice-stage-status" role="status">{speaking ? "Le patient vous répond…" : loading && streamingText ? "Le patient prépare sa réponse…" : loading ? "Le patient réfléchit…" : listening ? "À vous : je vous écoute." : "Un instant…"}</p>
+                  {speaking && (
+                    <button className="interrupt-button" onClick={interruptPatient} type="button">
+                      <Square aria-hidden="true" size={14} /> Interrompre et parler
+                    </button>
+                  )}
                   {lastSystemNote && <p className="voice-stage-note">{lastSystemNote}</p>}
                   <p className="voice-stage-heard">{input ? <><span>Compris</span> {input}</> : phase === "anamnese" ? "Parlez normalement. Pour passer à l’examen, dites « je vais vous examiner »." : "Vous pouvez encore poser une question au patient."}</p>
                   <button type="button" className="text-link" onClick={() => setShowTranscript((value) => !value)} aria-expanded={showTranscript}>{showTranscript ? "Masquer l’échange écrit" : "Afficher l’échange écrit"}</button>
@@ -857,7 +916,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                   })}
                   <div className="ecos-last-result" aria-live="polite">
                     {lastResult
-                      ? <p><strong>{lastResult.label}</strong>{lastResult.result}</p>
+                      ? <><p><strong>{lastResult.label}</strong>{lastResult.result}</p><ProcedureFigure image={lastResult.image} /></>
                       : <p>Les résultats s’affichent ici et dans l’échange.</p>}
                   </div>
                   {!confirmingSynthesis && (
@@ -873,12 +932,19 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                 <form className="ecos-synthesis ecos-analysis" onSubmit={(event) => { event.preventDefault(); if (!busy) requestSynthesis(); }}>
                   <h2 ref={analysisHeadingRef} tabIndex={-1}>Analyse des examens</h2>
                   {examResults.length
-                    ? <div className="ecos-exam-results">{examResults.map((item) => <p key={item.id}><strong>{item.label}</strong>{item.result}</p>)}</div>
+                    ? <div className="ecos-exam-results">{examResults.map((item) => <div key={item.id}><p><strong>{item.label}</strong>{item.result}</p><ProcedureFigure image={item.image} /></div>)}</div>
                     : <p>Tu n’as demandé aucun examen complémentaire. <button type="button" className="text-link" onClick={() => goToPhase("examen")}>Revenir à l’examen clinique</button></p>}
                   <label className="ecos-synthesis-plan">
                     <span>Ton analyse : décris chaque examen de façon systématique, puis conclus</span>
                     <textarea maxLength={1200} rows={6} value={analysis} disabled={!examResults.length} onChange={(event) => setAnalysis(event.target.value)} placeholder="Ex. : radiographie de … face et profil, qualité correcte. Alignement…, corticales…, interligne…, parties molles… Conclusion : …" />
                   </label>
+                  <div className="dictation-row">
+                    <button type="button" className={`mic-button${dictatingField === "analysis" ? " recording" : ""}`} disabled={!examResults.length} onClick={() => toggleFieldDictation("analysis")} aria-pressed={dictatingField === "analysis"} aria-label={dictatingField === "analysis" ? "Arrêter la dictée de l’analyse" : "Dicter ton analyse"}>
+                      {dictatingField === "analysis" ? <Square aria-hidden="true" size={16} /> : <Mic aria-hidden="true" size={19} />}
+                    </button>
+                    <span>{dictatingField === "analysis" ? "Je t’écoute, dicte ton analyse…" : "Tu peux aussi dicter ton analyse."}</span>
+                  </div>
+                  {dictationNote && <p role="alert" className="dictation-note">{dictationNote}</p>}
                   {!confirmingSynthesis && (
                     <div className="ecos-phase-actions">
                       <p>Ton analyse est notée dans la grille. Elle est enregistrée à l’ouverture de la synthèse.</p>
@@ -905,6 +971,13 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                     <span>Ta prise en charge : examens, traitements, orientation et ce que tu expliques au patient</span>
                     <textarea maxLength={1200} rows={5} value={plan} onChange={(event) => setPlan(event.target.value)} placeholder="Ex. : je donne…, j’appelle…, j’hospitalise en…, j’explique au patient que…" />
                   </label>
+                  <div className="dictation-row">
+                    <button type="button" className={`mic-button${dictatingField === "plan" ? " recording" : ""}`} onClick={() => toggleFieldDictation("plan")} aria-pressed={dictatingField === "plan"} aria-label={dictatingField === "plan" ? "Arrêter la dictée de la prise en charge" : "Dicter ta prise en charge"}>
+                      {dictatingField === "plan" ? <Square aria-hidden="true" size={16} /> : <Mic aria-hidden="true" size={19} />}
+                    </button>
+                    <span>{dictatingField === "plan" ? "Je t’écoute, dicte ta prise en charge…" : "Tu peux aussi dicter ta prise en charge."}</span>
+                  </div>
+                  {dictationNote && <p role="alert" className="dictation-note">{dictationNote}</p>}
                   <div className="ecos-phase-actions">
                     <p>{diagnosis ? "Tu peux terminer la station." : "Choisis un diagnostic pour terminer."}</p>
                     <button type="submit" className="button primary" aria-disabled={busy || !diagnosis || undefined}>Terminer et voir le bilan</button>

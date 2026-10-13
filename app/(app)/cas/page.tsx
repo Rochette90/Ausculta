@@ -1,6 +1,6 @@
 import { CaseCatalog } from "@/components/ecos/CaseCatalog";
 import { requireUser } from "@/lib/auth/require-user";
-import { getClinicalCaseCatalog } from "@/lib/ecos/cases";
+import { getClinicalCaseCatalog, getCompletedStationCodes } from "@/lib/ecos/cases";
 import { pageTitle } from "@/lib/brand";
 import { FEATURES } from "@/lib/features";
 import { EXAM_DURATION_SECONDS } from "@/lib/ecos/timing";
@@ -8,8 +8,8 @@ import { EXAM_DURATION_SECONDS } from "@/lib/ecos/timing";
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle(FEATURES.anatomy ? "Cas cliniques & ECOS" : "Stations ECOS") };
 export default async function CasPage() {
-  await requireUser("/cas");
-  const cases = await getClinicalCaseCatalog();
+  const user = await requireUser("/cas");
+  const [cases, completed] = await Promise.all([getClinicalCaseCatalog(), getCompletedStationCodes(user.id)]);
   // Les mini-cas de raisonnement appartiennent au module d'anatomie.
   const reasoning = !FEATURES.anatomy ? [] : (await import("@/lib/anatomy/catalog")).anatomyModules.map((module) => ({ slug: module.slug, title: module.case.title, region: module.region, moduleTitle: module.title }));
   const examMinutes = Math.round(EXAM_DURATION_SECONDS / 60);
@@ -25,7 +25,7 @@ export default async function CasPage() {
           ? <><div><dt>ECOS</dt><dd>Entretien chronométré, au clavier ou à la voix, en mode entraînement ou examen.</dd></div><div><dt>Raisonnement</dt><dd>Vignettes anatomocliniques courtes et correction expliquée.</dd></div></>
           : <><div><dt>Entraînement</dt><dd>Sans chronomètre, à ton rythme.</dd></div><div><dt>Examen</dt><dd>{examMinutes} minutes pour toute la station. Grille et score au bilan, à la fin.</dd></div><div><dt>À la voix</dt><dd>Parle au patient, il te répond. Le clavier reste disponible.</dd></div></>}
       </dl>
-      <CaseCatalog cases={cases} reasoning={reasoning} />
+      <CaseCatalog cases={cases} completed={[...completed]} reasoning={reasoning} />
     </main>
   );
 }

@@ -9,7 +9,8 @@ type ReasoningCase = { slug: string; title: string; region: string; moduleTitle:
 
 const DIFFICULTY = { easy: "Facile", medium: "Intermédiaire", hard: "Avancé" } as const;
 
-export function CaseCatalog({ cases, reasoning }: { cases: ClinicalCaseSummary[]; reasoning: ReasoningCase[] }) {
+export function CaseCatalog({ cases, reasoning, completed = [] }: { cases: ClinicalCaseSummary[]; reasoning: ReasoningCase[]; completed?: string[] }) {
+  const done = new Set(completed);
   const [mode, setMode] = useState("Tous");
   const [query, setQuery] = useState("");
   const [readyOnly, setReadyOnly] = useState(true);
@@ -47,11 +48,12 @@ export function CaseCatalog({ cases, reasoning }: { cases: ClinicalCaseSummary[]
                 <ul className="station-row-meta">
                   <li>{item.specialty ?? "Transversal"}</li>
                   <li>{DIFFICULTY[item.difficulty]}</li>
+                  {item.code && done.has(item.code) && <li>Déjà réalisée</li>}
                 </ul>
               </div>
               <span className="station-row-time">{item.duration}</span>
               {item.published && item.code
-                ? <Link className="button secondary small" href={`/cas/${item.code}`}>Commencer</Link>
+                ? <Link className="button secondary small" href={`/cas/${item.code}`}>{item.code && done.has(item.code) ? "Rejouer" : "Commencer"}</Link>
                 : <span className="station-row-draft">En préparation</span>}
             </li>
           ))}

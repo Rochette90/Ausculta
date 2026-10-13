@@ -72,6 +72,23 @@ const CASE_COLUMNS = "slug, title, difficulty, status, patient, scenario, specia
 // Le catalogue affiche aussi les stations en préparation (status draft),
 // que la policy RLS masque volontairement : lecture via le client admin,
 // limitée à des champs non sensibles.
+/** Codes publics des stations déjà menées à terme par ce compte (pour le catalogue). */
+export async function getCompletedStationCodes(userId: string): Promise<Set<string>> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("ecos_sessions")
+    .select("station_slug")
+    .eq("user_id", userId)
+    .eq("status", "completed");
+  if (error) throw error;
+  const codes = new Set<string>();
+  for (const row of data ?? []) {
+    const code = ecosPublicCode(String(row.station_slug));
+    if (code) codes.add(code);
+  }
+  return codes;
+}
+
 export const getClinicalCaseCatalog = cache(async (): Promise<ClinicalCaseSummary[]> => {
   const admin = createAdminClient();
   const { data, error } = await admin

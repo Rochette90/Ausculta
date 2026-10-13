@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- images cliniques distantes (hébergées), dimensions inconnues : le composant Image de Next exige largeur et hauteur. */
 "use client";
 
 import {

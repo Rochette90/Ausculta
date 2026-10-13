@@ -10,6 +10,14 @@ import type { EcosScenario } from "./types.ts";
 /** Une réplique du patient dépasse rarement quelques phrases. */
 export const SPEECH_MAX_CHARACTERS = 1_200;
 
+/**
+ * Caractères synthétisés par ElevenLabs au plus par réplique. ElevenLabs
+ * facture au caractère : au-delà, la voix du navigateur lit la fin, le
+ * texte complet reste affiché. Les répliques usuelles (~200 caractères)
+ * ne sont jamais tronquées.
+ */
+export const SPEECH_SYNTHESIS_MAX_CHARACTERS = 700;
+
 /** En dessous de cet âge, une voix « jeune » est préférée si elle existe. */
 const YOUNG_VOICE_MAX_AGE = 35;
 
@@ -62,8 +70,13 @@ export function speechRequestBody(text: string, modelId: string) {
   };
 }
 
-/** Format demandé à ElevenLabs : MP3, lisible par tous les navigateurs. */
-const SPEECH_OUTPUT_FORMAT = "mp3_44100_128";
+/**
+ * Format demandé à ElevenLabs : MP3 22,05 kHz / 32 kbit/s. Pour de la parole,
+ * la qualité est indiscernable du 44,1 kHz / 128 kbit/s, avec un fichier
+ * environ quatre fois plus léger (premier son et transfert plus rapides).
+ * Le coût ElevenLabs, lui, dépend des caractères, pas du format.
+ */
+const SPEECH_OUTPUT_FORMAT = "mp3_22050_32";
 
 /** Requête de synthèse ElevenLabs pour une réplique. */
 export function elevenLabsSpeechRequest(config: SpeechConfig, text: string) {
@@ -100,26 +113,85 @@ export class VoiceProviderError extends Error {
   }
 }
 
-/** Synthétise une réplique et rend le MP3 complet. */
+/**
+ * Cache mémoire des synthèses : un même texte dit par une même voix ne se
+ * paie qu'une fois. Les phrases d'ouverture des stations, identiques à
+ * chaque séance, en sont la première source d'économie. Borné en nombre et
+ * en octets ; vit le temps du processus serveur.
+ */
+const SPEECH_CACHE_MAX_ENTRIES = 128;
+const SPEECH_CACHE_MAX_BYTES = 16_000_000;
+const speechCache = new Map<string, Uint8Array>();
+const speechInflight = new Map<string, Promise<Uint8Array>>();
+let speechCacheBytes = 0;
+
+function speechCacheKey(config: SpeechConfig, text: string): string {
+  return `${config.voiceId}|${config.modelId}|${SPEECH_OUTPUT_FORMAT}|${text}`;
+}
+
+/** Audio déjà synthétisé pour ce texte et cette voix, ou `null`. */
+export function cachedSpeech(config: SpeechConfig, text: string): Uint8Array | null {
+  const key = speechCacheKey(config, text);
+  const hit = speechCache.get(key);
+  if (!hit) return null;
+  // Replace en fin : l'éviction retire les entrées les moins récentes.
+  speechCache.delete(key);
+  speechCache.set(key, hit);
+  return hit;
+}
+
+/** Retient une synthèse pour la resservir sans nouvel appel payant. */
+export function storeSpeech(config: SpeechConfig, text: string, bytes: Uint8Array): void {
+  if (bytes.byteLength > SPEECH_CACHE_MAX_BYTES) return;
+  const key = speechCacheKey(config, text);
+  const previous = speechCache.get(key);
+  if (previous) speechCacheBytes -= previous.byteLength;
+  speechCache.delete(key);
+  speechCache.set(key, bytes);
+  speechCacheBytes += bytes.byteLength;
+  for (const [oldestKey, oldest] of speechCache) {
+    if (speechCache.size <= SPEECH_CACHE_MAX_ENTRIES && speechCacheBytes <= SPEECH_CACHE_MAX_BYTES) break;
+    speechCache.delete(oldestKey);
+    speechCacheBytes -= oldest.byteLength;
+  }
+}
+
+/** Synthétise une réplique et rend le MP3 complet (cache et appels en cours partagés). */
 export async function synthesizeSpeech(
   config: SpeechConfig,
   text: string,
   { timeoutMs = 10_000, fetchImpl = fetch }: { timeoutMs?: number; fetchImpl?: typeof fetch } = {},
 ): Promise<Uint8Array> {
-  const { url, headers, body } = elevenLabsSpeechRequest(config, text);
-  let response: Response;
+  const hit = cachedSpeech(config, text);
+  if (hit) return hit;
+  const key = speechCacheKey(config, text);
+  const pending = speechInflight.get(key);
+  if (pending) return pending;
+  const task = (async (): Promise<Uint8Array> => {
+    const { url, headers, body } = elevenLabsSpeechRequest(config, text);
+    let response: Response;
+    try {
+      response = await fetchImpl(url, { method: "POST", headers, body, signal: AbortSignal.timeout(timeoutMs) });
+    } catch {
+      throw new VoiceProviderError("délai dépassé ou réseau indisponible", false);
+    }
+    if (!response.ok) {
+      const reason = speechErrorReason(await response.json().catch(() => null));
+      throw new VoiceProviderError(`${response.status}${reason ? ` — ${reason}` : ""}`, isPermanentVoiceFailure(response.status));
+    }
+    let bytes: Uint8Array;
+    try {
+      bytes = new Uint8Array(await response.arrayBuffer());
+    } catch {
+      throw new VoiceProviderError("audio interrompu", false);
+    }
+    storeSpeech(config, text, bytes);
+    return bytes;
+  })();
+  speechInflight.set(key, task);
   try {
-    response = await fetchImpl(url, { method: "POST", headers, body, signal: AbortSignal.timeout(timeoutMs) });
-  } catch {
-    throw new VoiceProviderError("délai dépassé ou réseau indisponible", false);
-  }
-  if (!response.ok) {
-    const reason = speechErrorReason(await response.json().catch(() => null));
-    throw new VoiceProviderError(`${response.status}${reason ? ` — ${reason}` : ""}`, isPermanentVoiceFailure(response.status));
-  }
-  try {
-    return new Uint8Array(await response.arrayBuffer());
-  } catch {
-    throw new VoiceProviderError("audio interrompu", false);
+    return await task;
+  } finally {
+    speechInflight.delete(key);
   }
 }

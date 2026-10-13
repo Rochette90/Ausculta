@@ -145,6 +145,9 @@ export function createStageDirectionFilter({ speakers = [] }: { speakers?: reado
 /** En deçà, une première phrase (« Oui. ») attend la suivante : trop courte pour valoir un envoi à part. */
 const FIRST_SEGMENT_MIN_CHARACTERS = 20;
 
+/** En deçà, une phrase suivante attend la suivante : un envoi à part coûterait un aller-retour de synthèse. */
+const NEXT_SEGMENT_MIN_CHARACTERS = 12;
+
 /**
  * Fin de phrase suivie d'un blanc. Guillemets et parenthèse fermante suivent
  * la phrase, y compris après l'espace de la typographie française (« … »).
@@ -152,10 +155,11 @@ const FIRST_SEGMENT_MIN_CHARACTERS = 20;
 const SENTENCE_END = /[.!?…]+(?:[\s\u00a0\u202f]*["»”’)])*(?=\s)/g;
 
 /**
- * Découpe une réplique en au plus deux morceaux à dire à voix haute : la
- * première phrase dès qu'elle est complète, pour que le patient commence à
- * parler pendant que la suite s'écrit, puis tout le reste à la fin. Une
- * réplique que `mute` désigne (ligne de l'examinateur) n'est jamais dite.
+ * Découpe une réplique en morceaux à dire à voix haute, phrase par phrase :
+ * chacune part dès qu'elle est complète, pour que le patient commence à
+ * parler pendant que la suite s'écrit et ne marque pas une longue pause
+ * avant la fin. Une réplique que `mute` désigne (ligne de l'examinateur)
+ * n'est jamais dite.
  */
 export function createSpeechSegmenter({
   minFirst = FIRST_SEGMENT_MIN_CHARACTERS,
@@ -165,20 +169,29 @@ export function createSpeechSegmenter({
   let firstSent = false;
   let muted = false;
 
+  function ready(): string[] {
+    if (muted) return [];
+    const segments: string[] = [];
+    for (const match of buffer.matchAll(SENTENCE_END)) {
+      const end = (match.index ?? 0) + match[0].length;
+      const segment = buffer.slice(0, end).trim();
+      const minimum = firstSent ? NEXT_SEGMENT_MIN_CHARACTERS : minFirst;
+      if (segment.length < minimum) continue;
+      buffer = buffer.slice(end);
+      if (mute(segment)) { muted = true; return segments; }
+      firstSent = true;
+      segments.push(segment);
+      // Le tampon a été tronqué : les fins de phrase suivantes se relisent.
+      segments.push(...ready());
+      return segments;
+    }
+    return segments;
+  }
+
   return {
     push(text: string): string[] {
       buffer += text;
-      if (firstSent || muted) return [];
-      for (const match of buffer.matchAll(SENTENCE_END)) {
-        const end = (match.index ?? 0) + match[0].length;
-        const segment = buffer.slice(0, end).trim();
-        if (segment.length < minFirst) continue;
-        buffer = buffer.slice(end);
-        firstSent = true;
-        if (mute(segment)) { muted = true; return []; }
-        return [segment];
-      }
-      return [];
+      return ready();
     },
     flush(): string[] {
       const rest = buffer.trim();

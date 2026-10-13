@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { SPEECH_MAX_CHARACTERS, speakerSex, speechConfig, speechRequestBody } from "../lib/ecos/voice.ts";
+import { elevenLabsSpeechRequest, SPEECH_MAX_CHARACTERS, SPEECH_SYNTHESIS_MAX_CHARACTERS, speakerSex, speechConfig, speechRequestBody } from "../lib/ecos/voice.ts";
 import { ECOS_SCENARIOS } from "../lib/ecos/stations/index.ts";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
@@ -76,6 +76,34 @@ test("la route de synthèse ne lit que des répliques enregistrées et garde la 
   assert.match(envExample, /^ELEVENLABS_API_KEY=$/m);
   assert.doesNotMatch(envExample, /NEXT_PUBLIC_ELEVENLABS/);
   assert.match(vercel, /app\/api\/ecos\/speech\/route\.ts/);
+});
+
+test("la voix est rapide à démarrer, économe et ne reste jamais bloquée", async () => {
+  const [chat, speech, station, player] = await Promise.all([
+    read("../app/api/ecos/chat/route.ts"),
+    read("../app/api/ecos/speech/route.ts"),
+    read("../components/ecos/EcosStation.tsx"),
+    read("../components/ecos/patient-voice.ts"),
+  ]);
+  // Format léger pour la parole et plafond de caractères facturés par réplique.
+  assert.match(elevenLabsSpeechRequest({ apiKey: "k", voiceId: "v", modelId: "m" }, "Bonjour").url, /output_format=mp3_22050_32/);
+  assert.ok(SPEECH_SYNTHESIS_MAX_CHARACTERS < SPEECH_MAX_CHARACTERS);
+  assert.match(chat, /SPEECH_SYNTHESIS_MAX_CHARACTERS/);
+  assert.match(chat, /firstTokenTimeoutMs: FIRST_TOKEN_TIMEOUT_MS/);
+  // Une phrase déjà synthétisée est resservie sans appel payant.
+  assert.match(speech, /cachedSpeech\(config, text\)/);
+  assert.match(speech, /storeSpeech\(config, text, all\)/);
+  // Audio trop lent : la voix du navigateur prend le relais sans attendre l'échec,
+  // mais le seuil laisse à une synthèse normale (2 à 3 s) le temps d'arriver.
+  assert.match(station, /VOICE_AUDIO_FALLBACK_MS = 4_000/);
+  assert.match(station, /voiceSettled\.has\(index\)\) return;[\s\S]+player\.pushText\(spokenReply/);
+  assert.match(station, /!voiceSettled\.has\(event\.index\)\) \{\s*settleVoice\(event\.index\);/);
+  // Voix du navigateur connues de façon asynchrone, morceau suivant préchargé,
+  // et garde-fou proportionné au texte si la fin de lecture n'arrive jamais.
+  assert.match(player, /voiceschanged/);
+  assert.match(player, /preloadNext\(\)/);
+  assert.match(player, /standbyUrl === item\.url/);
+  assert.match(player, /item\.text\.length \* 120/);
 });
 
 test("la conversation vocale ne rouvre jamais le micro pendant que le patient parle", async () => {

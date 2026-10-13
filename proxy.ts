@@ -11,6 +11,16 @@ export async function proxy(request: NextRequest) {
   const fallback = disabledRouteFallback(request.nextUrl.pathname);
   if (fallback) return NextResponse.redirect(new URL(fallback, request.url));
 
+  // Lien e-mail (`token_hash`) ou retour OAuth (`code` sur l'accueil) arrivé ailleurs
+  // que sur /auth/callback : Supabase replie sur la Site URL quand l'origine demandée
+  // n'est pas dans ses Redirect URLs. On remet la requête sur le callback.
+  const { pathname, searchParams } = request.nextUrl;
+  if (pathname !== "/auth/callback" && (searchParams.has("token_hash") || (pathname === "/" && searchParams.has("code")))) {
+    const callbackUrl = new URL("/auth/callback", request.url);
+    callbackUrl.search = request.nextUrl.search;
+    return NextResponse.redirect(callbackUrl);
+  }
+
   // Nonce CSP unique par requête : transmis au rendu (Next.js le lit dans
   // l'en-tête CSP de la requête pour marquer ses <script>) et renvoyé au
   // navigateur. Remplace la CSP générique de `next.config.ts` sur cette réponse.
