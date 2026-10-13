@@ -6,14 +6,14 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../../../../lib/api-security";
-import { enforceRateLimit } from "../../../../../lib/rate-limit";
+} from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
 import { findProcedure, procedureResult } from "@/lib/ecos/grading";
 import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { EXAMINER_PREFIX, PROCEDURE_PREFIX } from "@/lib/ecos/text";
 import { sessionDeadline } from "@/lib/ecos/timing";
-import { createAdminClient } from "../../../../../../lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 /**
  * Clinical-exam phase: the student chooses a gesture or a test; the server

@@ -59,6 +59,8 @@ export type EcosDebrief = {
   redFlags: string[];
   management: string[];
   differentials: string[];
+  /** Lecture attendue des examens complémentaires (stations avec une étape « Analyse »). */
+  examReading?: string[];
   sources: EcosSource[];
   pathologySlugs: string[];
 };
@@ -139,6 +141,8 @@ export type EcosStationView = {
   brief: string[];
   /** Gestures offered in the exam phase: labels only, never results or relevance. */
   procedures: Array<Pick<EcosProcedure, "id" | "label" | "category">>;
+  /** Une étape « Analyse » suit l'examen clinique : l'étudiant interprète par écrit les examens demandés. */
+  analysis: boolean;
   /** Grid total, exam and diagnosis lines included. */
   maxScore: number;
   /** Duration of the exam mode. Training has no clock. */

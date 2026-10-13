@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* `dark:` suit la bascule de thème (`data-theme`), pas la préférence du système. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ==========================================================================
    Système visuel « L'écoute »
    Deux voix typographiques : le sans-serif (Hanken Grotesk) pour l'interface
@@ -196,7 +199,6 @@ p { text-wrap: pretty; }
 .text-link:hover, .learning-inline-link:hover, .learning-back:hover { text-decoration-color: currentColor; }
 .learning-back { margin-bottom: 24px; font-size: 15px; }
 
-.tabular { font-variant-numeric: tabular-nums; }
 
 /* --- Boutons ------------------------------------------------------------- */
 
@@ -224,8 +226,6 @@ p { text-wrap: pretty; }
 .button.quiet:hover { border-color: var(--ink); }
 .button.small { min-height: 44px; padding: 0 18px; font-size: 15px; }
 .button.full { width: 100%; }
-.button.danger-ghost { background: transparent; color: var(--red); border-color: color-mix(in srgb, var(--red) 45%, transparent); }
-.button.danger-ghost:hover { background: var(--red-light); }
 .button:disabled, .button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 
 /* --- Marque -------------------------------------------------------------- */
@@ -558,7 +558,6 @@ html[data-theme="dark"] .bg-white { background-color: var(--surface) !important;
 html[data-theme="dark"] .bg-white\/95 { background-color: color-mix(in srgb, var(--surface) 95%, transparent) !important; }
 html[data-theme="dark"] .bg-slate-50,
 html[data-theme="dark"] .bg-slate-50\/60,
-html[data-theme="dark"] .bg-slate-50\/70,
 html[data-theme="dark"] .bg-slate-100 { background-color: var(--surface-subtle) !important; }
 html[data-theme="dark"] .border-slate-100,
 html[data-theme="dark"] .border-slate-200,
@@ -576,21 +575,18 @@ html[data-theme="dark"] :is(input, select, textarea) {
   background-color: var(--surface);
 }
 html[data-theme="dark"] :is(input, textarea)::placeholder { color: var(--muted-light); }
-html[data-theme="dark"] :is(.bg-teal-50, .bg-teal-50\/50, .bg-teal-50\/60, .bg-emerald-50) { background-color: #12352f !important; }
+html[data-theme="dark"] :is(.bg-teal-50, .bg-emerald-50) { background-color: #12352f !important; }
 html[data-theme="dark"] :is(.bg-amber-50, .bg-orange-50) { background-color: #3a2a12 !important; }
 html[data-theme="dark"] :is(.bg-rose-50, .bg-red-50) { background-color: #3b1a1a !important; }
-html[data-theme="dark"] :is(.bg-sky-50, .bg-blue-50) { background-color: #102c3f !important; }
-html[data-theme="dark"] :is(.bg-violet-50, .bg-violet-50\/60) { background-color: #251b3d !important; }
-html[data-theme="dark"] :is(.bg-teal-100, .bg-emerald-100, .bg-cyan-100) { background-color: #164e4a !important; }
-html[data-theme="dark"] :is(.bg-amber-100, .bg-orange-100, .bg-lime-100) { background-color: #473515 !important; }
-html[data-theme="dark"] :is(.bg-sky-100, .bg-blue-100, .bg-violet-100, .bg-purple-100, .bg-indigo-100) { background-color: #283250 !important; }
-html[data-theme="dark"] :is(.border-teal-100, .border-emerald-100, .border-amber-100, .border-orange-100, .border-rose-100, .border-red-100, .border-sky-100, .border-blue-100, .border-violet-100, .border-cyan-100, .border-fuchsia-100, .border-purple-100, .border-lime-100, .border-pink-100, .border-indigo-100, .border-stone-200) { border-color: var(--line) !important; }
+html[data-theme="dark"] :is(.bg-sky-50) { background-color: #102c3f !important; }
+html[data-theme="dark"] :is(.bg-violet-50) { background-color: #251b3d !important; }
+html[data-theme="dark"] :is(.bg-amber-100) { background-color: #473515 !important; }
 html[data-theme="dark"] :is(.text-teal-700, .text-teal-800) { color: var(--primary) !important; }
-html[data-theme="dark"] :is(.text-emerald-700, .text-emerald-800, .text-emerald-900) { color: #6ee7b7 !important; }
-html[data-theme="dark"] :is(.text-amber-700, .text-amber-800, .text-amber-900, .text-orange-700, .text-orange-800) { color: #fcd34d !important; }
-html[data-theme="dark"] :is(.text-rose-600, .text-rose-700, .text-rose-800, .text-red-800) { color: #fda4af !important; }
-html[data-theme="dark"] :is(.text-sky-700, .text-sky-800, .text-blue-800) { color: #7dd3fc !important; }
-html[data-theme="dark"] :is(.text-violet-700, .text-violet-800) { color: #c4b5fd !important; }
+html[data-theme="dark"] :is(.text-emerald-700, .text-emerald-800) { color: #6ee7b7 !important; }
+html[data-theme="dark"] :is(.text-amber-700, .text-amber-800, .text-amber-900, .text-orange-700) { color: #fcd34d !important; }
+html[data-theme="dark"] :is(.text-rose-600, .text-rose-700) { color: #fda4af !important; }
+html[data-theme="dark"] :is(.text-sky-700) { color: #7dd3fc !important; }
+html[data-theme="dark"] :is(.text-violet-700) { color: #c4b5fd !important; }
 html[data-theme="dark"] :is(.ring-teal-100) { --tw-ring-color: rgba(94, 224, 204, .22) !important; }
 html[data-theme="dark"] .bg-slate-950 .bg-white,
 html[data-theme="dark"] .bg-teal-950 .bg-white {
@@ -612,3 +608,23 @@ html[data-theme="dark"] .bg-\[var\(--primary\)\].text-white { color: var(--on-pr
 @media (max-width: 760px) {
   input, select, textarea { font-size: 16px !important; }
 }
+
+/* Pages d'authentification : lien d'aide sous le mot de passe, consentement à l'inscription. */
+.auth-help { justify-self: end; margin-top: 2px; color: var(--muted); font-size: 14px; text-underline-offset: 4px; }
+.auth-help:hover { color: var(--ink); }
+.auth-consent { margin: 14px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+.auth-consent a { color: var(--ink); text-underline-offset: 3px; }
+
+/* Pied de page : liens légaux sur la ligne du copyright. */
+.site-footer-legal { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; list-style: none; }
+.site-footer-legal a { color: var(--muted); font-size: 14px; text-decoration: none; }
+.site-footer-legal a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+/* Pages légales : colonne de lecture étroite. */
+.legal-prose { max-width: 72ch; }
+.legal-prose h2 { margin: 40px 0 12px; font-size: 22px; }
+.legal-prose h3 { margin: 24px 0 8px; font-size: 17px; }
+.legal-prose p, .legal-prose li { line-height: 1.6; }
+.legal-prose ul { padding-left: 1.2em; }
+.legal-prose .legal-placeholder { padding: 2px 6px; border-radius: 6px; background: var(--mint); color: var(--mint-dark); font-weight: 600; }
+.legal-meta { color: var(--muted); font-size: 14px; }

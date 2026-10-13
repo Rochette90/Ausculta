@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import { OnboardingFlow } from "../../components/onboarding/OnboardingFlow";
-import { requireUser } from "../../lib/auth/require-user";
-import { DEFAULT_AFTER_LOGIN_PATH, safeRedirectPath } from "../../lib/auth/safe-redirect";
-import { createClient } from "../../lib/supabase/server";
-import { getOnboardingMetadata } from "../../lib/onboarding/metadata";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
+import { requireUser } from "@/lib/auth/require-user";
+import { DEFAULT_AFTER_LOGIN_PATH, safeRedirectPath } from "@/lib/auth/safe-redirect";
+import { createClient } from "@/lib/supabase/server";
+import { getOnboardingMetadata } from "@/lib/onboarding/metadata";
 import { pageTitle } from "@/lib/brand";
 import { ONBOARDING_ASKS_SPECIALTIES } from "@/lib/features";
 import { zurichDate } from "@/lib/dates";

@@ -14,7 +14,7 @@ const allSections: Array<{ title: string; links: FooterLink[] }> = [
       { name: "Catalogue médical", href: "/catalogue", feature: "fiches" },
       { name: "Tutoriels pratiques", href: "/tutoriels", feature: "tutorials" },
       { name: "Qualité scientifique", href: "/qualite", feature: "fiches" },
-      { name: "Tarifs", href: "/pricing" },
+      { name: "Tarifs", href: "/pricing", feature: "premium" },
       { name: "Questions fréquentes", href: "/faq" },
     ],
   },
@@ -37,6 +37,13 @@ const allSections: Array<{ title: string; links: FooterLink[] }> = [
     ],
   },
 ];
+/** Toujours affichés, quel que soit le périmètre actif. */
+export const LEGAL_LINKS: ReadonlyArray<FooterLink> = [
+  { name: "Mentions légales", href: "/mentions-legales" },
+  { name: "Conditions d’utilisation", href: "/cgu" },
+  { name: "Confidentialité", href: "/confidentialite" },
+];
+
 const sections = allSections.map((section) => ({
   ...section,
   links: section.links.filter((link) => !link.feature || FEATURES[link.feature]),
@@ -62,6 +69,9 @@ export function MarketingFooter() {
         </div>
         <div className="site-footer-bottom">
           <span>© 2026 {BRAND_NAME}. Contenu pédagogique, ne remplace pas un avis médical.</span>
+          <ul className="site-footer-legal" aria-label="Informations légales">
+            {LEGAL_LINKS.map((link) => <li key={link.href}><Link href={link.href}>{link.name}</Link></li>)}
+          </ul>
           <a href="#top">Revenir en haut de la page</a>
         </div>
       </div>

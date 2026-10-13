@@ -4,11 +4,11 @@ import { BadgeCheck, CheckCircle2, Code2, ExternalLink, Eye, LoaderCircle, Rotat
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { reviewAdminPathology, updateAdminPathology, type AdminPathologyUpdateInput } from "../../app/actions/admin-pathologies";
-import { MarkdownBlocks, parseMarkdown } from "../../app/markdown";
-import type { AdminPathologyDetails } from "../../lib/admin/queries";
-import type { PathologyReviewStatus } from "../../types/content";
-import { Button, buttonVariants } from "../ui/button";
+import { reviewAdminPathology, updateAdminPathology, type AdminPathologyUpdateInput } from "@/app/actions/admin-pathologies";
+import { MarkdownBlocks, parseMarkdown } from "@/app/markdown";
+import type { AdminPathologyDetails } from "@/lib/admin/queries";
+import type { PathologyReviewStatus } from "@/types/content";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 type EditorMode = "edit" | "preview";
 type ReviewState = {

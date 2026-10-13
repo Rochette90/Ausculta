@@ -1,18 +1,20 @@
 "use client";
 
-import { Bone, BookOpen, ClipboardCheck, Home, ShieldCheck, Stethoscope, TimerReset } from "lucide-react";
+import { Bone, BookOpen, BookOpenText, ClipboardCheck, Home, ListChecks, ShieldCheck, Stethoscope, TimerReset } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BrandLogo } from "../brand/BrandLogo";
-import { ThemeToggle } from "../theme/ThemeToggle";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { BRAND_NAME } from "@/lib/brand";
 import { FEATURES, type FeatureKey } from "@/lib/features";
 
 // Chaque entrée dépend d'un module : un module masqué (lib/features.ts)
-// disparaît de la navigation. Les stations ECOS viennent juste après l'accueil.
+// disparaît de la navigation. Après l'accueil : la théorie, puis les stations ECOS, puis les grilles.
 const allItems: Array<{ href: string; label: string; shortLabel: string; icon: typeof Home; feature?: FeatureKey }> = [
   { href: "/dashboard", label: "Accueil", shortLabel: "Accueil", icon: Home },
+  { href: "/theorie", label: "Théorie", shortLabel: "Théorie", icon: BookOpenText, feature: "theorie" },
   { href: "/cas", label: "Stations ECOS", shortLabel: "Stations", icon: Stethoscope, feature: "ecos" },
+  { href: "/grilles", label: "Grilles ECOS", shortLabel: "Grilles", icon: ListChecks, feature: "grilles" },
   { href: "/specialties", label: "Fiches", shortLabel: "Fiches", icon: BookOpen, feature: "fiches" },
   { href: "/anatomie", label: "Anatomie", shortLabel: "Anatomie", icon: Bone, feature: "anatomy" },
   { href: "/quiz", label: "QCM", shortLabel: "QCM", icon: ClipboardCheck, feature: "quiz" },

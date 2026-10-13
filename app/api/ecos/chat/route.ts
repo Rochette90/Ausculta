@@ -2,7 +2,8 @@ import { buildPatientPrompt, EXAMINER_PREFIX, localPatientReply } from "@/lib/ec
 import { encodeChatEvent, type ChatStreamEvent } from "@/lib/ecos/chat-stream";
 import { patientAiChain, patientAiTimeoutMs, type TranscriptMessage } from "@/lib/ecos/patient-ai";
 import { streamPatientReply } from "@/lib/ecos/patient-reply";
-import { DAY_SECONDS, ecosQuotas, sessionIsFull } from "@/lib/ecos/quotas";
+import { ecosQuotasForUser } from "@/lib/ecos/plan";
+import { DAY_SECONDS, sessionIsFull } from "@/lib/ecos/quotas";
 import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { usesReservedPrefix } from "@/lib/ecos/text";
@@ -16,10 +17,10 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../../lib/api-security";
-import { enforceDailyQuota, enforceRateLimit, withinRateLimit } from "../../../lib/rate-limit";
-import { stopwatch } from "../../../lib/timing";
-import { createAdminClient } from "../../../../lib/supabase/server";
+} from "@/app/lib/api-security";
+import { enforceDailyQuota, enforceRateLimit, withinGlobalLimit, withinRateLimit } from "@/app/lib/rate-limit";
+import { stopwatch } from "@/app/lib/timing";
+import { createAdminClient } from "@/lib/supabase/server";
 
 /** Messages relus pour donner le contexte au modèle, question en cours comprise. */
 const HISTORY_WINDOW = 12;
@@ -72,10 +73,11 @@ export async function POST(request: Request) {
       throw new ApiError(400, "invalid_session", "Session invalide");
     }
 
-    // Contrôles indépendants lancés ensemble : un seul aller-retour vers la base.
     const admin = createAdminClient();
-    const quotas = ecosQuotas();
-    const [, sessionResult, synthesisOpen, historyResult, , voiceWithinQuota] = await Promise.all([
+    // Les quotas dépendent de l'offre du compte : lue d'abord, le reste part ensemble.
+    const { quotas } = await ecosQuotasForUser(admin, user.id);
+    // Contrôles indépendants lancés ensemble : un seul aller-retour vers la base.
+    const [, sessionResult, synthesisOpen, historyResult, modelWithinGlobalQuota, voiceWithinQuota] = await Promise.all([
       enforceRateLimit(admin, user.id, "ecos-chat", 30, 60),
       admin
         .from("ecos_sessions")
@@ -91,10 +93,15 @@ export async function POST(request: Request) {
         .eq("user_id", user.id)
         .order("sequence", { ascending: false })
         .limit(HISTORY_WINDOW - 1),
+      // Les plafonds globaux ne sont comptés qu'une fois le quota du compte passé.
       enforceDailyQuota(admin, user.id, "ecos-chat-day", quotas.dailyMessages,
-        "Tu as atteint le nombre de questions prévu pour aujourd’hui. Termine la station pour voir ton bilan."),
-      // Au-delà du quota de voix réaliste, la voix du navigateur prend le relais.
-      wantsVoice ? withinRateLimit(admin, user.id, "ecos-voice-day", quotas.dailyVoiceReplies, DAY_SECONDS) : false,
+        "Tu as atteint le nombre de questions prévu pour aujourd’hui. Termine la station pour voir ton bilan.")
+        .then(() => withinGlobalLimit(admin, "ecos-chat-day", quotas.globalDailyMessages, DAY_SECONDS)),
+      // Au-delà du quota de voix réaliste (du compte ou de toute l'application), la voix du navigateur prend le relais.
+      wantsVoice
+        ? withinRateLimit(admin, user.id, "ecos-voice-day", quotas.dailyVoiceReplies, DAY_SECONDS)
+          .then((open) => open && withinGlobalLimit(admin, "ecos-voice-day", quotas.globalDailyVoiceReplies, DAY_SECONDS))
+        : false,
     ]);
     const { data: session, error: sessionError } = sessionResult;
     if (sessionError) throw sessionError;
@@ -131,7 +138,9 @@ export async function POST(request: Request) {
     studentSaved.catch(() => undefined);
 
     const voice = wantsVoice && voiceWithinQuota ? speechConfig(scenario) : null;
-    const chain = patientAiChain();
+    // Plafond global du jour atteint : le moteur local répond, aucun fournisseur n'est appelé.
+    if (!modelWithinGlobalQuota) console.warn(`${BRAND_NAME} patient: plafond global de messages atteint, moteur local`);
+    const chain = modelWithinGlobalQuota ? patientAiChain() : [];
     const turn = history.filter((item) => item.role === "student").length;
 
     const stream = new ReadableStream<Uint8Array>({

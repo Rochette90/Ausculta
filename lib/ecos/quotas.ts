@@ -3,9 +3,14 @@
  *
  * Les limites par minute (dans chaque route) freinent une rafale ; celles-ci
  * plafonnent ce qu'un compte peut consommer par jour en appels de modèle et
- * en synthèse vocale. Chaque valeur se règle par variable d'environnement,
- * sans redéploiement de code.
+ * en synthèse vocale, selon son offre (Découverte ou Premium). Les plafonds
+ * globaux bornent la facture quel que soit le nombre de comptes : atteints,
+ * le moteur local et la voix du navigateur prennent le relais sans bloquer
+ * l'étudiant. Chaque valeur se règle par variable d'environnement, sans
+ * redéploiement de code. La page des tarifs affiche ces mêmes valeurs.
  */
+export type EcosPlan = "free" | "pro";
+
 export type EcosQuotas = {
   /** Stations démarrées par compte et par jour. */
   dailySessions: number;
@@ -15,13 +20,24 @@ export type EcosQuotas = {
   dailyVoiceReplies: number;
   /** Messages enregistrés dans une même station (questions, réponses, gestes). */
   sessionMessages: number;
+  /** Appels de modèle par jour, tous comptes confondus ; au-delà, le moteur local répond. */
+  globalDailyMessages: number;
+  /** Répliques dites par la voix réaliste par jour, tous comptes confondus ; au-delà, voix du navigateur. */
+  globalDailyVoiceReplies: number;
 };
 
-export const DEFAULT_ECOS_QUOTAS: EcosQuotas = {
-  dailySessions: 20,
-  dailyMessages: 600,
-  dailyVoiceReplies: 300,
+/** Plafonds communs aux deux offres. */
+const SHARED_DEFAULTS = {
   sessionMessages: 200,
+  globalDailyMessages: 3000,
+  globalDailyVoiceReplies: 200,
+};
+
+export const DEFAULT_ECOS_QUOTAS: Readonly<Record<EcosPlan, EcosQuotas>> = {
+  // Découverte : de quoi s'entraîner chaque jour, avec un aperçu de la voix réaliste.
+  free: { dailySessions: 3, dailyMessages: 120, dailyVoiceReplies: 10, ...SHARED_DEFAULTS },
+  // Premium : usage intensif, mais fini (ElevenLabs facture au caractère).
+  pro: { dailySessions: 10, dailyMessages: 600, dailyVoiceReplies: 150, ...SHARED_DEFAULTS },
 };
 
 export const DAY_SECONDS = 86_400;
@@ -31,12 +47,21 @@ function positiveInteger(value: string | undefined, fallback: number): number {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-export function ecosQuotas(env: Record<string, string | undefined> = process.env): EcosQuotas {
+/** Offre d'un profil : toute valeur autre que `pro` vaut Découverte. */
+export function ecosPlan(plan: unknown): EcosPlan {
+  return plan === "pro" ? "pro" : "free";
+}
+
+export function ecosQuotas(env: Record<string, string | undefined> = process.env, plan: EcosPlan = "free"): EcosQuotas {
+  const defaults = DEFAULT_ECOS_QUOTAS[plan];
+  const prefix = plan === "pro" ? "ECOS_PRO_DAILY" : "ECOS_DAILY";
   return {
-    dailySessions: positiveInteger(env.ECOS_DAILY_SESSIONS, DEFAULT_ECOS_QUOTAS.dailySessions),
-    dailyMessages: positiveInteger(env.ECOS_DAILY_MESSAGES, DEFAULT_ECOS_QUOTAS.dailyMessages),
-    dailyVoiceReplies: positiveInteger(env.ECOS_DAILY_VOICE_REPLIES, DEFAULT_ECOS_QUOTAS.dailyVoiceReplies),
-    sessionMessages: positiveInteger(env.ECOS_SESSION_MESSAGES, DEFAULT_ECOS_QUOTAS.sessionMessages),
+    dailySessions: positiveInteger(env[`${prefix}_SESSIONS`], defaults.dailySessions),
+    dailyMessages: positiveInteger(env[`${prefix}_MESSAGES`], defaults.dailyMessages),
+    dailyVoiceReplies: positiveInteger(env[`${prefix}_VOICE_REPLIES`], defaults.dailyVoiceReplies),
+    sessionMessages: positiveInteger(env.ECOS_SESSION_MESSAGES, defaults.sessionMessages),
+    globalDailyMessages: positiveInteger(env.ECOS_GLOBAL_DAILY_MESSAGES, defaults.globalDailyMessages),
+    globalDailyVoiceReplies: positiveInteger(env.ECOS_GLOBAL_DAILY_VOICE_REPLIES, defaults.globalDailyVoiceReplies),
   };
 }
 

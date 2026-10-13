@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Newsreader } from "next/font/google";
-import { ThemeInitializer } from "../components/theme/ThemeInitializer";
+import { ThemeInitializer } from "@/components/theme/ThemeInitializer";
 import "./globals.css";
 import "./learning.css";
 import "./styles/marketing.css";
 import "./styles/station.css";
 import "./styles/fiche.css";
+import "./styles/grids.css";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 // Deux voix typographiques : le sans-serif pour l'interface et l'étudiant,

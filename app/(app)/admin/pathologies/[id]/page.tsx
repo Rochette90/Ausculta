@@ -1,9 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PathologyEditor } from "../../../../../components/admin/PathologyEditor";
-import { getAdminPathology } from "../../../../../lib/admin/queries";
-import { requireAdminUser } from "../../../../../lib/auth/admin";
+import { PathologyEditor } from "@/components/admin/PathologyEditor";
+import { getAdminPathology } from "@/lib/admin/queries";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 type PageProps = { params: Promise<{ id: string }> };

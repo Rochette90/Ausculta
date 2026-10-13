@@ -5,12 +5,12 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../lib/api-security";
+} from "@/app/lib/api-security";
 import { FEATURES } from "@/lib/features";
 import { gradeTutorial } from "@/lib/tutorials/questions";
-import { calculateActivityReward } from "../../lib/ecos";
-import { enforceRateLimit } from "../../lib/rate-limit";
-import { createAdminClient } from "../../../lib/supabase/server";
+import { calculateActivityReward } from "@/app/lib/ecos";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
 
 type Progress = {
   totalXp: number;

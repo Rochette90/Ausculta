@@ -6,17 +6,76 @@ schemas = ["public", "storage", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
+# Réglages Auth. Ils s'appliquent à l'instance locale (`supabase start`) et
+# servent de référence pour le dashboard du projet distant : les valeurs
+# ci-dessous doivent y être reportées (Authentication > Settings), ou poussées
+# avec `npx supabase config push` une fois le projet lié.
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
 additional_redirect_urls = ["http://localhost:3000/auth/callback"]
 jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
 enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+# Longueur minimale alignée sur le formulaire (`minLength={8}`) et sur
+# `lib/auth/password.ts`. Pas d'exigence de classes de caractères : la longueur
+# et le rejet des mots de passe compromis (dashboard, offre Pro) suffisent.
+minimum_password_length = 8
+password_requirements = ""
+
+[auth.rate_limit]
+# E-mails envoyés par heure (confirmation, réinitialisation, changement).
+email_sent = 10
+# Tentatives de connexion / inscription par 5 minutes et par adresse IP.
+sign_in_sign_ups = 30
+token_refresh = 150
+token_verifications = 30
+anonymous_users = 0
 
 [auth.email]
 enable_signup = true
+# Un changement d'adresse doit être confirmé depuis l'ancienne ET la nouvelle.
 double_confirm_changes = true
 enable_confirmations = true
+# Un mot de passe ne peut être changé que par une session récente ou un lien
+# de réinitialisation (voir `POST /api/account/password`).
+secure_password_change = true
+# Délai minimal entre deux e-mails pour un même destinataire.
+max_frequency = "1m0s"
+# Validité des liens envoyés par e-mail (secondes).
+otp_expiry = 3600
+otp_length = 6
+
+# Modèles d'e-mails en français (sujets + HTML). Le même contenu doit être
+# collé dans le dashboard (Authentication > Email Templates) pour la production.
+[auth.email.template.confirmation]
+subject = "Confirmez votre adresse e-mail"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Réinitialisez votre mot de passe"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Votre lien de connexion"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.email_change]
+subject = "Confirmez votre nouvelle adresse e-mail"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.invite]
+subject = "Vous êtes invité·e"
+content_path = "./supabase/templates/invite.html"
+
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
+skip_nonce_check = false
 
 [storage]
 enabled = true

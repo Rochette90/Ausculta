@@ -1,12 +1,14 @@
 import { initialsFrom, profileAvatarUrl } from "@/lib/profile/presentation";
 import { LogOut } from "lucide-react";
-import { BillingActions } from "../../../components/profile/BillingActions";
-import { DeleteAccountButton } from "../../../components/profile/DeleteAccountButton";
-import { ProfileSettings } from "../../../components/profile/ProfileSettings";
-import { requireUser } from "../../../lib/auth/require-user";
-import { getProfileSummary } from "../../../lib/profile/queries";
-import { createClient } from "../../../lib/supabase/server";
+import { BillingActions } from "@/components/profile/BillingActions";
+import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
+import { DeleteAccountButton } from "@/components/profile/DeleteAccountButton";
+import { ProfileSettings } from "@/components/profile/ProfileSettings";
+import { requireUser } from "@/lib/auth/require-user";
+import { getProfileSummary } from "@/lib/profile/queries";
+import { createClient } from "@/lib/supabase/server";
 import { BRAND_PRO_PLAN, pageTitle } from "@/lib/brand";
+import { FEATURES, premiumOnSale } from "@/lib/features";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Profil") };
@@ -55,6 +57,7 @@ export default async function ProfilPage() {
   const fullName = profile?.full_name?.trim() || emailIdentity;
   const initials = initialsFrom(fullName) || "ÉT";
   const isPro = profile?.plan === "pro";
+  const hasCustomer = Boolean(profile?.stripe_customer_id);
   const avatarUrl = profileAvatarUrl(user.id, profile);
   const levelProgress = (profile?.xp ?? 0) % 100;
   const memberSince = profile?.created_at
@@ -78,7 +81,7 @@ export default async function ProfilPage() {
           <h1>{fullName}</h1>
           <p>{user.email}{memberSince ? `, membre depuis ${memberSince}` : ""}</p>
         </div>
-        <span className={`profile-plan${isPro ? " is-pro" : ""}`}>{isPro ? BRAND_PRO_PLAN : "Plan gratuit"}</span>
+        {(FEATURES.premium || isPro) && <span className={`profile-plan${isPro ? " is-pro" : ""}`}>{isPro ? BRAND_PRO_PLAN : "Plan gratuit"}</span>}
       </header>
 
       <dl className="dash-stats" aria-label="Ta progression">
@@ -115,19 +118,22 @@ export default async function ProfilPage() {
             ) : <p>Termine ta première station pour débloquer un badge.</p>}
           </section>
 
-          <section aria-labelledby="plan-title">
+          {/* Formule payante masquée : la section ne reste que pour un compte déjà client Stripe. */}
+          {(FEATURES.premium || hasCustomer) && <section aria-labelledby="plan-title">
             <h2 id="plan-title">Abonnement : {isPro ? BRAND_PRO_PLAN : "Découverte"}</h2>
             <p>
               {subscription?.current_period_end
                 ? `Prochaine échéance : ${new Date(subscription.current_period_end).toLocaleDateString("fr-CH", { timeZone: "Europe/Zurich" })}`
                 : "Tout est gratuit pour l’instant."}
             </p>
-            <BillingActions hasCustomer={Boolean(profile?.stripe_customer_id)} isPro={isPro} />
-          </section>
+            <BillingActions hasCustomer={hasCustomer} isPro={isPro} canSubscribe={premiumOnSale()} />
+          </section>}
 
           <section aria-labelledby="account-title">
             <h2 id="account-title">Compte et sécurité</h2>
             <p>Ta photo est privée et tes données de progression restent liées à ton compte.</p>
+            <ChangePasswordForm />
+            <div className="my-6 h-px bg-[var(--line)]" />
             <div className="profile-actions">
               <form action="/auth/signout" method="post">
                 <button className="danger-link is-neutral" type="submit"><LogOut aria-hidden="true" size={17} /> Se déconnecter</button>

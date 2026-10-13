@@ -2,10 +2,10 @@
 
 import { CheckCircle2, LoaderCircle } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
-import { resolveContactMessage } from "../../app/actions/admin-contact";
-import type { AdminContactMessage } from "../../lib/admin/queries";
-import { Button } from "../ui/button";
-import { cn } from "../../lib/utils";
+import { resolveContactMessage } from "@/app/actions/admin-contact";
+import type { AdminContactMessage } from "@/lib/admin/queries";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 function MessageCard({ message }: { message: AdminContactMessage }) {
   const [status, setStatus] = useState(message.status);

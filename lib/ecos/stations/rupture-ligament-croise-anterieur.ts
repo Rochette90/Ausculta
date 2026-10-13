@@ -1,0 +1,166 @@
+import type { EcosScenario } from "../types.ts";
+import { communicationCriterion, LOCATION, ONSET, planReaction, presentationCriterion, treatmentsCriterion, VITALS } from "./shared.ts";
+
+const MECHANISM = ["comment c est arrive", "que s est il passe", "qu est ce qui s est passe", "racontez", "mecanisme", "tourn", "pivot", "torsion", "tordu", "comment vous etes", "dans quelle position", "pied bloque"];
+const CRACK = ["craquement", "crac", "bruit", "entendu", "claquement"];
+const STOPPED = ["arreter", "continuer", "quitter", "sortir du terrain", "rejouer", "reprendre le match", "finir le match"];
+const SWELLING = ["gonfl", "enfle", "epanchement", "liquide", "tumefaction"];
+const GIVING_WAY = ["lache", "derob", "instab", "pas stable", "flanche", "se tord"];
+const LOCKING = ["bloqu", "coince", "tendre la jambe", "etendre", "plier", "accroupi"];
+
+export const ruptureLigamentCroiseAnterieur: EcosScenario = {
+  slug: "rupture-ligament-croise-anterieur",
+  version: 1,
+  setting: "cabinet",
+  patient: { name: "M. Reymond", age: 23, sex: "M" },
+  painful: true,
+  persona: "Étudiant sportif, détendu, un peu impatient : il veut surtout savoir quand il pourra rejouer au football. Il répond simplement et ne parle de ses lâchages du genou que si on lui pose la question.",
+  brief: [
+    "Vous êtes médecin assistant·e dans un cabinet de médecine du sport.",
+    "M. Reymond, 23 ans, consulte deux semaines après s’être tordu le genou droit au football.",
+    "Menez l’anamnèse et l’examen clinique ciblés, demandez les examens complémentaires utiles et interprétez-les, puis posez un diagnostic et proposez une prise en charge.",
+  ],
+  opening: "Bonjour docteur. Je me suis fait mal au genou droit au foot il y a deux semaines. Il est toujours un peu gonflé, et j’ai l’impression qu’il n’est plus fiable.",
+  history: {
+    identity: "Luca Reymond, 23 ans.",
+    occupation: "Je suis étudiant en géographie, et je travaille le week-end dans un magasin de sport.",
+    living: "J’habite en colocation à Lausanne, au troisième sans ascenseur.",
+    feeling: "Ça va, c’est surtout frustrant de ne plus pouvoir jouer.",
+    previousEpisodes: "Non, jamais eu de problème au genou avant.",
+    course: "La douleur a bien diminué, je marche presque normalement. Mais le genou reste un peu gonflé, et il lâche quand je tourne.",
+    otherSymptoms: "Le genou se dérobe quand je change de direction, comme s’il partait de côté.",
+    medications: "J’ai pris de l’ibuprofène les premiers jours, plus rien maintenant.",
+    allergies: "Aucune allergie.",
+    personalHistory: "Rien du tout, je n’ai jamais été opéré.",
+    familyHistory: "Rien de particulier.",
+    tobacco: "Non, je ne fume pas.",
+    alcohol: "Quelques bières le week-end.",
+    drugs: "Non.",
+    concerns: "Est-ce que je vais pouvoir rejouer cette saison ? Et est-ce qu’il faut m’opérer ?",
+  },
+  rules: [
+    { topic: "mécanisme", keywords: MECHANISM, reply: "J’ai voulu changer de direction avec le ballon, le pied droit est resté planté dans le gazon et le genou est parti vers l’intérieur en tournant." },
+    { topic: "début", keywords: ONSET, reply: "C’était il y a deux semaines, pendant un match, un dimanche après-midi." },
+    { topic: "craquement", keywords: CRACK, reply: "Oui, j’ai senti un craquement dans le genou, même mes coéquipiers ont cru l’entendre." },
+    { topic: "arrêt du jeu", keywords: STOPPED, reply: "J’ai dû sortir tout de suite, je n’arrivais plus à courir." },
+    { topic: "gonflement", keywords: SWELLING, reply: "Il a gonflé très vite, dans l’heure qui a suivi : le soir il était énorme. Aujourd’hui il est encore un peu gonflé." },
+    { topic: "lâchages", keywords: GIVING_WAY, reply: "Oui, deux fois cette semaine en descendant du tram et en me retournant, le genou s’est dérobé. Ça ne fait pas très mal, mais ça fait peur." },
+    { topic: "blocage", keywords: LOCKING, reply: "Non, il n’est jamais resté bloqué. Je peux le tendre complètement, c’est juste raide quand je le plie à fond." },
+    { topic: "localisation", keywords: [...LOCATION, "douleur", "avez vous mal", "ca fait mal"], reply: "Sur le moment, j’avais mal dans tout le genou, surtout sur le côté extérieur. Maintenant c’est surtout une gêne." },
+    { topic: "sport", keywords: ["sport", "football", "foot$", "niveau", "competition", "entrainement", "equipe", "club"], reply: "Je joue en club, en troisième ligue, entraînements deux fois par semaine et un match le week-end. J’aimerais vraiment continuer." },
+    { topic: "appui", keywords: ["marcher", "appui", "poser le pied", "charge", "boit"], reply: "Le premier jour j’ai boité, avec des béquilles prêtées par le club. Maintenant je marche sans aide." },
+    { topic: "neurovasculaire", keywords: ["fourmill", "engourdi", "sensibilite", "froid", "pied tombant", "pied$"], reply: "Non, je sens bien mon pied, rien d’anormal." },
+    { topic: "constantes", examiner: true, keywords: VITALS, reply: "T 36,7 °C, FC 68/min, TA 124/76 mmHg. Patient en bon état général." },
+    { topic: "inspection et palpation", examiner: true, keywords: ["inspect", "palpe", "palpation", "j examine le genou", "je regarde le genou", "choc rotulien", "glacon"], reply: "Genou droit : épanchement modéré avec choc rotulien positif, sans rougeur ni chaleur. Pas d’ecchymose. Pas de douleur à la palpation des interlignes ni des trajets ligamentaires collatéraux. Marche sans boiterie franche." },
+    { topic: "tests du pivot central", examiner: true, keywords: ["lachman", "tiroir anterieur", "pivot shift", "ressaut"], reply: "Lachman : translation tibiale antérieure augmentée par rapport au côté gauche, arrêt mou. Tiroir antérieur augmenté. Pivot shift difficile à évaluer, le patient se défend." },
+    planReaction("Donc je ne peux pas rejouer tout de suite ? Combien de temps sans foot ?", ["physio", "reeducation", "ligamentoplastie", "chirurg", "operation", "irm"]),
+  ],
+  examination: [
+    { id: "constantes", label: "Constantes vitales", category: "constantes", pertinent: true, topic: "constantes" },
+    { id: "inspection-palpation", label: "Inspection, palpation du genou et choc rotulien", category: "examen", pertinent: true, topic: "inspection et palpation" },
+    { id: "mobilite", label: "Mobilité active et passive du genou", category: "examen", pertinent: true, result: "Flexion 120° à droite contre 140° à gauche, limitée par l’épanchement. Extension complète, 0°, pas de flessum. Appareil extenseur fonctionnel : il lève la jambe tendue." },
+    { id: "lachman", label: "Test de Lachman et tiroir antérieur", category: "examen", pertinent: true, topic: "tests du pivot central" },
+    { id: "collateraux", label: "Testing des ligaments collatéraux en valgus et en varus", category: "examen", pertinent: true, result: "Pas de laxité en valgus ni en varus, en extension comme à 30° de flexion. Pas de douleur sur les trajets." },
+    { id: "neurovasculaire", label: "Pouls distaux et sensibilité du pied", category: "examen", pertinent: false, result: "Pouls pédieux et tibial postérieur bien perçus, sensibilité et motricité du pied normales." },
+    { id: "radiographie", label: "Radiographie du genou droit face et profil", category: "complementaire", pertinent: true, result: "Radiographie du genou droit, face et profil, centrage correct. Alignement fémoro-tibial et fémoro-patellaire conservé. Petit fragment osseux ovalaire de 6 mm, parallèle au plateau tibial, juste sous le versant latéral du plateau tibial. Pas d’autre interruption corticale. Interlignes conservés. De profil : comblement du récessus suprapatellaire." },
+    { id: "irm", label: "IRM du genou droit", category: "complementaire", pertinent: true, result: "IRM du genou droit : ligament croisé antérieur non visualisé sous forme de faisceau continu dans l’échancrure, remplacé par un hypersignal mal défini. Hypersignal de l’os spongieux de la partie latérale du condyle fémoral latéral et du versant postérieur du plateau tibial latéral. Hypersignal linéaire de la corne postérieure du ménisque externe atteignant la surface articulaire inférieure. Ligament croisé postérieur et ligaments collatéraux continus. Épanchement articulaire modéré." },
+    { id: "ponction", label: "Ponction articulaire", category: "complementaire", pertinent: false, result: "Non indiquée : épanchement modéré, sans fièvre ni signe inflammatoire, deux semaines après un traumatisme." },
+    { id: "bilan-sanguin", label: "Bilan sanguin (FSC, CRP)", category: "complementaire", pertinent: false, result: "Leucocytes 6,8 G/L, CRP < 5 mg/L. Il n’apporte rien dans ce contexte traumatique." },
+    { id: "echographie", label: "Échographie du genou", category: "complementaire", pertinent: false, result: "Épanchement articulaire modéré. Les structures intra-articulaires ne sont pas évaluables par l’échographie." },
+  ],
+  diagnosisChoice: { correct: "Rupture du ligament croisé antérieur du genou droit", distractors: ["Lésion isolée du ligament collatéral interne", "Luxation de la rotule", "Lésion méniscale en anse de seau"] },
+  criteria: [
+    presentationCriterion,
+    {
+      id: "mechanism",
+      label: "Précise le traumatisme",
+      hint: "Mécanisme (pivot pied bloqué), craquement, arrêt immédiat de l’activité",
+      points: 3,
+      groups: [MECHANISM, CRACK, STOPPED],
+    },
+    {
+      id: "symptoms",
+      label: "Recherche les signes d’une lésion intra-articulaire",
+      hint: "Gonflement et sa rapidité, lâchages, blocage",
+      points: 3,
+      groups: [SWELLING, GIVING_WAY, LOCKING],
+    },
+    {
+      id: "context",
+      label: "Situe le patient",
+      hint: "Sport pratiqué et niveau, antécédents du genou",
+      points: 2,
+      groups: [["sport", "football", "foot$", "niveau", "competition", "club", "entrainement"], ["deja eu", "premiere fois", "avant$", "antecedent", "opere", "operation"]],
+    },
+    treatmentsCriterion,
+    {
+      id: "exam",
+      label: "Examen ciblé du genou",
+      hint: "Épanchement, mobilité, Lachman, ligaments collatéraux",
+      points: 2,
+      groups: [VITALS, ["lachman", "tiroir", "palp", "genou"]],
+    },
+    {
+      id: "analysis",
+      label: "Interprète la radiographie et l’IRM",
+      hint: "Épanchement, arrachement de Segond, rupture du LCA, lésion du ménisque externe",
+      points: 4,
+      groups: [
+        ["epanchement", "hemarthrose", "liquide", "comble", "recessus"],
+        ["segond", "arrachement", "avulsion"],
+        ["lca$", "croise anterieur", "ligament croise", "rupture du lca", "rupture du ligament"],
+        ["menisque", "meniscal", "meniscale"],
+      ],
+    },
+    {
+      id: "management",
+      label: "Propose une prise en charge adaptée",
+      hint: "Physiothérapie précoce, avis orthopédique pour une reconstruction chez le sportif de pivot, ménisque à traiter",
+      points: 2,
+      groups: [
+        ["physio", "reeducation", "renforc", "quadriceps", "kine"],
+        ["chirurg", "ligamentoplast", "reconstruct", "arthroscop", "orthoped", "operer", "operation"],
+        ["pivot", "reprise", "rejouer", "arret du sport", "pas de foot", "pas de football", "sport$"],
+      ],
+    },
+    communicationCriterion,
+  ],
+  debrief: {
+    diagnosis: "Rupture du ligament croisé antérieur du genou droit, avec arrachement de Segond et lésion de la corne postérieure du ménisque externe",
+    summary: "Traumatisme en pivot pied bloqué chez un footballeur, avec craquement, arrêt immédiat et hémarthrose rapide, puis lâchages aux changements de direction. Le Lachman est positif. La radiographie montre un arrachement de Segond et l’IRM confirme la rupture du LCA, avec une lésion méniscale externe associée. Pas d’urgence chirurgicale : physiothérapie, puis reconstruction à discuter, recommandée chez ce jeune sportif de pivot avec un ménisque à traiter.",
+    keyFindings: [
+      "Mécanisme en valgus et rotation, pied bloqué, avec craquement et arrêt immédiat du jeu.",
+      "Gonflement en moins de 2 h : hémarthrose, donc lésion intra-articulaire (LCA en tête chez le sportif adulte).",
+      "Lâchages aux pivots, sans blocage vrai : instabilité par insuffisance du LCA.",
+      "Lachman positif avec arrêt mou, ligaments collatéraux stables.",
+    ],
+    redFlags: [
+      "Flessum non réductible après le traumatisme : anse de seau méniscale, urgence chirurgicale.",
+      "Laxité multiligamentaire ou luxation du genou : rechercher une lésion de l’artère poplitée et du nerf fibulaire.",
+      "Genou chaud, rouge et fébrile : arthrite septique, ponction.",
+    ],
+    management: [
+      "Phase aiguë : antalgie, charge selon les douleurs, cannes si besoin, glace, physiothérapie précoce pour retrouver la mobilité et le quadriceps.",
+      "Pas de reprise des sports de pivot tant que l’instabilité persiste.",
+      "Avis orthopédique : reconstruction du LCA sous arthroscopie (autogreffe) recommandée chez le jeune sportif de pivot, d’autant qu’une lésion méniscale est à traiter (suture si possible).",
+      "Retour au football de compétition en général 9 à 12 mois après une reconstruction, selon des critères fonctionnels.",
+    ],
+    differentials: [
+      "Lésion du ligament collatéral interne (douleur interne, pas d’hémarthrose, laxité en valgus).",
+      "Luxation de la rotule (adolescent, rotule latéralisée, appréhension).",
+      "Lésion méniscale isolée (gonflement retardé, blocages).",
+      "Lésion ostéochondrale ou fracture du plateau tibial.",
+    ],
+    examReading: [
+      "Radiographie : comblement du récessus suprapatellaire, c’est-à-dire un épanchement.",
+      "Radiographie : petit fragment osseux sous le plateau tibial latéral, l’arrachement de Segond, quasi pathognomonique d’une rupture du LCA (environ 10 % des cas).",
+      "IRM : LCA non visualisé en continuité, donc rompu, avec contusions osseuses typiques du pivot (condyle fémoral latéral et plateau tibial postéro-latéral).",
+      "IRM : lésion de la corne postérieure du ménisque externe, associée dans plus de la moitié des ruptures du LCA ; elle pèse sur le choix chirurgical.",
+    ],
+    sources: [
+      { label: "AAOS 2022 — Management of Anterior Cruciate Ligament Injuries, Clinical Practice Guideline", url: "https://www.aaos.org/quality/quality-programs/anterior-cruciate-ligament-injuries/" },
+      { label: "Brophy RH, Lowry KJ. JAAOS 2023 — Résumé de la recommandation AAOS sur les lésions du LCA", url: "https://pubmed.ncbi.nlm.nih.gov/36727995/" },
+    ],
+    pathologySlugs: [],
+  },
+};

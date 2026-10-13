@@ -13,9 +13,10 @@ import { ListeningBars } from "@/components/brand/BrandLogo";
 import { remainingSeconds } from "@/lib/ecos/timing";
 import { readChatEvents } from "@/lib/ecos/chat-stream";
 import { base64AudioBlob, PatientVoicePlayer } from "./patient-voice";
+import { StationFeedback } from "./StationFeedback";
 
 type Screen = "briefing" | "station" | "report";
-type Phase = "anamnese" | "examen" | "synthese";
+type Phase = "anamnese" | "examen" | "analyse" | "synthese";
 
 type CompletionResponse = {
   xp: number;
@@ -42,6 +43,16 @@ const PHASES: Array<{ id: Phase; label: string }> = [
   { id: "examen", label: "Examen clinique" },
   { id: "synthese", label: "Synthèse" },
 ];
+/** Stations de 5ᵉ année : les examens demandés s'interprètent par écrit avant la synthèse. */
+const PHASES_WITH_ANALYSIS: Array<{ id: Phase; label: string }> = [
+  { id: "anamnese", label: "Anamnèse" },
+  { id: "examen", label: "Examen clinique" },
+  { id: "analyse", label: "Analyse" },
+  { id: "synthese", label: "Synthèse" },
+];
+
+/** Le patient n'est interrogé qu'à l'anamnèse et pendant l'examen clinique. */
+const chatPhase = (phase: Phase) => phase === "anamnese" || phase === "examen";
 
 const PROCEDURE_QUESTIONS: Array<{ category: EcosProcedureCategory; question: string }> = [
   { category: "constantes", question: "Quels paramètres relèves-tu ?" },
@@ -181,6 +192,8 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const [optionsError, setOptionsError] = useState(false);
   const [diagnosis, setDiagnosis] = useState("");
   const [plan, setPlan] = useState("");
+  const [analysis, setAnalysis] = useState("");
+  const [examResults, setExamResults] = useState<Array<{ id: string; label: string; result: string }>>([]);
   const [result, setResult] = useState<CompletionResponse | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const deadline = useRef(0);
@@ -189,11 +202,12 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const messageLock = useRef(false);
   const pendingMessage = useRef<Promise<void> | null>(null);
   const pendingGesture = useRef<Promise<void> | null>(null);
-  const synthesisRef = useRef({ diagnosis: "", plan: "" });
+  const synthesisRef = useRef({ diagnosis: "", plan: "", analysis: "" });
   const phaseRef = useRef<Phase>("anamnese");
   const examAnnounced = useRef(false);
   const focusOnPhase = useRef(false);
   const examHeadingRef = useRef<HTMLHeadingElement>(null);
+  const analysisHeadingRef = useRef<HTMLHeadingElement>(null);
   const synthesisHeadingRef = useRef<HTMLHeadingElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   // Voix du patient (créée au premier clic qui l'active, voir enableVoice).
@@ -220,7 +234,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   const lastMessage = messages.at(-1);
   const lastSystemNote = lastMessage?.role === "system" ? lastMessage.content : null;
 
-  useEffect(() => { synthesisRef.current = { diagnosis, plan }; }, [diagnosis, plan]);
+  useEffect(() => { synthesisRef.current = { diagnosis, plan, analysis }; }, [diagnosis, plan, analysis]);
 
   useEffect(() => {
     transcriptRef.current?.scrollTo({ top: transcriptRef.current.scrollHeight, behavior: "smooth" });
@@ -230,7 +244,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   useEffect(() => {
     if (!focusOnPhase.current) return;
     focusOnPhase.current = false;
-    (phase === "examen" ? examHeadingRef : phase === "synthese" ? synthesisHeadingRef : null)?.current?.focus();
+    (phase === "examen" ? examHeadingRef : phase === "analyse" ? analysisHeadingRef : phase === "synthese" ? synthesisHeadingRef : null)?.current?.focus();
   }, [phase]);
 
   /**
@@ -316,6 +330,8 @@ export function EcosStation({ station }: { station: EcosStationView }) {
     setOptionsError(false);
     setDiagnosis("");
     setPlan("");
+    setAnalysis("");
+    setExamResults([]);
     setResult(null);
     setStationError(null);
     setSecondsLeft(examSeconds);
@@ -358,7 +374,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
 
   async function sendMessage(content: string) {
     const clean = content.trim();
-    if (!clean || clean.length > 800 || messageLock.current || finishLock.current || !sessionId || screen !== "station" || phaseRef.current === "synthese" || timeOver) return;
+    if (!clean || clean.length > 800 || messageLock.current || finishLock.current || !sessionId || screen !== "station" || !chatPhase(phaseRef.current) || timeOver) return;
     messageLock.current = true;
     setLoading(true);
     setInput("");
@@ -450,6 +466,9 @@ export function EcosStation({ station }: { station: EcosStationView }) {
         const data = await response.json() as { label: string; result: string };
         setPerformed((current) => [...current, procedureId]);
         setLastResult({ label: data.label, result: data.result });
+        if (station.procedures.some((procedure) => procedure.id === procedureId && procedure.category === "complementaire")) {
+          setExamResults((current) => [...current, { id: procedureId, label: data.label, result: data.result }]);
+        }
         setMessages((current) => [...current, { role: "student", content: `${PROCEDURE_PREFIX}${data.label}` }, { role: "patient", content: `${EXAMINER_PREFIX}${data.result}` }]);
       } catch (error) {
         setMessages((current) => [...current, { role: "system", content: error instanceof Error && error.message ? error.message : "Le résultat de ce geste n’a pas pu être obtenu." }]);
@@ -472,7 +491,11 @@ export function EcosStation({ station }: { station: EcosStationView }) {
     try {
       await pendingMessage.current;
       await pendingGesture.current;
-      const response = await fetch(`/api/ecos/session/${sessionId}/synthesis`, { method: "POST", signal: AbortSignal.timeout(20_000) });
+      // L'analyse écrite est enregistrée avant que les propositions ne soient connues.
+      const response = await fetch(`/api/ecos/session/${sessionId}/synthesis`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ analysis: synthesisRef.current.analysis }), signal: AbortSignal.timeout(20_000),
+      });
       const data = await response.json() as { options?: string[] };
       if (!response.ok || !data.options?.length) throw new Error("Options indisponibles");
       setOptions(data.options);
@@ -480,15 +503,26 @@ export function EcosStation({ station }: { station: EcosStationView }) {
     finally { setOpeningSynthesis(false); }
   }
 
+  /** L'analyse ferme l'entretien : la conversation vocale s'arrête, l'étudiant peut revenir à l'examen. */
+  function enterAnalysis() {
+    if (!chatPhase(phaseRef.current)) return;
+    if (conversationRef.current) stopConversation();
+    stopSpeaking();
+    changePhase("analyse");
+  }
+
   /** Going to the synthesis closes the history and the exam: ask first. */
   function requestSynthesis() {
     if (phaseRef.current === "synthese") return;
+    // Avec une étape d'analyse, la synthèse s'ouvre depuis l'analyse seulement.
+    if (station.analysis && phaseRef.current !== "analyse") { enterAnalysis(); return; }
     setConfirmingSynthesis(true);
   }
 
   function goToPhase(next: Phase) {
     if (phaseRef.current === "synthese" || next === phaseRef.current) return;
     if (next === "synthese") { requestSynthesis(); return; }
+    if (next === "analyse") { enterAnalysis(); return; }
     if (next === "examen" && phaseRef.current === "anamnese") { void announceExam(); return; }
     changePhase(next);
   }
@@ -508,7 +542,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
 
   /** Ouvre le micro pour une question. Le mode conversation le rappelle après chaque réponse. */
   function beginListening() {
-    if (recognitionRef.current || loading || finishLock.current || screen !== "station" || phaseRef.current === "synthese") return;
+    if (recognitionRef.current || loading || finishLock.current || screen !== "station" || !chatPhase(phaseRef.current)) return;
     // Couper le patient avant d'ouvrir le micro : sinon la dictée transcrit sa voix.
     stopSpeaking();
     const BrowserRecognition = (window as typeof window & { webkitSpeechRecognition?: new () => SpeechRecognition; SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition
@@ -626,7 +660,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   }, [screen, timed, finishStation]);
 
   // Mode conversation : dès que personne ne parle ni ne réfléchit, le micro se rouvre.
-  const conversationIdle = conversation && screen === "station" && phase !== "synthese" && !timeOver
+  const conversationIdle = conversation && screen === "station" && chatPhase(phase) && !timeOver
     && !loading && !speaking && !listening && !saving && !pendingProcedure && !openingSynthesis && !confirmingSynthesis;
   useEffect(() => {
     if (!conversationIdle) return;
@@ -651,7 +685,8 @@ export function EcosStation({ station }: { station: EcosStationView }) {
   }
 
   const examMinutes = Math.round(examSeconds / 60);
-  const phaseIndex = PHASES.findIndex((entry) => entry.id === phase);
+  const phases = station.analysis ? PHASES_WITH_ANALYSIS : PHASES;
+  const phaseIndex = phases.findIndex((entry) => entry.id === phase);
   const stationNumber = station.code.replace(/^station-/, "");
   const briefingMeta = [`Station ${stationNumber}`, SETTING_LABEL[station.setting], station.specialty].filter(Boolean).join(", ");
   // « M. Favre, 62 ans » → « M. Favre » dans l'échange.
@@ -716,7 +751,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
             </div>
             <nav className="ecos-phases" aria-label="Étapes de la station">
               <ol>
-                {PHASES.map((item, index) => {
+                {phases.map((item, index) => {
                   const locked = phase === "synthese" && item.id !== "synthese";
                   return (
                     <li key={item.id}>
@@ -732,7 +767,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
               {timed
                 ? <div className={`timer${secondsLeft < 90 ? " timer-alert" : ""}`} role="timer" aria-live="off"><span>Temps restant</span><strong>{formatTime(secondsLeft)}</strong></div>
                 : <span className="ecos-free-time">Sans chronomètre</span>}
-              <button className="button secondary small" disabled={busy} onClick={() => (phase === "synthese" ? void finishStation() : requestSynthesis())} type="button">{phase === "synthese" ? "Terminer" : "Aller à la synthèse"}</button>
+              <button className="button secondary small" disabled={busy} onClick={() => (phase === "synthese" ? void finishStation() : requestSynthesis())} type="button">{phase === "synthese" ? "Terminer" : station.analysis && phase !== "analyse" ? "Aller à l’analyse" : "Aller à la synthèse"}</button>
             </div>
           </header>
 
@@ -742,10 +777,10 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                 <span className="patient-mark"><ListeningBars state={patientState} /></span>
                 <div>
                   <p className="patient-name voice">{station.patientLabel}</p>
-                  <p className="patient-status">{speaking ? "Vous répond…" : loading ? "Réfléchit…" : listening ? "Vous écoute…" : phase === "examen" ? "Examen en cours" : phase === "synthese" ? "Attend vos conclusions" : "En consultation"}</p>
+                  <p className="patient-status">{speaking ? "Vous répond…" : loading ? "Réfléchit…" : listening ? "Vous écoute…" : phase === "examen" ? "Examen en cours" : !chatPhase(phase) ? "Attend vos conclusions" : "En consultation"}</p>
                 </div>
               </div>
-              {phase !== "synthese" && (
+              {chatPhase(phase) && (
                 <button className={`conversation-toggle${conversation ? " active" : ""}`} onClick={() => (conversation ? stopConversation() : startConversation())} aria-pressed={conversation} type="button">
                   {conversation ? <><Square aria-hidden="true" size={15} /> Arrêter la conversation</> : <><Mic aria-hidden="true" size={17} /> Conversation vocale</>}
                 </button>
@@ -782,7 +817,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
 
               {confirmingSynthesis && phase !== "synthese" && (
                 <div className="ecos-confirm" role="alertdialog" aria-labelledby="ecos-confirm-title">
-                  <p id="ecos-confirm-title"><strong>Passer à la synthèse ?</strong> Tu ne pourras plus interroger le patient ni réaliser de geste.</p>
+                  <p id="ecos-confirm-title"><strong>Passer à la synthèse ?</strong> {station.analysis ? "Tu ne pourras plus interroger le patient, réaliser de geste ni modifier ton analyse." : "Tu ne pourras plus interroger le patient ni réaliser de geste."}</p>
                   <div>
                     <button type="button" className="button secondary small" onClick={() => setConfirmingSynthesis(false)}>Continuer la station</button>
                     <button type="button" className="button primary small" disabled={openingSynthesis} onClick={() => void openSynthesis()}>Ouvrir la synthèse</button>
@@ -828,10 +863,29 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                   {!confirmingSynthesis && (
                     <div className="ecos-phase-actions">
                       <p>{performed.length} geste{performed.length > 1 ? "s" : ""} réalisé{performed.length > 1 ? "s" : ""}.</p>
-                      <button className="button quiet small" aria-disabled={busy || undefined} onClick={() => { if (!busy) requestSynthesis(); }} type="button">Passer à la synthèse</button>
+                      <button className="button quiet small" aria-disabled={busy || undefined} onClick={() => { if (!busy) requestSynthesis(); }} type="button">{station.analysis ? "Passer à l’analyse des examens" : "Passer à la synthèse"}</button>
                     </div>
                   )}
                 </div>
+              )}
+
+              {phase === "analyse" && (
+                <form className="ecos-synthesis ecos-analysis" onSubmit={(event) => { event.preventDefault(); if (!busy) requestSynthesis(); }}>
+                  <h2 ref={analysisHeadingRef} tabIndex={-1}>Analyse des examens</h2>
+                  {examResults.length
+                    ? <div className="ecos-exam-results">{examResults.map((item) => <p key={item.id}><strong>{item.label}</strong>{item.result}</p>)}</div>
+                    : <p>Tu n’as demandé aucun examen complémentaire. <button type="button" className="text-link" onClick={() => goToPhase("examen")}>Revenir à l’examen clinique</button></p>}
+                  <label className="ecos-synthesis-plan">
+                    <span>Ton analyse : décris chaque examen de façon systématique, puis conclus</span>
+                    <textarea maxLength={1200} rows={6} value={analysis} disabled={!examResults.length} onChange={(event) => setAnalysis(event.target.value)} placeholder="Ex. : radiographie de … face et profil, qualité correcte. Alignement…, corticales…, interligne…, parties molles… Conclusion : …" />
+                  </label>
+                  {!confirmingSynthesis && (
+                    <div className="ecos-phase-actions">
+                      <p>Ton analyse est notée dans la grille. Elle est enregistrée à l’ouverture de la synthèse.</p>
+                      <button type="submit" className="button quiet small" aria-disabled={busy || undefined}>Passer à la synthèse</button>
+                    </div>
+                  )}
+                </form>
               )}
 
               {phase === "synthese" && (
@@ -858,7 +912,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                 </form>
               )}
 
-              {phase !== "synthese" && !conversation && (
+              {chatPhase(phase) && !conversation && (
                 <>
                   <form className="composer" onSubmit={submit}>
                     <input
@@ -972,6 +1026,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
                 <DebriefList title="Drapeaux rouges" items={result.debrief.redFlags} />
                 <DebriefList title="Prise en charge attendue" items={result.debrief.management} />
                 <DebriefList title="Diagnostics différentiels" items={result.debrief.differentials} />
+                {result.debrief.examReading && <DebriefList title="Lecture attendue des examens" items={result.debrief.examReading} />}
               </div>
               {result.debrief.fiches.length > 0 && (
                 <div className="ecos-debrief-links">
@@ -988,6 +1043,7 @@ export function EcosStation({ station }: { station: EcosStationView }) {
           ) : !saving && (
             <p className="learning-notice">Le débriefing (diagnostic, points clés et sources) s’affiche une fois le bilan enregistré.</p>
           )}
+          {result && sessionId && !saving && <StationFeedback key={sessionId} sessionId={sessionId} />}
           <p className="medical-disclaimer">Simulation pédagogique. Cette évaluation ne constitue pas une certification clinique.</p>
         </div>
       )}

@@ -1,0 +1,16 @@
+# Reverse proxy devant l'application Next.js (voir compose.yaml).
+# Caddy obtient et renouvelle le certificat TLS, ajoute X-Forwarded-Proto/Host
+# (Next les lit pour reconstruire l'URL publique) et ne tamponne pas les
+# réponses, ce qui préserve le streaming du chat ECOS.
+
+{$APP_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		-Server
+	}
+
+	reverse_proxy app:3000 {
+		flush_interval -1
+	}
+}

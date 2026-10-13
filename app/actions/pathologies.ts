@@ -2,9 +2,9 @@
 
 import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
-import { ApiError } from "../lib/api-security";
-import { enforceRateLimit } from "../lib/rate-limit";
-import { createAdminClient, createClient } from "../../lib/supabase/server";
+import { ApiError } from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { BRAND_NAME } from "@/lib/brand";
 import { ficheIsAccessible } from "@/lib/content/fiche-access";
 

@@ -1,13 +1,15 @@
-import { ApiError, apiJson, assertSameOrigin, handleApiError, requireAuthenticatedUser } from "../../../lib/api-security";
-import { blocksNewCheckout } from "../../../lib/billing";
-import { enforceRateLimit } from "../../../lib/rate-limit";
-import { appOrigin, getStripe } from "../../../lib/stripe";
-import { createAdminClient } from "../../../../lib/supabase/server";
+import { ApiError, apiJson, assertSameOrigin, handleApiError, requireAuthenticatedUser } from "@/app/lib/api-security";
+import { blocksNewCheckout } from "@/app/lib/billing";
+import { FEATURES } from "@/lib/features";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { appOrigin, getStripe } from "@/app/lib/stripe";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
     const user = await requireAuthenticatedUser();
     assertSameOrigin(request);
+    if (!FEATURES.premium) throw new ApiError(404, "billing_unavailable", "Abonnement indisponible");
     const priceId = process.env.STRIPE_PRO_PRICE_ID;
     if (!priceId?.startsWith("price_")) {
       throw new ApiError(503, "billing_unavailable", "Abonnement indisponible");

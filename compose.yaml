@@ -1,0 +1,51 @@
+# Serveur Infomaniak (VPS Cloud / Public Cloud) : application Next.js + Caddy
+# (TLS automatique Let's Encrypt, reverse proxy avec x-forwarded-proto).
+#
+# Pré-requis sur le serveur :
+#   - Docker Engine + plugin compose
+#   - `.env.production` à côté de ce fichier (copie de `.env.example` remplie)
+#   - DNS A/AAAA du domaine vers le serveur, ports 80 et 443 ouverts
+#
+# Démarrage : docker compose --env-file .env.production up -d --build
+# Mise à jour : git pull && docker compose --env-file .env.production up -d --build
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    image: ausculta-app:latest
+    env_file: .env.production
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - web
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?APP_DOMAIN manquant dans .env.production}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      - web
+
+networks:
+  web:
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -2,8 +2,8 @@
 
 import { FileUp, LoaderCircle } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
-import { importAdminQuestionsCsv } from "../../app/actions/admin-questions";
-import { Button } from "../ui/button";
+import { importAdminQuestionsCsv } from "@/app/actions/admin-questions";
+import { Button } from "@/components/ui/button";
 
 export function QuestionCsvImport() {
   const inputRef = useRef<HTMLInputElement>(null);

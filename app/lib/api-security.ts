@@ -1,7 +1,8 @@
 import { BodyTooLargeError, readLimitedBody } from "@/lib/http/body";
+import { isTrustedOrigin } from "@/lib/http/origin";
 import { NextResponse } from "next/server";
 import type { User } from "@supabase/supabase-js";
-import { createClient } from "../../lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { BRAND_NAME } from "@/lib/brand";
 
 export class ApiError extends Error {
@@ -33,12 +34,9 @@ export function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return;
 
-  try {
-    if (new URL(origin).origin !== new URL(request.url).origin) {
-      throw new ApiError(403, "invalid_origin", "Origine refusée");
-    }
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
+  // Derrière un reverse proxy, l'origine publique (`NEXT_PUBLIC_APP_URL`)
+  // est acceptée en plus de celle reconstruite par Next (voir lib/http/origin.ts).
+  if (!isTrustedOrigin(origin, request.url, process.env.NEXT_PUBLIC_APP_URL)) {
     throw new ApiError(403, "invalid_origin", "Origine refusée");
   }
 }

@@ -5,9 +5,9 @@
 import { CheckCircle2, LoaderCircle, Plus, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { saveAdminQuestion, type AdminQuestionInput } from "../../app/actions/admin-questions";
-import type { AdminQuestionDetails, AdminQuestionFormOptions } from "../../lib/admin/questions";
-import { Button } from "../ui/button";
+import { saveAdminQuestion, type AdminQuestionInput } from "@/app/actions/admin-questions";
+import type { AdminQuestionDetails, AdminQuestionFormOptions } from "@/lib/admin/questions";
+import { Button } from "@/components/ui/button";
 
 export function AdminQuestionForm({ metadata, question }: { metadata: AdminQuestionFormOptions; question?: AdminQuestionDetails }) {
   const router = useRouter();

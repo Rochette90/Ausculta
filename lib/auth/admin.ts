@@ -21,7 +21,7 @@ export class AdminAccessError extends Error {
  * Le rôle est toujours relu depuis la base pour l'utilisateur de la session
  * courante : aucune valeur envoyée par le client n'entre dans cette décision.
  */
-export const getAdminContext = cache(async (): Promise<{ user: User | null; isAdmin: boolean }> => {
+const getAdminContext = cache(async (): Promise<{ user: User | null; isAdmin: boolean }> => {
   const user = await getCurrentUser();
   if (!user) return { user: null, isAdmin: false };
   const supabase = await createClient();

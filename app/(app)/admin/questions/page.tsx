@@ -1,12 +1,12 @@
 import { FilePlus2 } from "lucide-react";
 import Link from "next/link";
-import { AdminQuestionList } from "../../../../components/admin/AdminQuestionList";
-import { AdminSectionNav } from "../../../../components/admin/AdminSectionNav";
-import { QuestionCsvImport } from "../../../../components/admin/QuestionCsvImport";
-import { buttonVariants } from "../../../../components/ui/button";
-import { getAdminQuestions } from "../../../../lib/admin/questions";
+import { AdminQuestionList } from "@/components/admin/AdminQuestionList";
+import { AdminSectionNav } from "@/components/admin/AdminSectionNav";
+import { QuestionCsvImport } from "@/components/admin/QuestionCsvImport";
+import { buttonVariants } from "@/components/ui/button";
+import { getAdminQuestions } from "@/lib/admin/questions";
 import { pageTitle } from "@/lib/brand";
-import { requireAdminUser } from "../../../../lib/auth/admin";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Administration des QCM") };

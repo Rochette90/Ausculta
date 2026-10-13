@@ -2,9 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { PATHNAME_HEADER } from "@/lib/brand";
 
-export async function updateSession(request: NextRequest) {
+/**
+ * Rafraîchit la session Supabase et propage `extraRequestHeaders` (chemin
+ * courant, nonce CSP) vers le rendu serveur.
+ */
+export async function updateSession(request: NextRequest, extraRequestHeaders: Record<string, string> = {}) {
   const createResponse = () => {
     const requestHeaders = new Headers(request.headers);
+    for (const [name, value] of Object.entries(extraRequestHeaders)) requestHeaders.set(name, value);
     requestHeaders.set(
       PATHNAME_HEADER,
       `${request.nextUrl.pathname}${request.nextUrl.search}`,

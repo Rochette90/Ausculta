@@ -3,14 +3,15 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "../../lib/supabase/client";
-import { BrandLogo } from "../brand/BrandLogo";
+import { createClient } from "@/lib/supabase/client";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/auth/password";
 
-export function AuthForm({ nextPath, switchNextPath = nextPath, mode }: { nextPath: string; switchNextPath?: string; mode: "login" | "signup" }) {
+export function AuthForm({ nextPath, switchNextPath = nextPath, mode, initialStatus = null }: { nextPath: string; switchNextPath?: string; mode: "login" | "signup"; initialStatus?: string | null }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(initialStatus);
   const [loading, setLoading] = useState(false);
   const isSignup = mode === "signup";
 
@@ -62,7 +63,9 @@ export function AuthForm({ nextPath, switchNextPath = nextPath, mode }: { nextPa
         <label htmlFor="email">Adresse e-mail</label>
         <input className="field" id="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="prenom.nom@unil.ch" />
         <label htmlFor="password">Mot de passe</label>
-        <input className="field" id="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="8 caractères minimum" />
+        <input className="field" id="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} maxLength={PASSWORD_MAX_LENGTH} minLength={PASSWORD_MIN_LENGTH} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder={`${PASSWORD_MIN_LENGTH} caractères minimum`} />
+        {!isSignup && <Link className="auth-help" href="/mot-de-passe-oublie">Mot de passe oublié ?</Link>}
+        {isSignup && <p className="auth-consent">En créant un compte, vous acceptez les <Link href="/cgu">conditions d’utilisation</Link> et la <Link href="/confidentialite">politique de confidentialité</Link>.</p>}
         <button className="button primary full" disabled={loading} type="submit">{loading ? isSignup ? "Création…" : "Connexion…" : isSignup ? "Créer mon compte" : "Se connecter"}</button>
       </form>
       {status && <p className="auth-status" role="status">{status}</p>}

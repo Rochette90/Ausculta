@@ -1,8 +1,8 @@
-import { AdminSectionNav } from "../../../../components/admin/AdminSectionNav";
-import { AdminContactMessages } from "../../../../components/admin/AdminContactMessages";
-import { getAdminContactMessages } from "../../../../lib/admin/queries";
+import { AdminSectionNav } from "@/components/admin/AdminSectionNav";
+import { AdminContactMessages } from "@/components/admin/AdminContactMessages";
+import { getAdminContactMessages } from "@/lib/admin/queries";
 import { pageTitle } from "@/lib/brand";
-import { requireAdminUser } from "../../../../lib/auth/admin";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Messages de contact") };

@@ -73,7 +73,7 @@ export type FicheChapter = {
  * bien rédigée le reclassement ne bouge rien, il ne rattrape que les fiches
  * dont les blocs sont dans le désordre.
  */
-export const FICHE_CHAPTERS: FicheChapter[] = [
+const FICHE_CHAPTERS: FicheChapter[] = [
   { key: "resume", label: "En bref", group: "synthese", icon: "book", match: /^(resume|en bref|objectifs?|introduction|points? cles?)/ },
   { key: "definition", label: "Définition", group: "synthese", icon: "book", match: /^(definition|generalites|nosologie|rappel)/ },
   { key: "classification", label: "Classification", group: "synthese", icon: "layers", match: /^(classification|formes|types|sous-?types|stades?|variantes)/ },
@@ -103,7 +103,7 @@ export const FICHE_CHAPTERS: FicheChapter[] = [
 
 const RANK_BY_KEY = new Map(FICHE_CHAPTERS.map((chapter, index) => [chapter.key, index]));
 
-export function normalizeTitle(title: string) {
+function normalizeTitle(title: string) {
   return title
     .toLowerCase()
     .normalize("NFD")

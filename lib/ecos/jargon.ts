@@ -7,7 +7,7 @@ import { hasAnyKeyword, normalizeEcosText } from "./text.ts";
  */
 export type JargonTerm = { term: string; keywords: string[]; plain: string };
 
-export const MEDICAL_JARGON: readonly JargonTerm[] = [
+const MEDICAL_JARGON: readonly JargonTerm[] = [
   { term: "dyspnée", keywords: ["dyspn"], plain: "essoufflement, du mal à respirer" },
   { term: "irradiation", keywords: ["irradi"], plain: "« Est-ce que la douleur va ailleurs ? »" },
   { term: "céphalées", keywords: ["cephal"], plain: "maux de tête" },

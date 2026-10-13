@@ -1,11 +1,11 @@
 import { FilePenLine, FilePlus2, MessageSquareWarning } from "lucide-react";
 import Link from "next/link";
-import { AdminPathologyList } from "../../../../components/admin/AdminPathologyList";
-import { AdminSectionNav } from "../../../../components/admin/AdminSectionNav";
-import { buttonVariants } from "../../../../components/ui/button";
-import { getAdminPathologies, getAdminPathologyReports } from "../../../../lib/admin/queries";
+import { AdminPathologyList } from "@/components/admin/AdminPathologyList";
+import { AdminSectionNav } from "@/components/admin/AdminSectionNav";
+import { buttonVariants } from "@/components/ui/button";
+import { getAdminPathologies, getAdminPathologyReports } from "@/lib/admin/queries";
 import { BRAND_NAME, pageTitle } from "@/lib/brand";
-import { requireAdminUser } from "../../../../lib/auth/admin";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Administration des fiches") };

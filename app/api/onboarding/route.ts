@@ -7,10 +7,10 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../lib/api-security";
-import { enforceRateLimit } from "../../lib/rate-limit";
-import { createAdminClient } from "../../../lib/supabase/server";
-import { getOnboardingMetadata, isMissingOnboardingColumn } from "../../../lib/onboarding/metadata";
+} from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
+import { getOnboardingMetadata, isMissingOnboardingColumn } from "@/lib/onboarding/metadata";
 import { ONBOARDING_METADATA_KEY } from "@/lib/brand";
 import { ONBOARDING_ASKS_SPECIALTIES } from "@/lib/features";
 

@@ -86,7 +86,7 @@ test("la conversation vocale ne rouvre jamais le micro pendant que le patient pa
   // Pour une réponse, l'attente du flux (loading) puis la lecture (speaking) tiennent le micro fermé.
   assert.match(station, /finally \{\s*if \(player && reply !== null\) player\.end\(reply\);[\s\S]{0,120}setLoading\(false\);/);
   const idle = station.match(/const conversationIdle = ([^;]+);/)?.[1] ?? "";
-  for (const condition of ["conversation", "!loading", "!speaking", "!listening", "phase !== \"synthese\"", "!timeOver"]) {
+  for (const condition of ["conversation", "!loading", "!speaking", "!listening", "chatPhase(phase)", "!timeOver"]) {
     assert.ok(idle.includes(condition), `condition manquante : ${condition}`);
   }
   assert.match(station, /if \(!conversationIdle\) return;[\s\S]+beginListening\(\)/);
@@ -105,7 +105,7 @@ test("la conversation vocale s'arrête proprement et explique pourquoi", async (
   assert.match(station, /setScreen\("report"\);\s*stopSpeaking\(\);[\s\S]{0,160}setConversation\(false\);/);
   assert.match(station, /if \(conversationRef\.current\) stopConversation\(\);/);
   // Le champ de saisie laisse la place à la scène vocale, l'échange écrit reste accessible.
-  assert.match(station, /phase !== "synthese" && !conversation && \(/);
+  assert.match(station, /chatPhase\(phase\) && !conversation && \(/);
   assert.match(station, /Afficher l’échange écrit/);
   // Une question tapée au clavier n'est jamais effacée par une dictée muette.
   assert.match(station, /if \(showedInterim\) setInput\(""\);/);

@@ -2,11 +2,11 @@
 
 import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
-import type { PathologySectionKey } from "../../types/content";
-import { AdminAccessError, assertAdminUser } from "../../lib/auth/admin";
-import { getCurrentUser } from "../../lib/auth/require-user";
-import { createAdminClient } from "../../lib/supabase/server";
-import { enforceRateLimit } from "../lib/rate-limit";
+import type { PathologySectionKey } from "@/types/content";
+import { AdminAccessError, assertAdminUser } from "@/lib/auth/admin";
+import { getCurrentUser } from "@/lib/auth/require-user";
+import { createAdminClient } from "@/lib/supabase/server";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
 import { BRAND_NAME } from "@/lib/brand";
 import { ficheIsAccessible } from "@/lib/content/fiche-access";
 

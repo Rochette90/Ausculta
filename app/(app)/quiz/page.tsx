@@ -11,13 +11,13 @@ import {
   Target,
 } from "lucide-react";
 import Link from "next/link";
-import { DailyQuizCard } from "../../../components/quiz/DailyQuizCard";
-import { SpecialtyIcon } from "../../../components/content/SpecialtyIcon";
-import { buttonVariants } from "../../../components/ui/button";
-import { requireUser } from "../../../lib/auth/require-user";
-import { cn } from "../../../lib/utils";
-import { getDailyQuiz, getDailyQuizAttempt } from "../../../lib/quiz/daily";
-import { getSpecialtyQuizCatalog } from "../../../lib/quiz/specialty";
+import { DailyQuizCard } from "@/components/quiz/DailyQuizCard";
+import { SpecialtyIcon } from "@/components/content/SpecialtyIcon";
+import { buttonVariants } from "@/components/ui/button";
+import { requireUser } from "@/lib/auth/require-user";
+import { cn } from "@/lib/utils";
+import { getDailyQuiz, getDailyQuizAttempt } from "@/lib/quiz/daily";
+import { getSpecialtyQuizCatalog } from "@/lib/quiz/specialty";
 import { pageTitle } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";

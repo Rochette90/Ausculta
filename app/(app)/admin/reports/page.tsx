@@ -1,9 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { AdminReports } from "../../../../components/admin/AdminReports";
-import { getAdminPathologyReports } from "../../../../lib/admin/queries";
+import { AdminReports } from "@/components/admin/AdminReports";
+import { getAdminPathologyReports } from "@/lib/admin/queries";
 import { pageTitle } from "@/lib/brand";
-import { requireAdminUser } from "../../../../lib/auth/admin";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Signalements des fiches") };

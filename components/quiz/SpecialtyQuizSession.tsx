@@ -17,11 +17,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { answerQuestion, type AnswerQuestionResult } from "../../app/actions/quiz";
-import type { SpecialtyQuiz } from "../../lib/quiz/specialty";
-import { cn } from "../../lib/utils";
-import { SpecialtyIcon } from "../content/SpecialtyIcon";
-import { Button, buttonVariants } from "../ui/button";
+import { answerQuestion, type AnswerQuestionResult } from "@/app/actions/quiz";
+import type { SpecialtyQuiz } from "@/lib/quiz/specialty";
+import { cn } from "@/lib/utils";
+import { SpecialtyIcon } from "@/components/content/SpecialtyIcon";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { QuizAnswerList, QuizDifficultyBadge } from "./QuizPrimitives";
 import { PROGRESS_EVENT_NAME } from "@/lib/brand";
 

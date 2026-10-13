@@ -133,7 +133,8 @@ test("la route de discussion passe par cette couche et journalise les échecs sa
     read("../components/ecos/EcosStation.tsx"),
     read("../.env.example"),
   ]);
-  assert.match(route, /const chain = patientAiChain\(\);/);
+  // La chaîne n'est construite que sous le plafond global du jour (voir tests/ecos-quotas.test.mjs).
+  assert.match(route, /const chain = modelWithinGlobalQuota \? patientAiChain\(\) : \[\];/);
   assert.match(route, /streamPatientReply\(\{/);
   // Si aucun modèle ne répond, le moteur local répond toujours.
   assert.match(route, /fallback: \(\) => localPatientReply\(scenario, message, turn\)/);

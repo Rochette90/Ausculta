@@ -3,7 +3,7 @@
 import { ArrowRight, BadgeCheck, FilePenLine, RotateCcw, Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { AdminPathologyListItem } from "../../lib/admin/queries";
+import type { AdminPathologyListItem } from "@/lib/admin/queries";
 
 export function AdminPathologyList({ pathologies }: { pathologies: AdminPathologyListItem[] }) {
   const [query, setQuery] = useState("");

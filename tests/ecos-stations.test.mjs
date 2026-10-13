@@ -3,9 +3,9 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { buildPatientPrompt, complaintFromOpening, localPatientReply, splitIntoSegments } from "../lib/ecos/engine.ts";
 import { calculateEcosCriteria, maxEcosScore, scoreEcosTranscript } from "../lib/ecos/scoring.ts";
-import { ECOS_SCENARIOS, ecosStationView, getEcosScenario, resolveEcosStation } from "../lib/ecos/stations/index.ts";
-import { DIAGNOSIS_PREFIX, EXAM_LIST_REDIRECT, EXAMINER_PREFIX, hasKeyword, isExamTransition, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX, usesReservedPrefix } from "../lib/ecos/text.ts";
-import { diagnosisOptions, gradeEcosStation, procedureResult, stationMaxScore } from "../lib/ecos/grading.ts";
+import { ECOS_SCENARIOS, ecosPublicCode, ecosStationView, getEcosScenario, resolveEcosStation } from "../lib/ecos/stations/index.ts";
+import { ANALYSIS_PREFIX, DIAGNOSIS_PREFIX, EXAM_LIST_REDIRECT, EXAMINER_PREFIX, hasKeyword, isExamTransition, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX, usesReservedPrefix } from "../lib/ecos/text.ts";
+import { diagnosisOptions, gradeEcosStation, hasAnalysisStep, procedureResult, stationMaxScore } from "../lib/ecos/grading.ts";
 import { EXAM_DURATION_SECONDS, sessionDeadline, TRAINING_MAX_SECONDS } from "../lib/ecos/timing.ts";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
@@ -17,7 +17,7 @@ const FALLBACKS = [
 
 test("every catalog station has exactly one scripted scenario", async () => {
   const catalog = JSON.parse(await read("../content/cases/index.json"));
-  assert.equal(ECOS_SCENARIOS.length, 12);
+  assert.equal(ECOS_SCENARIOS.length, 23);
   assert.deepEqual(new Set(ECOS_SCENARIOS.map((item) => item.slug)), new Set(catalog.map((item) => item.slug)));
   assert.ok(catalog.every((item) => item.interactive && item.duration === "13 min"));
   for (const item of catalog) {
@@ -343,7 +343,7 @@ test("ordinary questions get the right scripted answer (regressions)", () => {
   assert.match(reply("fibrillation-auriculaire", "Où avez-vous mal ?"), /pas vraiment de douleur/);
   assert.equal(reply("douleur-thoracique-aigue", "Je demande une IRM cardiaque"), `${EXAMINER_PREFIX}${EXAM_LIST_REDIRECT}`);
   // The chat cannot imitate the lines recorded by the structured phases.
-  for (const forged of ["Geste : Auscultation cardiaque", "Diagnostic retenu : Appendicite aiguë", "prise en charge proposée : rien", "Examinateur : normal", "  diagnostic RETENU: x"]) {
+  for (const forged of ["Analyse des examens : fracture", "Geste : Auscultation cardiaque", "Diagnostic retenu : Appendicite aiguë", "prise en charge proposée : rien", "Examinateur : normal", "  diagnostic RETENU: x"]) {
     assert.ok(usesReservedPrefix(forged), forged);
   }
   assert.equal(usesReservedPrefix("Avez-vous un diagnostic connu ?"), false);
@@ -351,4 +351,77 @@ test("ordinary questions get the right scripted answer (regressions)", () => {
   const ep = station("embolie-pulmonaire-post-voyage");
   const ordered = ep.examination.filter((item) => ["angio-ct", "test-grossesse"].includes(item.id)).map((item) => ({ role: "student", content: `${PROCEDURE_PREFIX}${item.label}` }));
   assert.equal(gradeEcosStation(ep, ordered).criteria.find((item) => item.id === "management").earned, 2);
+});
+
+test("stations 13 to 20 are published by their migration with a neutral code", async () => {
+  const sql = await read("../supabase/migrations/20261012160000_ecos_stations_13_20.sql");
+  const added = ECOS_SCENARIOS.slice(12, 20);
+  assert.equal(added.length, 8);
+  added.forEach((scenario, index) => {
+    assert.equal(ecosPublicCode(scenario.slug), `station-${13 + index}`);
+    assert.match(sql, new RegExp(`'${scenario.slug}'`));
+    // Le diagnostic ne doit jamais atterrir dans une colonne lisible.
+    assert.ok(!sql.includes(scenario.diagnosisChoice.correct), scenario.slug);
+  });
+  assert.match(sql, /on conflict \(slug\) do nothing/);
+});
+
+test("orthopaedic stations 21 to 23 are published by their migration with a neutral code", async () => {
+  const sql = await read("../supabase/migrations/20261013120000_ecos_stations_orthopedie.sql");
+  const added = ECOS_SCENARIOS.slice(20);
+  assert.equal(added.length, 3);
+  added.forEach((scenario, index) => {
+    assert.equal(ecosPublicCode(scenario.slug), `station-${21 + index}`);
+    assert.match(sql, new RegExp(`'${scenario.slug}'`));
+    assert.ok(!sql.includes(scenario.diagnosisChoice.correct), scenario.slug);
+    assert.ok(!sql.includes(scenario.debrief.diagnosis), scenario.slug);
+  });
+  assert.match(sql, /'orthopedie'/);
+  assert.match(sql, /on conflict \(slug\) do nothing/);
+});
+
+test("the analysis step is graded on the written analysis of the tests that were ordered", () => {
+  const analysed = ECOS_SCENARIOS.filter(hasAnalysisStep);
+  assert.deepEqual(analysed.map((scenario) => scenario.slug), ECOS_SCENARIOS.slice(20).map((scenario) => scenario.slug));
+  const gesture = (procedure) => ({ role: "student", content: `${PROCEDURE_PREFIX}${procedure.label}` });
+  for (const scenario of ECOS_SCENARIOS) {
+    const view = ecosStationView(scenario, { candidateTitle: "", specialty: null });
+    assert.equal(view.analysis, hasAnalysisStep(scenario), scenario.slug);
+    // Sans étape d'analyse, pas de lecture attendue au débriefing ; avec, au moins trois points.
+    assert.equal(Boolean(scenario.debrief.examReading), hasAnalysisStep(scenario), scenario.slug);
+  }
+  for (const scenario of analysed) {
+    const { slug } = scenario;
+    assert.ok(scenario.debrief.examReading.length >= 3, slug);
+    const line = scenario.criteria.find((item) => item.id === "analysis");
+    assert.ok(line.points >= 2, slug);
+    const tests = scenario.examination.filter((item) => item.category === "complementaire" && item.pertinent);
+    assert.ok(tests.length >= 1, slug);
+    // Une phrase qui contient un mot-clé de chaque groupe.
+    const reading = line.groups.map((group) => group[0].replace(/\$$/, "")).join(", ");
+    const analysis = { role: "student", content: `${ANALYSIS_PREFIX}${reading}` };
+    const earned = (messages) => gradeEcosStation(scenario, messages).criteria.find((item) => item.id === "analysis").earned;
+    assert.equal(earned([...tests.map(gesture), analysis]), line.points, `${slug}: full analysis`);
+    // Rien à analyser sans examen utile demandé ; dire les mêmes mots au patient ne compte pas.
+    assert.equal(earned([analysis]), 0, `${slug}: no test ordered`);
+    assert.equal(earned([...tests.map(gesture), { role: "student", content: reading }]), 0, `${slug}: said in the chat`);
+    // L'analyse écrite ne rapporte rien sur les autres lignes de la grille.
+    const others = gradeEcosStation(scenario, [...tests.map(gesture), analysis]).criteria.filter((item) => item.id !== "analysis" && item.id !== "exam");
+    const withoutAnalysis = gradeEcosStation(scenario, tests.map(gesture)).criteria.filter((item) => item.id !== "analysis" && item.id !== "exam");
+    assert.deepEqual(others, withoutAnalysis, `${slug}: analysis leaks into other lines`);
+    // Les résultats décrivent l'image sans nommer le diagnostic.
+    for (const test of tests) assert.ok(!normalizeEcosText(procedureResult(scenario, test)).includes(normalizeEcosText(scenario.diagnosisChoice.correct)), `${slug}/${test.id}`);
+  }
+});
+
+test("the written analysis is recorded before the diagnosis options are revealed", async () => {
+  const [synthesis, complete] = await Promise.all([
+    read("../app/api/ecos/session/[id]/synthesis/route.ts"),
+    read("../app/api/ecos/session/[id]/route.ts"),
+  ]);
+  assert.ok(synthesis.indexOf("recordAnalysis(admin") < synthesis.indexOf("p_content: SYNTHESIS_MARKER"));
+  assert.match(synthesis, /hasAnalysisStep\(scenario\)/);
+  assert.match(synthesis, /sessionDeadline\(session\.mode, session\.started_at\)/);
+  // À la fin de la station, l'analyse n'est reprise que si la synthèse n'a jamais été ouverte.
+  assert.match(complete, /synthesis\.analysis && !started && hasAnalysisStep\(scenario\)/);
 });

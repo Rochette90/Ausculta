@@ -1,10 +1,10 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdminQuestionForm } from "../../../../../components/admin/AdminQuestionForm";
-import { AdminSectionNav } from "../../../../../components/admin/AdminSectionNav";
-import { getAdminQuestion, getAdminQuestionFormOptions } from "../../../../../lib/admin/questions";
-import { requireAdminUser } from "../../../../../lib/auth/admin";
+import { AdminQuestionForm } from "@/components/admin/AdminQuestionForm";
+import { AdminSectionNav } from "@/components/admin/AdminSectionNav";
+import { getAdminQuestion, getAdminQuestionFormOptions } from "@/lib/admin/questions";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 type PageProps = { params: Promise<{ id: string }> };

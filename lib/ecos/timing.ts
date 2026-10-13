@@ -10,7 +10,7 @@ export const EXAM_DURATION_SECONDS = 13 * 60;
 /** Training has no clock; an abandoned session still closes after 3 hours. */
 export const TRAINING_MAX_SECONDS = 3 * 60 * 60;
 /** Network latency allowance before the server refuses a late action. */
-export const SUBMISSION_GRACE_SECONDS = 30;
+const SUBMISSION_GRACE_SECONDS = 30;
 
 export function parseEcosMode(value: unknown): EcosMode {
   return value === "exam" ? "exam" : "training";

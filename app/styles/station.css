@@ -190,6 +190,9 @@
 .ecos-last-result { padding: 14px 16px; border-radius: var(--radius-md); background: var(--paper); }
 .ecos-last-result p { margin: 0; color: var(--ink-secondary); font-size: 16px; line-height: 1.55; }
 .ecos-last-result strong { display: block; margin-bottom: 2px; color: var(--ink); }
+.ecos-exam-results { display: grid; gap: 10px; margin-bottom: 18px; }
+.ecos-exam-results p { margin: 0; padding: 14px 16px; border-radius: var(--radius-md); background: var(--paper); color: var(--ink-secondary); font-size: 16px; line-height: 1.55; }
+.ecos-exam-results strong { display: block; margin-bottom: 2px; color: var(--ink); }
 
 /* Synthèse */
 .ecos-synthesis { display: grid; gap: 20px; padding: clamp(20px, 3vw, 28px); border-radius: var(--radius-lg); background: var(--surface); }
@@ -296,6 +299,21 @@
 .ecos-debrief-links > div { display: flex; flex-wrap: wrap; gap: 10px 22px; }
 .ecos-debrief-sources a { color: var(--primary); overflow-wrap: anywhere; }
 .ecos-debrief-sources p { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+
+/* Avis de fin de station */
+.station-feedback > p { margin: 6px 0 18px; color: var(--ink-secondary); }
+.station-feedback form { display: grid; gap: 16px; max-width: 560px; }
+.station-feedback form > .button { justify-self: start; }
+.station-feedback-rating { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; border: 0; }
+.station-feedback-rating legend { margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+.station-feedback-rating label { cursor: pointer; font-size: 28px; line-height: 1; color: var(--line); transition: color 120ms ease; }
+.station-feedback-rating label.is-on { color: var(--amber); }
+.station-feedback-rating label:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-sm); }
+.station-feedback-rating input { position: absolute; opacity: 0; pointer-events: none; }
+.station-feedback-hint { margin-left: 10px; color: var(--muted); font-size: 14px; }
+.station-feedback-field { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.station-feedback-field select, .station-feedback-field textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--paper); color: var(--ink); font: inherit; font-weight: 400; }
+.station-feedback-error { margin: 0; color: var(--red-dark); font-size: 14px; }
 @media (max-width: 760px) { .ecos-debrief-grid { grid-template-columns: minmax(0, 1fr); } }
 
 .question-mix { margin: 18px 0 8px; }

@@ -6,32 +6,34 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../../../lib/api-security";
-import { enforceRateLimit } from "../../../../lib/rate-limit";
+} from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
 import { BRAND_NAME } from "@/lib/brand";
 import { communicationReport } from "@/lib/ecos/communication";
 import { debriefView } from "@/lib/ecos/debrief";
-import { diagnosisOptions, EXAM_CRITERION_ID, gradeEcosStation, storedTranscript } from "@/lib/ecos/grading";
+import { diagnosisOptions, EXAM_CRITERION_ID, gradeEcosStation, hasAnalysisStep, storedTranscript } from "@/lib/ecos/grading";
 import { patientAiChain } from "@/lib/ecos/patient-ai";
 import { requestReview, reviewLine, withoutReview } from "@/lib/ecos/review";
-import { synthesisStarted } from "@/lib/ecos/sessions";
+import { MAX_ANALYSIS_LENGTH, recordAnalysis, synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { DIAGNOSIS_PREFIX, PLAN_PREFIX } from "@/lib/ecos/text";
 import { sessionDeadline } from "@/lib/ecos/timing";
 import type { EcosMessage, EcosScenario } from "@/lib/ecos/types";
-import { createAdminClient } from "../../../../../lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 const MAX_PLAN_LENGTH = 1_200;
 
 /** Optional synthesis sent with the end of the station. */
 async function readSynthesis(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
-  if (!contentType.includes("application/json")) return { diagnosis: "", plan: "" };
-  const body = await readJsonObject(request, 4_096);
+  if (!contentType.includes("application/json")) return { diagnosis: "", plan: "", analysis: "" };
+  const body = await readJsonObject(request, 12_288);
   const diagnosis = typeof body.diagnosis === "string" ? body.diagnosis.trim() : "";
   const plan = typeof body.plan === "string" ? body.plan.trim() : "";
+  const analysis = typeof body.analysis === "string" ? body.analysis.trim() : "";
   if (plan.length > MAX_PLAN_LENGTH) throw new ApiError(400, "invalid_plan", "Prise en charge trop longue");
-  return { diagnosis, plan };
+  if (analysis.length > MAX_ANALYSIS_LENGTH) throw new ApiError(400, "invalid_analysis", "Analyse trop longue");
+  return { diagnosis, plan, analysis };
 }
 
 /** Bilan renvoyé au navigateur : grille, communication et débriefing. */
@@ -88,10 +90,14 @@ export async function POST(
     // La synthèse n'est enregistrée que dans le temps imparti ; au-delà, la
     // station est corrigée avec ce qui a été fait avant l'échéance.
     if (Date.now() <= sessionDeadline(session.mode, session.started_at)) {
+      const started = await synthesisStarted(admin, id, user.id);
+      // Temps écoulé avant la synthèse : l'analyse en cours compte encore,
+      // puisqu'aucune proposition de diagnostic n'a été vue.
+      if (synthesis.analysis && !started && hasAnalysisStep(scenario)) await recordAnalysis(admin, id, user.id, synthesis.analysis);
       const lines: string[] = [];
       if (synthesis.diagnosis) {
         // Les propositions ne sont connues qu'après l'ouverture de la synthèse.
-        if (!(await synthesisStarted(admin, id, user.id))) {
+        if (!started) {
           throw new ApiError(409, "synthesis_not_started", "Ouvre la synthèse avant de proposer un diagnostic.");
         }
         if (!diagnosisOptions(scenario, id).includes(synthesis.diagnosis)) {

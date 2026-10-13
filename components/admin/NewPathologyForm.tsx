@@ -3,9 +3,9 @@
 import { CheckCircle2, LoaderCircle, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { createAdminPathology, type CreateAdminPathologyInput } from "../../app/actions/admin-pathologies";
-import type { AdminSpecialtyOption } from "../../lib/admin/queries";
-import { Button } from "../ui/button";
+import { createAdminPathology, type CreateAdminPathologyInput } from "@/app/actions/admin-pathologies";
+import type { AdminSpecialtyOption } from "@/lib/admin/queries";
+import { Button } from "@/components/ui/button";
 
 function slugify(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()

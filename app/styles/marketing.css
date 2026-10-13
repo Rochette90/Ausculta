@@ -168,6 +168,15 @@
 .plan li { position: relative; padding-left: 26px; color: var(--ink-secondary); font-size: 16px; line-height: 1.5; }
 .plan li::before { content: ""; position: absolute; left: 4px; top: .6em; width: 10px; height: 4px; border-radius: 2px; background: var(--bar-2); }
 .plan .button { margin-top: 32px; }
+.plan-error { margin: 12px 0 0; color: var(--danger, #b42318); font-size: 15px; }
+.plans-table { width: 100%; margin: 40px 0 0; border-collapse: collapse; font-size: 16px; }
+.plans-table caption { padding: 0 0 14px; text-align: left; color: var(--ink); font-size: 20px; font-weight: 650; }
+.plans-table th, .plans-table td { padding: 14px 12px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.45; }
+.plans-table thead th { border-top: 0; color: var(--muted); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.plans-table tbody th { color: var(--ink); font-weight: 600; }
+.plans-table td { color: var(--ink-secondary); }
+.plans-table td:last-child { color: var(--ink); }
+@media (max-width: 640px) { .plans-table { font-size: 15px; } .plans-table th, .plans-table td { padding: 12px 8px; } }
 .plans-notes { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 28px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 15px; }
 
 /* --- À propos ------------------------------------------------------------ */

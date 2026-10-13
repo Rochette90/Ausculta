@@ -1,6 +1,6 @@
 import type { EcosMessage } from "./types.ts";
 import { unexplainedJargon } from "./jargon.ts";
-import { DIAGNOSIS_PREFIX, hasAnyKeyword, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX } from "./text.ts";
+import { ANALYSIS_PREFIX, DIAGNOSIS_PREFIX, hasAnyKeyword, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX } from "./text.ts";
 
 /**
  * Bilan de communication de l'entretien, calculé sur les seuls messages que
@@ -66,12 +66,12 @@ const CONCERNS = ["qu est ce qui vous inquiet", "ce qui vous inquiet", "ca vous 
 const SUMMARY = ["si je resume", "pour resumer", "je resume", "en resume", "si je comprends bien", "si j ai bien compris", "recapitul", "vous me dites que", "si je vous suis bien"];
 const UNDERSTANDING = ["avez vous des questions", "des questions", "est ce clair", "c est clair", "avez vous compris", "vous avez compris", "est ce que vous comprenez", "vous comprenez", "est ce que ca vous va", "ca vous va", "pouvez vous me redire", "pouvez vous reformuler", "qu avez vous retenu"];
 
-/** Messages de l'étudiant au patient : ni geste, ni diagnostic, ni prise en charge écrite. */
-export function interviewLines(messages: readonly EcosMessage[]): string[] {
+/** Messages de l'étudiant au patient : ni geste, ni diagnostic, ni analyse ou prise en charge écrite. */
+function interviewLines(messages: readonly EcosMessage[]): string[] {
   return messages
     .filter((message) => message.role === "student")
     .map((message) => message.content)
-    .filter((content) => ![PROCEDURE_PREFIX, DIAGNOSIS_PREFIX, PLAN_PREFIX].some((prefix) => content.startsWith(prefix)));
+    .filter((content) => ![PROCEDURE_PREFIX, DIAGNOSIS_PREFIX, PLAN_PREFIX, ANALYSIS_PREFIX].some((prefix) => content.startsWith(prefix)));
 }
 
 const startsWithAny = (text: string, starts: readonly string[]) => starts.some((start) => {
@@ -92,7 +92,7 @@ function withoutFillers(text: string): string {
  * `asked` : la phrase finit par « ? ». `fallback` : compter la proposition
  * comme question fermée même sans tournure interrogative reconnue.
  */
-export function questionKind(clause: string, asked = false, spoken = false, fallback = asked): QuestionKind | null {
+function questionKind(clause: string, asked = false, spoken = false, fallback = asked): QuestionKind | null {
   const raw = normalizeEcosText(clause);
   if (startsWithAny(raw, OPEN_DIRECTIVES)) return "open";
   const text = withoutFillers(raw);

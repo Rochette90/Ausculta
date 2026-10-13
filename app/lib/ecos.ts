@@ -1,6 +1,6 @@
 // La grille ECOS est désormais propre à chaque station : voir lib/ecos/scoring.ts
 // et lib/ecos/stations. Ce module ne conserve que les récompenses d'activité.
-export type { EcosMessage } from "../../lib/ecos/types.ts";
+export type { EcosMessage } from "@/lib/ecos/types.ts";
 
 export function calculateActivityReward(activityType: string, score: number) {
   const safeScore = Math.min(100, Math.max(0, Math.round(score)));

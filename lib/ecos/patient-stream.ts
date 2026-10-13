@@ -143,7 +143,7 @@ export function createStageDirectionFilter({ speakers = [] }: { speakers?: reado
 }
 
 /** En deçà, une première phrase (« Oui. ») attend la suivante : trop courte pour valoir un envoi à part. */
-export const FIRST_SEGMENT_MIN_CHARACTERS = 20;
+const FIRST_SEGMENT_MIN_CHARACTERS = 20;
 
 /**
  * Fin de phrase suivie d'un blanc. Guillemets et parenthèse fermante suivent

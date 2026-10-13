@@ -1,9 +1,9 @@
 import { ArrowLeft, FilePlus2 } from "lucide-react";
 import Link from "next/link";
-import { NewPathologyForm } from "../../../../../components/admin/NewPathologyForm";
-import { getAdminSpecialties } from "../../../../../lib/admin/queries";
+import { NewPathologyForm } from "@/components/admin/NewPathologyForm";
+import { getAdminSpecialties } from "@/lib/admin/queries";
 import { pageTitle } from "@/lib/brand";
-import { requireAdminUser } from "../../../../../lib/auth/admin";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Nouvelle fiche") };

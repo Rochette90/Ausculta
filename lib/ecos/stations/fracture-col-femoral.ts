@@ -1,0 +1,171 @@
+import type { EcosScenario } from "../types.ts";
+import { communicationCriterion, LABS, LOCATION, ONSET, planReaction, presentationCriterion, treatmentsCriterion, VITALS } from "./shared.ts";
+
+const FALL = ["comment etes vous tombe", "comment vous etes tombe", "comment c est arrive", "que s est il passe", "qu est ce qui s est passe", "racontez", "tombe", "chute", "glisse", "trebuch"];
+const FALL_CAUSE = ["malaise", "vertige", "tete qui tourne", "perdu connaissance", "evanoui", "palpitation", "avant de tomber", "juste avant", "pourquoi etes vous tombe", "cause de la chute"];
+const GROUND_TIME = ["combien de temps", "par terre", "au sol", "relever", "qui vous a trouve", "rester allonge", "appele"];
+const HEAD = ["tete", "cogne", "choc a la tete"];
+const AUTONOMY = ["vivez", "seule", "domicile", "autonom", "besoin d aide", "qui vous aide", "aide a domicile", "soins a domicile", "canne", "deambulat", "marchiez", "courses", "escalier"];
+const COGNITION = ["memoire", "confus", "oubli", "desorient"];
+const FRAGILITY = ["osteopor", "fracture", "os fragiles", "deja casse", "poignet", "densit"];
+const ANTICOAGULATION = ["anticoag", "fluidif", "eclaircir le sang", "eliquis", "apixaban", "xarelto", "sintrom", "marcoumar", "derniere prise", "derniere dose"];
+
+export const fractureColFemoral: EcosScenario = {
+  slug: "fracture-col-femoral",
+  version: 1,
+  setting: "urgences",
+  patient: { name: "Mme Pittet", age: 84, sex: "F" },
+  painful: true,
+  persona: "Dame âgée, lucide et polie, douloureuse dès qu’on bouge sa jambe. Elle minimise (« ce n’est rien, j’ai juste glissé ») et s’inquiète surtout de ne pas pouvoir rentrer chez elle et de son chat. Elle ne parle de son anticoagulant que si on lui demande ses médicaments.",
+  brief: [
+    "Vous êtes médecin assistant·e aux urgences.",
+    "Mme Pittet, 84 ans, est amenée en ambulance après une chute à domicile ; elle ne peut plus se relever.",
+    "Menez l’anamnèse et l’examen clinique ciblés, demandez les examens complémentaires utiles et interprétez-les, puis posez un diagnostic et proposez une prise en charge.",
+  ],
+  opening: "Bonjour docteur… J’ai glissé dans ma cuisine ce matin et je suis tombée sur le côté droit. Depuis, j’ai très mal à la hanche et je n’arrive plus à me lever.",
+  history: {
+    identity: "Jeanne Pittet, 84 ans.",
+    occupation: "Je suis retraitée, j’étais couturière.",
+    living: "Je vis seule dans mon appartement, au premier étage. Ma fille passe deux fois par semaine, je fais encore mes courses avec ma canne.",
+    feeling: "J’ai mal dès que je bouge, sinon ça va.",
+    previousEpisodes: "Je suis déjà tombée l’hiver dernier, je m’étais cassé le poignet gauche.",
+    course: "Ça ne s’arrange pas, et dès qu’on touche ma jambe c’est terrible.",
+    otherSymptoms: "J’ai froid, je suis restée longtemps par terre.",
+    medications: "De l’Eliquis, deux fois par jour, pour le cœur qui bat de travers. Un comprimé pour la tension, l’amlodipine. Et un somnifère le soir, le zolpidem.",
+    allergies: "Pas d’allergie connue.",
+    personalHistory: "Une arythmie du cœur, de la tension, le poignet cassé l’hiver dernier. On m’a dit que j’avais les os un peu fragiles, mais je n’ai pas de traitement pour ça.",
+    familyHistory: "Ma mère s’est cassé le col du fémur, elle aussi.",
+    tobacco: "Non, jamais.",
+    alcohol: "Un petit verre de vin au repas de midi.",
+    drugs: "Non, voyons.",
+    concerns: "Est-ce que je vais pouvoir rentrer chez moi ? Mon chat est tout seul.",
+  },
+  rules: [
+    { topic: "début", keywords: ONSET, reply: "Ce matin vers 6 heures, en allant chercher un verre d’eau à la cuisine." },
+    { topic: "mécanisme de la chute", keywords: FALL, reply: "J’ai glissé sur le carrelage, j’étais en pantoufles. Je suis tombée de ma hauteur, directement sur la hanche droite." },
+    { topic: "cause de la chute", keywords: FALL_CAUSE, reply: "Non, pas de malaise, je n’ai pas eu la tête qui tourne avant. J’ai vraiment glissé. Par contre la nuit je suis un peu dans le coton avec mon somnifère." },
+    { topic: "temps au sol", keywords: GROUND_TIME, reply: "Je suis restée par terre presque trois heures. C’est ma voisine qui m’a entendue appeler vers 9 heures." },
+    { topic: "tête", keywords: HEAD, reply: "Non, je ne me suis pas cogné la tête, je me souviens de tout." },
+    { topic: "localisation", keywords: [...LOCATION, "douleur", "avez vous mal", "ca fait mal", "genou"], reply: "Dans le pli de l’aine à droite, ça descend un peu vers le genou. Je n’ai mal nulle part ailleurs." },
+    { topic: "appui", keywords: ["marcher", "appui", "poser le pied", "lever la jambe", "bouger la jambe", "debout"], reply: "Impossible de me mettre debout, ni même de soulever la jambe." },
+    { topic: "anticoagulant", keywords: ANTICOAGULATION, reply: "Oui, l’Eliquis. Ma dernière prise, c’était hier soir vers 20 heures." },
+    { topic: "autonomie", keywords: AUTONOMY, reply: "Je marche avec une canne dehors, sans rien dans l’appartement. Je me lave et je m’habille seule, ma fille m’aide pour le ménage." },
+    { topic: "mémoire", keywords: COGNITION, reply: "La tête va bien, docteur. Ma fille trouve que j’oublie un peu les rendez-vous, mais c’est l’âge." },
+    { topic: "fragilité osseuse", keywords: FRAGILITY, reply: "Le poignet gauche cassé l’hiver dernier, en tombant sur le trottoir. On m’a parlé d’ostéoporose mais on n’a rien fait de plus." },
+    { topic: "alimentation", keywords: ["mange", "appetit", "poids", "nutrition", "a jeun", "repas", "bu$"], reply: "Je n’ai rien mangé ni bu depuis hier soir. D’habitude je mange un peu comme un oiseau." },
+    { topic: "constantes", examiner: true, keywords: VITALS, reply: "T 35,9 °C, FC 92/min irrégulière, TA 158/84 mmHg, FR 18/min, SpO₂ 95 %. Glasgow 15, patiente orientée." },
+    { topic: "examen de la hanche", examiner: true, keywords: ["inspect", "palpe", "palpation", "raccourci", "rotation externe", "examine la hanche", "examen de la hanche"], reply: "Membre inférieur droit raccourci d’environ 2 cm et en rotation externe. Douleur vive à la palpation du pli inguinal droit et à la mobilisation passive de la hanche ; la patiente ne peut pas décoller le talon du lit. Pas de plaie, pas de déformation de la cuisse." },
+    { topic: "ECG", examiner: true, keywords: ["ecg", "electrocardiogramme"], reply: "ECG : rythme irrégulier sans onde P identifiable, fréquence ventriculaire 90/min, QRS fins, pas de trouble de la repolarisation aigu." },
+    { topic: "bilan sanguin", examiner: true, keywords: [...LABS, "ck$", "cpk", "coagulation", "groupe sanguin"], reply: "Hb 116 g/L, leucocytes 10,2 G/L, créatinine 96 µmol/L (DFG 46 mL/min), K⁺ 4,1 mmol/L, CK 980 U/L, INR 1,2. Activité anti-Xa (apixaban) en cours. Groupe et anticorps irréguliers prélevés." },
+    planReaction("Une opération, à mon âge ? Et qui va nourrir mon chat ?", ["operer", "operation", "prothese", "chirurg", "orthoped"]),
+  ],
+  examination: [
+    { id: "constantes", label: "Constantes vitales et Glasgow", category: "constantes", pertinent: true, topic: "constantes" },
+    { id: "hanche", label: "Inspection et palpation des membres inférieurs, mobilisation de la hanche", category: "examen", pertinent: true, topic: "examen de la hanche" },
+    { id: "neurovasculaire", label: "Pouls distaux, sensibilité et motricité du pied droit", category: "examen", pertinent: true, result: "Pouls pédieux et tibial postérieur droits présents, sensibilité et motricité des orteils conservées." },
+    { id: "peau", label: "Examen cutané des points d’appui", category: "examen", pertinent: true, result: "Rougeur qui ne blanchit pas à la pression sur le talon droit et en regard du grand trochanter droit, sans plaie." },
+    { id: "neurologique", label: "Examen neurologique complet", category: "examen", pertinent: false, result: "Pas de déficit focal. Il n’apporte rien de plus ici : pas de malaise, pas de choc à la tête." },
+    { id: "ecg", label: "ECG", category: "complementaire", pertinent: true, topic: "ECG" },
+    { id: "bilan-sanguin", label: "Bilan sanguin (FSC, créatinine, électrolytes, CK, crase, groupe)", category: "complementaire", pertinent: true, topic: "bilan sanguin" },
+    { id: "radiographie", label: "Radiographie du bassin de face et de la hanche droite de profil axial", category: "complementaire", pertinent: true, result: "Radiographie du bassin de face et de la hanche droite de profil axial, de qualité correcte. Interruption des corticales supérieure et inférieure du col fémoral droit, juste sous la tête fémorale. Le fût fémoral est ascensionné et tourné en rotation externe ; les travées de la tête ne sont plus en continuité avec celles du col. Les trochanters sont intacts. Cadres obturateurs, branches pubiennes et cotyles sans interruption corticale. Déminéralisation diffuse, corticales fines. Pincement modéré de l’interligne coxo-fémoral gauche." },
+    { id: "ct-cerebral", label: "CT cérébral", category: "complementaire", pertinent: false, result: "Non indiqué : pas de traumatisme crânien, pas de trouble de la vigilance." },
+    { id: "irm", label: "IRM de la hanche", category: "complementaire", pertinent: false, result: "Non indiquée : la radiographie est contributive. L’IRM se discute seulement si la radiographie est normale et la suspicion persiste." },
+    { id: "d-dimeres", label: "D-dimères", category: "complementaire", pertinent: false, result: "2,8 mg/L : non interprétables après un traumatisme et chez une patiente de 84 ans." },
+  ],
+  diagnosisChoice: { correct: "Fracture du col fémoral droit déplacée", distractors: ["Fracture pertrochantérienne droite", "Fracture des branches ilio- et ischio-pubiennes droites", "Luxation postérieure de la hanche droite"] },
+  criteria: [
+    presentationCriterion,
+    {
+      id: "fall",
+      label: "Explore la chute",
+      hint: "Mécanisme, cause (malaise, vertige), temps passé au sol, choc à la tête",
+      points: 4,
+      groups: [FALL, FALL_CAUSE, GROUND_TIME, HEAD],
+    },
+    {
+      id: "terrain",
+      label: "Évalue le terrain gériatrique",
+      hint: "Autonomie et lieu de vie, cognition, fractures antérieures et ostéoporose",
+      points: 3,
+      groups: [AUTONOMY, COGNITION, FRAGILITY],
+    },
+    treatmentsCriterion,
+    {
+      id: "anticoagulation",
+      label: "Précise l’anticoagulant et sa dernière prise",
+      hint: "Molécule, indication, heure de la dernière dose : elles conditionnent l’heure de l’opération",
+      points: 1,
+      groups: [ANTICOAGULATION],
+    },
+    {
+      id: "exam",
+      label: "Examen ciblé",
+      hint: "Constantes, attitude du membre, status neurovasculaire, points d’appui",
+      points: 2,
+      groups: [VITALS, ["hanche", "jambe", "raccourci", "rotation"]],
+    },
+    {
+      id: "analysis",
+      label: "Interprète la radiographie",
+      hint: "Fracture du col fémoral sous-capitale, déplacée (Garden IV), os déminéralisé, pas d’autre fracture du bassin",
+      points: 3,
+      groups: [
+        ["col femoral", "col du femur", "col$", "sous capital", "intracapsul"],
+        ["deplac", "garden", "instable", "ascension", "rotation externe", "bascul"],
+        ["osteopen", "demineralis", "osteopor", "fragil", "corticales fines"],
+        ["trochanter", "branche", "cadre", "bassin", "pas d autre fracture", "cotyle"],
+      ],
+    },
+    {
+      id: "management",
+      label: "Organise une prise en charge orthogériatrique",
+      hint: "Antalgie (bloc), chirurgie rapide par arthroplastie, gestion de l’apixaban, prévention du delirium et des escarres, bilan de chute et d’ostéoporose",
+      points: 3,
+      groups: [
+        ["chirurg", "operer", "operation", "prothese", "arthroplast", "orthoped"],
+        ["antalg", "morphin", "bloc", "paracetamol", "opio", "fascia iliaca"],
+        ["delir", "confusion", "escarre", "nutrition", "hydrat", "geriat", "orthogeriat", "mobilis"],
+        ["osteopor", "densito", "vitamine d", "bisphosph", "prevention des chutes", "bilan de chute"],
+      ],
+    },
+    communicationCriterion,
+  ],
+  debrief: {
+    diagnosis: "Fracture sous-capitale du col fémoral droit, déplacée (Garden IV), sur chute de sa hauteur chez une patiente ostéoporotique sous apixaban",
+    summary: "Chute mécanique de sa hauteur chez une dame de 84 ans, avec impotence fonctionnelle, membre raccourci en rotation externe et trois heures passées au sol. La radiographie montre une fracture du col fémoral déplacée sur un os déminéralisé. C’est une urgence médicale et chirurgicale : antalgie par bloc, arthroplastie dans les 24 à 48 heures en tenant compte de l’apixaban et de la fonction rénale, prise en charge orthogériatrique, puis bilan de chute et traitement de l’ostéoporose.",
+    keyFindings: [
+      "Chute de sa hauteur : fracture de fragilité ; deuxième fracture après le poignet.",
+      "Membre inférieur raccourci et en rotation externe, impossibilité de lever la jambe tendue.",
+      "Trois heures au sol : hypothermie légère, CK élevées, rougeurs aux points d’appui.",
+      "Apixaban pris la veille au soir, DFG 46 mL/min : à intégrer dans le timing chirurgical et l’anesthésie.",
+    ],
+    redFlags: [
+      "Chute précédée d’un malaise : chercher une cause cardiaque ou neurologique (ECG, examen).",
+      "Long séjour au sol : rhabdomyolyse, insuffisance rénale, escarres, hypothermie.",
+      "Delirium : jusqu’à la moitié des patients âgés opérés de la hanche ; benzodiazépines et hypnotiques à éviter.",
+    ],
+    management: [
+      "Antalgie précoce : paracétamol et bloc du nerf fémoral ou du fascia iliaca, opioïdes à faible dose si besoin.",
+      "Avis orthopédique : fracture déplacée chez une patiente âgée, donc arthroplastie (hémi-arthroplastie ou prothèse totale selon l’autonomie, cimentée), idéalement le jour même ou le lendemain.",
+      "Apixaban suspendu, heure d’opération discutée avec l’anesthésie selon la dernière prise et la fonction rénale ; thromboprophylaxie après l’opération.",
+      "Prise en charge orthogériatrique : hydratation, nutrition, prévention du delirium et des escarres, mobilisation en charge complète dès le lendemain.",
+      "Avant la sortie : bilan de chute, révision du zolpidem, traitement de l’ostéoporose (calcium, vitamine D, bisphosphonate) et organisation du retour à domicile.",
+    ],
+    differentials: [
+      "Fracture pertrochantérienne (trait entre les trochanters, meilleur pronostic vasculaire, traitée par clou).",
+      "Fracture des branches pubiennes (marche parfois possible, membre non raccourci).",
+      "Fracture occulte du col (radiographie normale) : IRM ou CT si la suspicion persiste.",
+      "Luxation de prothèse ou luxation de hanche (traumatisme à haute énergie chez le jeune).",
+    ],
+    examReading: [
+      "Trait sous la tête fémorale, interrompant les deux corticales du col : fracture complète du col fémoral, intracapsulaire.",
+      "Fût ascensionné et en rotation externe, travées de la tête en discontinuité : fracture déplacée, Garden IV, donc instable, avec un risque élevé de nécrose de la tête.",
+      "Os déminéralisé, corticales fines : terrain ostéoporotique.",
+      "Trochanters, cadres obturateurs et cotyles intacts : pas de fracture pertrochantérienne ni du bassin associée.",
+    ],
+    sources: [
+      { label: "NICE CG124 — Hip fracture: management (mise à jour 2023)", url: "https://www.nice.org.uk/guidance/cg124" },
+    ],
+    pathologySlugs: ["anticoagulation", "fibrillation-auriculaire"],
+  },
+};

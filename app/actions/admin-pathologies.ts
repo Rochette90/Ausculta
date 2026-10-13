@@ -2,10 +2,10 @@
 
 import { SLUG_PATTERN, UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
-import type { Difficulty } from "../../types/content";
-import { AdminAccessError, assertAdminUser } from "../../lib/auth/admin";
-import { createAdminClient } from "../../lib/supabase/server";
-import { enforceRateLimit } from "../lib/rate-limit";
+import type { Difficulty } from "@/types/content";
+import { AdminAccessError, assertAdminUser } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/server";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
 import { BRAND_NAME } from "@/lib/brand";
 
 export type AdminPathologyUpdateInput = {

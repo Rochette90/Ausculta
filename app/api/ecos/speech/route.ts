@@ -1,5 +1,6 @@
 import { EXAMINER_PREFIX } from "@/lib/ecos/engine";
-import { DAY_SECONDS, ecosQuotas } from "@/lib/ecos/quotas";
+import { ecosQuotasForUser } from "@/lib/ecos/plan";
+import { DAY_SECONDS } from "@/lib/ecos/quotas";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { elevenLabsSpeechRequest, isPermanentVoiceFailure, SPEECH_MAX_CHARACTERS, speechConfig, speechErrorReason } from "@/lib/ecos/voice";
 import { UUID_PATTERN } from "@/lib/validation";
@@ -10,10 +11,10 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../../lib/api-security";
-import { enforceRateLimit, withinRateLimit } from "../../../lib/rate-limit";
-import { stopwatch } from "../../../lib/timing";
-import { createAdminClient } from "../../../../lib/supabase/server";
+} from "@/app/lib/api-security";
+import { enforceRateLimit, withinGlobalLimit, withinRateLimit } from "@/app/lib/rate-limit";
+import { stopwatch } from "@/app/lib/timing";
+import { createAdminClient } from "@/lib/supabase/server";
 
 /** Répliques récentes du patient parmi lesquelles la réplique à lire doit figurer. */
 const RECENT_PATIENT_LINES = 8;
@@ -60,8 +61,10 @@ export async function POST(request: Request) {
 
     const config = speechConfig(scenario);
     if (!config) throw new ApiError(503, "speech_unavailable", "Voix réaliste non configurée");
-    // Quota du jour atteint : même réponse, le navigateur lit avec sa propre voix.
-    if (!(await withinRateLimit(admin, user.id, "ecos-voice-day", ecosQuotas().dailyVoiceReplies, DAY_SECONDS))) {
+    // Quota du jour atteint (compte, puis plafond global) : même réponse, le navigateur lit avec sa propre voix.
+    const { quotas } = await ecosQuotasForUser(admin, user.id);
+    if (!(await withinRateLimit(admin, user.id, "ecos-voice-day", quotas.dailyVoiceReplies, DAY_SECONDS))
+      || !(await withinGlobalLimit(admin, "ecos-voice-day", quotas.globalDailyVoiceReplies, DAY_SECONDS))) {
       throw new ApiError(503, "speech_unavailable", "Voix réaliste indisponible pour aujourd’hui");
     }
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { Check, CheckCircle2, CircleX } from "lucide-react";
-import type { Difficulty } from "../../types/content";
-import { cn } from "../../lib/utils";
+import type { Difficulty } from "@/types/content";
+import { cn } from "@/lib/utils";
 
 type QuizOption = {
   id: string;

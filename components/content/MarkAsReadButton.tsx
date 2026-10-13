@@ -3,8 +3,8 @@
 import { CheckCircle2, LoaderCircle, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { markPathologyAsRead } from "../../app/actions/pathologies";
-import { Button } from "../ui/button";
+import { markPathologyAsRead } from "@/app/actions/pathologies";
+import { Button } from "@/components/ui/button";
 import { PROGRESS_EVENT_NAME } from "@/lib/brand";
 
 export function MarkAsReadButton({ pathologyId, initiallyCompleted }: { pathologyId: string; initiallyCompleted: boolean }) {

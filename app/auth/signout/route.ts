@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { assertSameOrigin } from "../../lib/api-security";
-import { createClient } from "../../../lib/supabase/server";
+import { assertSameOrigin } from "@/app/lib/api-security";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {

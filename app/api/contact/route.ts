@@ -4,9 +4,9 @@ import {
   assertSameOrigin,
   handleApiError,
   readJsonObject,
-} from "../../lib/api-security";
-import { enforceAnonymousRateLimit } from "../../lib/rate-limit";
-import { createAdminClient } from "../../../lib/supabase/server";
+} from "@/app/lib/api-security";
+import { enforceAnonymousRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
 
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 

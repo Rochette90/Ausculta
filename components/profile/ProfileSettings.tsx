@@ -4,9 +4,9 @@ import { initialsFrom } from "@/lib/profile/presentation";
 import { Camera, CheckCircle2, LoaderCircle, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useRef, useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { BRAND_NAME } from "@/lib/brand";
 import { FEATURES } from "@/lib/features";
 

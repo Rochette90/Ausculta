@@ -6,9 +6,9 @@ import {
   handleApiError,
   readJsonObject,
   requireAuthenticatedUser,
-} from "../../lib/api-security";
-import { enforceRateLimit } from "../../lib/rate-limit";
-import { createAdminClient } from "../../../lib/supabase/server";
+} from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
 
 
 function requiredInteger(value: unknown, minimum: number, maximum: number, label: string) {

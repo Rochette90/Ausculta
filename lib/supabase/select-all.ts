@@ -7,7 +7,7 @@
  * and apply a deterministic `.order(...)`, otherwise rows can be skipped or
  * repeated between pages.
  */
-export const POSTGREST_PAGE_SIZE = 1_000;
+const POSTGREST_PAGE_SIZE = 1_000;
 
 type PageResult<Row> = { data: Row[] | null; error: unknown };
 

@@ -2,11 +2,11 @@
 
 import { UUID_PATTERN } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
-import type { Difficulty, QuestionReviewStatus, QuestionType } from "../../types/content";
-import { AdminAccessError, assertAdminUser } from "../../lib/auth/admin";
-import { csvRecords } from "../../lib/admin/question-csv";
-import { createAdminClient } from "../../lib/supabase/server";
-import { enforceRateLimit } from "../lib/rate-limit";
+import type { Difficulty, QuestionReviewStatus, QuestionType } from "@/types/content";
+import { AdminAccessError, assertAdminUser } from "@/lib/auth/admin";
+import { csvRecords } from "@/lib/admin/question-csv";
+import { createAdminClient } from "@/lib/supabase/server";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
 import { BRAND_NAME } from "@/lib/brand";
 
 const difficulties: Difficulty[] = ["facile", "moyen", "difficile"];

@@ -4,6 +4,8 @@ export const EXAMINER_PREFIX = "Examinateur : ";
 export const PROCEDURE_PREFIX = "Geste : ";
 export const DIAGNOSIS_PREFIX = "Diagnostic retenu : ";
 export const PLAN_PREFIX = "Prise en charge proposée : ";
+/** Lecture écrite des examens complémentaires (stations avec une étape d'analyse). */
+export const ANALYSIS_PREFIX = "Analyse des examens : ";
 /** System line recorded when the synthesis opens: history and exam are then closed. */
 export const SYNTHESIS_MARKER = "Synthèse ouverte : anamnèse et examen clinique terminés.";
 /** Examiner answer when a gesture is requested in the chat instead of the exam list. */
@@ -57,7 +59,7 @@ export function isExamTransition(message: string): boolean {
 
 export const EXAM_TRANSITION_PHRASES: readonly string[] = EXAM_TRANSITION_KEYWORDS;
 
-const RESERVED_STARTS = ["geste", "diagnostic retenu", "prise en charge proposee", "examinateur", "synthese ouverte"];
+const RESERVED_STARTS = ["geste", "diagnostic retenu", "prise en charge proposee", "analyse des examens", "examinateur", "synthese ouverte"];
 
 /** Chat messages may not imitate the lines recorded by the structured phases. */
 export function usesReservedPrefix(message: string): boolean {

@@ -1,11 +1,11 @@
 import { initialsFrom, profileAvatarUrl } from "@/lib/profile/presentation";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { ConnectedNavigation } from "../../components/navigation/ConnectedNavigation";
-import { requireUser } from "../../lib/auth/require-user";
-import { safeRedirectPath } from "../../lib/auth/safe-redirect";
-import { getProfileSummary } from "../../lib/profile/queries";
-import { getOnboardingMetadata } from "../../lib/onboarding/metadata";
+import { ConnectedNavigation } from "@/components/navigation/ConnectedNavigation";
+import { requireUser } from "@/lib/auth/require-user";
+import { safeRedirectPath } from "@/lib/auth/safe-redirect";
+import { getProfileSummary } from "@/lib/profile/queries";
+import { getOnboardingMetadata } from "@/lib/onboarding/metadata";
 import { PATHNAME_HEADER } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";

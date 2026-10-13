@@ -250,7 +250,11 @@ function groupSections(sections: FicheSection[]): FicheGroup[] {
   })).filter((group) => group.sections.length > 0);
 }
 
-export function buildFicheDocument(source: Block[]): FicheDocument {
+/**
+ * `keepOrder` : garder l'ordre de rédaction. Le squelette canonique décrit une
+ * pathologie ; une fiche de méthode (la trame d'une anamnèse) a son propre fil.
+ */
+export function buildFicheDocument(source: Block[], { keepOrder = false }: { keepOrder?: boolean } = {}): FicheDocument {
   const nextId = createIdFactory();
   const normalized = headingsFromLabels(promoteLabelLists(source), nextId);
 
@@ -305,7 +309,7 @@ export function buildFicheDocument(source: Block[]): FicheDocument {
   const body = inheritGroups(all.filter((section) => !appendixIds.has(section.id)));
   // Une fiche découpée automatiquement n'a que des titres devinés : les
   // reclasser reviendrait à mélanger un texte dont on ne maîtrise pas le fil.
-  const sections = autoSectioned ? body : canonicalOrder(body);
+  const sections = autoSectioned || keepOrder ? body : canonicalOrder(body);
   const appendix = all
     .filter((section) => appendixIds.has(section.id))
     .map((section) => ({ ...section, group: "ressources" as FicheGroupKey }));

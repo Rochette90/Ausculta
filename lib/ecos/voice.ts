@@ -63,7 +63,7 @@ export function speechRequestBody(text: string, modelId: string) {
 }
 
 /** Format demandé à ElevenLabs : MP3, lisible par tous les navigateurs. */
-export const SPEECH_OUTPUT_FORMAT = "mp3_44100_128";
+const SPEECH_OUTPUT_FORMAT = "mp3_44100_128";
 
 /** Requête de synthèse ElevenLabs pour une réplique. */
 export function elevenLabsSpeechRequest(config: SpeechConfig, text: string) {

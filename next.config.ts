@@ -1,20 +1,11 @@
 import type { NextConfig } from "next";
+import { buildContentSecurityPolicy } from "./lib/security/csp";
 
 const isDevelopment = process.env.NODE_ENV === "development";
-const contentSecurityPolicy = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.supabase.co",
-  "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
-  "media-src 'self' blob:",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
-].join("; ");
+// Version sans nonce (`script-src 'self' 'unsafe-inline'`, `frame-ancestors 'none'`,
+// voir lib/security/csp.ts) : filet de sécurité pour les réponses qui ne passent
+// pas par `proxy.ts`, qui pose, lui, une CSP avec nonce par requête.
+const contentSecurityPolicy = buildContentSecurityPolicy({ isDevelopment });
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
@@ -26,7 +17,13 @@ const securityHeaders = [
   ...(isDevelopment ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]),
 ];
 
+// `output: "standalone"` uniquement pour l'image Docker (voir Dockerfile) :
+// `next start` refuse ce mode, et l'hébergement Node.js géré d'Infomaniak
+// lance `npm start` avec les node_modules complets.
+const standalone = process.env.NEXT_STANDALONE === "1";
+
 const nextConfig: NextConfig = {
+  ...(standalone ? { output: "standalone" as const } : {}),
   poweredByHeader: false,
   reactStrictMode: true,
   // Nécessaire pour `forbidden()` : les pages /admin doivent répondre 403 à un

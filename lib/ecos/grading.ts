@@ -1,6 +1,6 @@
 import type { EcosCriterion, EcosCriterionDefinition, EcosMessage, EcosProcedure, EcosScenario } from "./types.ts";
 import { storedReview } from "./review.ts";
-import { calculateEcosCriteria, ecosXp, maxEcosScore } from "./scoring.ts";
+import { ANALYSIS_CRITERION_ID, calculateEcosCriteria, ecosXp, maxEcosScore } from "./scoring.ts";
 import { DIAGNOSIS_PREFIX, normalizeEcosText, PROCEDURE_PREFIX } from "./text.ts";
 
 /**
@@ -16,7 +16,7 @@ export function storedTranscript(value: unknown): EcosMessage[] {
 }
 
 /** Points of the final diagnosis line, added to every station's grid. */
-export const DIAGNOSIS_POINTS = 2;
+const DIAGNOSIS_POINTS = 2;
 /** Grid line scored from the gestures chosen in the exam phase. */
 export const EXAM_CRITERION_ID = "exam";
 /** Each unhelpful gesture costs half a point on the exam line. */
@@ -24,6 +24,11 @@ const UNHELPFUL_GESTURE_PENALTY = 0.5;
 
 export function stationMaxScore(scenario: EcosScenario): number {
   return maxEcosScore(scenario.criteria) + DIAGNOSIS_POINTS;
+}
+
+/** La station a-t-elle une étape « Analyse » des examens complémentaires ? */
+export function hasAnalysisStep(scenario: EcosScenario): boolean {
+  return scenario.criteria.some((criterion) => criterion.id === ANALYSIS_CRITERION_ID);
 }
 
 export function findProcedure(scenario: EcosScenario, id: string): EcosProcedure | null {
@@ -67,11 +72,11 @@ function studentLines(messages: readonly EcosMessage[], prefix: string) {
 }
 
 /** Last diagnosis chosen by the student, if any. */
-export function chosenDiagnosis(messages: readonly EcosMessage[]): string | null {
+function chosenDiagnosis(messages: readonly EcosMessage[]): string | null {
   return studentLines(messages, DIAGNOSIS_PREFIX).at(-1) ?? null;
 }
 
-export function performedProcedures(scenario: EcosScenario, messages: readonly EcosMessage[]): EcosProcedure[] {
+function performedProcedures(scenario: EcosScenario, messages: readonly EcosMessage[]): EcosProcedure[] {
   const labels = new Set(studentLines(messages, PROCEDURE_PREFIX).map(normalizeEcosText));
   return scenario.examination.filter((procedure) => labels.has(normalizeEcosText(procedure.label)));
 }
@@ -80,7 +85,7 @@ export function performedProcedures(scenario: EcosScenario, messages: readonly E
  * Exam line: share of the expected gestures that were chosen, minus half a
  * point per unhelpful gesture (choosing everything is not a strategy).
  */
-export function examCriterion(scenario: EcosScenario, definition: EcosCriterionDefinition, performed: readonly EcosProcedure[]): EcosCriterion {
+function examCriterion(scenario: EcosScenario, definition: EcosCriterionDefinition, performed: readonly EcosProcedure[]): EcosCriterion {
   const expected = scenario.examination.filter((procedure) => procedure.pertinent).length;
   const done = performed.filter((procedure) => procedure.pertinent).length;
   const unhelpful = performed.length - done;
@@ -117,8 +122,16 @@ export function gradeEcosStation(scenario: EcosScenario, messages: readonly Ecos
   const expectedGestures = performed.filter((procedure) => procedure.pertinent).map((procedure) => ({ role: "student" as const, content: procedure.label }));
   const reviewed = storedReview(scenario, messages, EXAM_CRITERION_ID);
   const keywordCriteria = calculateEcosCriteria(scenario.criteria, [...messages, ...expectedGestures], reviewed ?? undefined);
+  // Une analyse n'a de valeur que sur des examens réellement demandés.
+  const analysedSomething = performed.some((procedure) => procedure.pertinent && procedure.category === "complementaire");
   const criteria = [
-    ...scenario.criteria.map((definition, index) => definition.id === EXAM_CRITERION_ID ? examCriterion(scenario, definition, performed) : keywordCriteria[index]),
+    ...scenario.criteria.map((definition, index) => {
+      if (definition.id === EXAM_CRITERION_ID) return examCriterion(scenario, definition, performed);
+      if (definition.id === ANALYSIS_CRITERION_ID && !analysedSomething) {
+        return { id: definition.id, label: definition.label, hint: `${definition.hint}. Sans examen complémentaire utile demandé, il n’y a rien à analyser.`, points: definition.points, earned: 0 };
+      }
+      return keywordCriteria[index];
+    }),
     diagnosisCriterion,
   ];
   const score = criteria.reduce((total, criterion) => total + criterion.earned, 0);

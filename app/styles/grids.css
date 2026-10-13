@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Grilles d'entraînement : la feuille que tient l'évaluateur pendant une
+   station jouée en binôme. Lisible d'un coup d'œil, cochable au pouce.
+   ========================================================================== */
+
+.grid-page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; }
+.grid-page-head p { max-width: 38em; }
+.grid-theory-link { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; }
+
+/* --- Chrono et scores ----------------------------------------------------- */
+
+.grid-board { position: sticky; top: 12px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 28px; margin: 28px 0 0; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--paper) 92%, transparent); box-shadow: var(--shadow-sm); backdrop-filter: blur(10px); }
+
+.grid-timer { display: flex; align-items: center; gap: 18px; }
+.grid-timer > div:first-child { display: grid; }
+.grid-timer-time { font-size: 34px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1; }
+.grid-timer-status { margin-top: 4px; color: var(--muted); font-size: 13px; font-weight: 600; }
+.grid-timer.is-running .grid-timer-status { color: var(--primary); }
+.grid-timer.is-warning .grid-timer-time, .grid-timer.is-warning .grid-timer-status { color: var(--red); }
+.grid-timer-actions { display: flex; gap: 6px; }
+
+.grid-scores { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; }
+.grid-scores div { display: grid; gap: 2px; }
+.grid-scores dt { color: var(--muted); font-size: 12px; font-weight: 600; }
+.grid-scores dd { margin: 0; font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.grid-scores small { color: var(--muted); font-size: 14px; font-weight: 500; }
+.grid-scores .is-total { padding-left: 22px; border-left: 1px solid var(--line); }
+.grid-scores .is-total dd { color: var(--primary); }
+
+/* --- Onglets -------------------------------------------------------------- */
+
+.grid-tabs { margin-bottom: 24px; }
+.grid-tabs button[aria-selected=true] { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.grid-tab-score { margin-left: 6px; font-size: 13px; font-variant-numeric: tabular-nums; opacity: .7; }
+
+/* --- Sections ------------------------------------------------------------- */
+
+.grid-alert { display: flex; gap: 12px; margin: 0 0 20px; padding: 14px 18px; border-radius: var(--radius-md); background: var(--red-light); color: var(--red-dark); font-size: 16px; line-height: 1.5; }
+.grid-alert svg { flex: none; margin-top: 2px; }
+
+.grid-sections { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.grid-section { padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.grid-section-head { display: flex; align-items: flex-start; gap: 14px; }
+.grid-section-num { flex: none; padding-top: 2px; color: var(--muted); font-size: 14px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.grid-section-title { flex: 1; min-width: 0; }
+.grid-section-title h3 { margin: 0; font-size: 17px; letter-spacing: 0; line-height: 1.4; }
+.grid-section-progress { display: flex; align-items: center; gap: 12px; margin-top: 4px; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.grid-section-progress .is-complete { color: var(--primary); font-weight: 650; }
+.grid-section-progress .text-link { padding: 0; border: 0; background: none; font-size: 14px; }
+
+.grid-mark { display: inline-flex; flex: none; padding: 3px; border-radius: 999px; background: var(--surface-subtle); }
+.grid-mark button { min-width: 48px; min-height: 36px; padding: 4px 12px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 650; }
+.grid-mark button:hover { color: var(--ink); }
+.grid-mark button[aria-checked=true].is-yes { background: var(--primary); color: var(--paper); }
+.grid-mark button[aria-checked=true].is-partial { background: var(--amber); color: var(--ink); }
+.grid-mark button[aria-checked=true].is-no { background: var(--ink); color: var(--paper); }
+
+.grid-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 6px; margin: 14px 0 0 30px; padding: 0; list-style: none; }
+.grid-item { display: flex; align-items: flex-start; gap: 10px; width: 100%; min-height: 40px; padding: 8px 10px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--ink-secondary); font-size: 15px; line-height: 1.4; text-align: left; }
+.grid-item:hover { background: var(--surface-subtle); }
+.grid-item[aria-pressed=true] { color: var(--ink); }
+.grid-item-box { display: grid; flex: none; place-items: center; width: 20px; height: 20px; margin-top: 1px; border: 1.5px solid var(--line); border-radius: 6px; color: var(--paper); }
+.grid-item[aria-pressed=true] .grid-item-box { border-color: var(--primary); background: var(--primary); }
+
+.grid-rubric { margin: 12px 0 0 30px; color: var(--muted); font-size: 13px; }
+
+/* --- Diagnostics ---------------------------------------------------------- */
+
+.grid-cards-block { margin-top: 32px; }
+.grid-cards-block .learning-eyebrow { margin: 0 0 12px; }
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.grid-card { display: grid; gap: 8px; width: 100%; height: 100%; padding: 16px 18px; border: 1.5px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-align: left; }
+.grid-card:hover { border-color: var(--ink-secondary); }
+.grid-card[aria-pressed=true] { border-color: var(--primary); background: var(--primary-subtle); }
+.grid-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; font-size: 16px; }
+.grid-card-desc { color: var(--ink-secondary); font-size: 14px; line-height: 1.5; }
+.grid-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.grid-card-tags span { padding: 2px 8px; border-radius: 999px; background: var(--surface-subtle); color: var(--muted); font-size: 12px; font-weight: 600; }
+
+.grid-level { flex: none; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+.grid-level.is-urgent { background: var(--red-light); color: var(--red-dark); }
+.grid-level.is-high { background: var(--amber-light); color: var(--amber-dark); }
+.grid-level.is-mid { background: var(--blue-light); color: var(--blue); }
+.grid-level.is-low { background: var(--surface-subtle); color: var(--muted); }
+
+.grid-panel-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-secondary); font-size: 15px; }
+.grid-panel-foot p { margin: 0; }
+
+@media (max-width: 640px) {
+  .grid-board { top: 0; padding: 12px 14px; }
+  .grid-timer-time { font-size: 28px; }
+  .grid-scores .is-total { padding-left: 0; border-left: 0; }
+  .grid-section { padding: 14px; }
+  .grid-section-head { flex-wrap: wrap; }
+  .grid-mark { width: 100%; }
+  .grid-mark button { flex: 1; }
+  .grid-items, .grid-rubric { margin-left: 0; }
+}
+
+@media print {
+  .grid-board { position: static; box-shadow: none; backdrop-filter: none; }
+  .grid-timer-actions, .grid-panel-foot .button { display: none; }
+}
+
+/* --- Accueil -------------------------------------------------------------- */
+
+.dash-grid-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }

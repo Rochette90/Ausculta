@@ -5,12 +5,12 @@ import {
   assertSameOrigin,
   handleApiError,
   requireAuthenticatedUser,
-} from "../../../lib/api-security";
-import { enforceDailyQuota, enforceRateLimit } from "../../../lib/rate-limit";
-import { createAdminClient } from "../../../../lib/supabase/server";
+} from "@/app/lib/api-security";
+import { enforceDailyQuota, enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
 
 import { getPublishedClinicalCase } from "@/lib/ecos/cases";
-import { ecosQuotas } from "@/lib/ecos/quotas";
+import { ecosQuotasForUser } from "@/lib/ecos/plan";
 import { resolveEcosStation } from "@/lib/ecos/stations";
 import { parseEcosMode } from "@/lib/ecos/timing";
 
@@ -27,7 +27,8 @@ export async function POST(request: Request) {
     if (!clinicalCase) throw new ApiError(404, "station_unavailable", "Station indisponible.");
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "ecos-session", 10, 60);
-    await enforceDailyQuota(admin, user.id, "ecos-session-day", ecosQuotas().dailySessions,
+    const { quotas } = await ecosQuotasForUser(admin, user.id);
+    await enforceDailyQuota(admin, user.id, "ecos-session-day", quotas.dailySessions,
       "Tu as atteint le nombre de stations prévu pour aujourd’hui. Reviens demain.");
 
     // Une seule station ouverte par compte : celles restées en suspens (onglet

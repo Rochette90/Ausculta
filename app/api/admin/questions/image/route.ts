@@ -3,10 +3,10 @@ import {
   apiJson,
   assertSameOrigin,
   handleApiError,
-} from "../../../../lib/api-security";
-import { enforceRateLimit } from "../../../../lib/rate-limit";
-import { AdminAccessError, assertAdminUser } from "../../../../../lib/auth/admin";
-import { createAdminClient } from "../../../../../lib/supabase/server";
+} from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { AdminAccessError, assertAdminUser } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/server";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MIME_EXTENSIONS = {

@@ -1,18 +1,29 @@
 import type { EcosScenario, EcosStationView } from "../types.ts";
-import { stationMaxScore } from "../grading.ts";
+import { hasAnalysisStep, stationMaxScore } from "../grading.ts";
 import { EXAM_DURATION_SECONDS } from "../timing.ts";
 import { acidocetoseDiabetique } from "./acidocetose-diabetique.ts";
 import { appendiciteAigue } from "./appendicite-aigue.ts";
 import { avcIschemiqueSylvienGauche } from "./avc-ischemique-sylvien-gauche.ts";
+import { cholecystiteAigue } from "./cholecystite-aigue.ts";
+import { coliqueNephretique } from "./colique-nephretique.ts";
+import { convulsionFebrile } from "./convulsion-febrile.ts";
 import { criseAsthme } from "./crise-asthme.ts";
 import { douleurThoraciqueAigue } from "./douleur-thoracique-aigue.ts";
 import { emboliePulmonairePostVoyage } from "./embolie-pulmonaire-post-voyage.ts";
 import { endocarditeInfectieuse } from "./endocardite-infectieuse.ts";
+import { erysipeleJambe } from "./erysipele-jambe.ts";
 import { fibrillationAuriculaire } from "./fibrillation-auriculaire.ts";
+import { fractureChevilleWeberB } from "./fracture-cheville-weber-b.ts";
+import { fractureColFemoral } from "./fracture-col-femoral.ts";
+import { hemorragieSousArachnoidienne } from "./hemorragie-sous-arachnoidienne.ts";
+import { humeurDepressiveIdeesSuicidaires } from "./humeur-depressive-idees-suicidaires.ts";
+import { insuffisanceCardiaqueDecompensee } from "./insuffisance-cardiaque-decompensee.ts";
 import { meningiteAigue } from "./meningite-aigue.ts";
 import { pancreatiteAigue } from "./pancreatite-aigue.ts";
 import { pneumonieCommunautaire } from "./pneumonie-communautaire.ts";
 import { pneumothoraxSpontane } from "./pneumothorax-spontane.ts";
+import { pyelonephriteAigue } from "./pyelonephrite-aigue.ts";
+import { ruptureLigamentCroiseAnterieur } from "./rupture-ligament-croise-anterieur.ts";
 
 /**
  * Scripted ECOS stations. A station is playable only when it is listed here
@@ -33,6 +44,17 @@ export const ECOS_SCENARIOS: readonly EcosScenario[] = [
   acidocetoseDiabetique,
   endocarditeInfectieuse,
   criseAsthme,
+  humeurDepressiveIdeesSuicidaires,
+  convulsionFebrile,
+  erysipeleJambe,
+  cholecystiteAigue,
+  coliqueNephretique,
+  hemorragieSousArachnoidienne,
+  pyelonephriteAigue,
+  insuffisanceCardiaqueDecompensee,
+  ruptureLigamentCroiseAnterieur,
+  fractureColFemoral,
+  fractureChevilleWeberB,
 ];
 
 /**
@@ -53,6 +75,17 @@ const PUBLIC_CODES: Readonly<Record<string, string>> = {
   "acidocetose-diabetique": "station-10",
   "endocardite-infectieuse": "station-11",
   "crise-asthme": "station-12",
+  "humeur-depressive-idees-suicidaires": "station-13",
+  "convulsion-febrile": "station-14",
+  "erysipele-jambe": "station-15",
+  "cholecystite-aigue": "station-16",
+  "colique-nephretique": "station-17",
+  "hemorragie-sous-arachnoidienne": "station-18",
+  "pyelonephrite-aigue": "station-19",
+  "insuffisance-cardiaque-decompensee": "station-20",
+  "rupture-ligament-croise-anterieur": "station-21",
+  "fracture-col-femoral": "station-22",
+  "fracture-cheville-weber-b": "station-23",
 };
 
 /**
@@ -104,6 +137,7 @@ export function ecosStationView(
     procedures: scenario.examination
       .map(({ id, label, category }) => ({ id, label, category }))
       .sort((left, right) => left.label.localeCompare(right.label, "fr")),
+    analysis: hasAnalysisStep(scenario),
     maxScore: stationMaxScore(scenario),
     examDurationSeconds: EXAM_DURATION_SECONDS,
   };

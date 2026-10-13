@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ThemeToggle } from "../theme/ThemeToggle";
-import { cn } from "../../lib/utils";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { cn } from "@/lib/utils";
 import { MenuToggleIcon } from "./menu-toggle-icon";
 import { useScroll } from "./use-scroll";
-import { BrandLogo } from "../brand/BrandLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { BRAND_NAME } from "@/lib/brand";
 import { FEATURES, type FeatureKey } from "@/lib/features";
 
@@ -15,7 +15,7 @@ import { FEATURES, type FeatureKey } from "@/lib/features";
 const allLinks: Array<{ label: string; href: string; feature?: FeatureKey }> = [
   { label: "Méthode", href: "/methode" },
   { label: "Catalogue", href: "/catalogue", feature: "fiches" },
-  { label: "Tarifs", href: "/pricing" },
+  { label: "Tarifs", href: "/pricing", feature: "premium" },
   { label: "FAQ", href: "/faq" },
   { label: "À propos", href: "/a-propos" },
 ];

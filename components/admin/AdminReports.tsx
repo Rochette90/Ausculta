@@ -3,10 +3,10 @@
 import { CheckCircle2, ExternalLink, LoaderCircle, MessageSquareWarning, PencilLine, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
-import { reviewPathologyReport } from "../../app/actions/reports";
-import type { AdminPathologyReport } from "../../lib/admin/queries";
-import { Button, buttonVariants } from "../ui/button";
-import { cn } from "../../lib/utils";
+import { reviewPathologyReport } from "@/app/actions/reports";
+import type { AdminPathologyReport } from "@/lib/admin/queries";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const labels = { open: "À traiter", reviewing: "En cours", resolved: "Résolu", rejected: "Rejeté" } as const;
 

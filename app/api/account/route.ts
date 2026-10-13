@@ -4,12 +4,12 @@ import {
   assertSameOrigin,
   handleApiError,
   requireAuthenticatedUser,
-} from "../../lib/api-security";
-import { needsCancellation } from "../../lib/billing";
-import { getStripe } from "../../lib/stripe";
-import { enforceRateLimit } from "../../lib/rate-limit";
-import { createAdminClient } from "../../../lib/supabase/server";
-import { isOwnAvatarPath } from "../../../lib/profile/avatar-path";
+} from "@/app/lib/api-security";
+import { needsCancellation } from "@/app/lib/billing";
+import { getStripe } from "@/app/lib/stripe";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
+import { isOwnAvatarPath } from "@/lib/profile/avatar-path";
 
 export async function DELETE(request: Request) {
   try {

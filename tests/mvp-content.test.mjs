@@ -34,9 +34,9 @@ test("vault imports keep provenance and start in needs-review state", async () =
   }
 });
 
-test("the clinical MVP catalog contains 12 priority cases", async () => {
+test("the clinical catalog contains 23 ECOS cases", async () => {
   const catalog = await readJson("../content/cases/index.json");
-  assert.equal(catalog.length, 12);
+  assert.equal(catalog.length, 23);
   assert.ok(catalog.some((item) => item.slug === "douleur-thoracique-aigue" && item.interactive));
   assert.ok(catalog.every((item) => item.candidateTitle?.length > 10));
   assert.ok(catalog.every((item) => item.diagnosis?.length > 3));

@@ -1,13 +1,14 @@
 import { CheckCircle2, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import type { DashboardData } from "../../lib/dashboard/queries";
-import type { ClinicalCaseSummary } from "../../lib/ecos/cases";
-import { FEATURES, isLearningPriorityAvailable } from "../../lib/features";
-import { Card } from "../ui/card";
-import { SpecialtyIcon } from "../content/SpecialtyIcon";
-import { cn } from "../../lib/utils";
-import { featuredStudySession } from "../../lib/study-sessions/catalog";
-import { StudySessionSpotlight } from "../study-sessions/StudySessionSpotlight";
+import type { DashboardData } from "@/lib/dashboard/queries";
+import type { ClinicalCaseSummary } from "@/lib/ecos/cases";
+import { FEATURES, isLearningPriorityAvailable } from "@/lib/features";
+import { Card } from "@/components/ui/card";
+import { SpecialtyIcon } from "@/components/content/SpecialtyIcon";
+import type { PracticeGridSummary } from "@/lib/grids/queries";
+import { cn } from "@/lib/utils";
+import { featuredStudySession } from "@/lib/study-sessions/catalog";
+import { StudySessionSpotlight } from "@/components/study-sessions/StudySessionSpotlight";
 
 const toneByColor: Record<string, string> = {
   amber: "bg-amber-50 text-amber-700",
@@ -56,7 +57,7 @@ function dashboardGreeting({
 
 const difficultyLabels = { easy: "Facile", medium: "Intermédiaire", hard: "Avancé" } as const;
 
-export function UserDashboard({ data, firstName, stations = [] }: { data: DashboardData; firstName: string | null; stations?: ClinicalCaseSummary[] }) {
+export function UserDashboard({ data, firstName, stations = [], grids = [] }: { data: DashboardData; firstName: string | null; stations?: ClinicalCaseSummary[]; grids?: PracticeGridSummary[] }) {
   const { profile, stats, specialties, dailyQuiz, dailyQuizCompleted, recommendedPathology, recentActivity, weeklyActivity, todayGoal, featuredStudySessionCompletedStepIds } = data;
   const displayName = firstName
     ? `${firstName.charAt(0).toLocaleUpperCase("fr-CH")}${firstName.slice(1)}`
@@ -240,6 +241,21 @@ export function UserDashboard({ data, firstName, stations = [] }: { data: Dashbo
           ) : (
             <p className="learning-note">Les stations sont en préparation. Reviens bientôt.</p>
           )}
+        </section>
+      )}
+
+      {FEATURES.grilles && grids.length > 0 && (
+        <section className="learning-section" aria-labelledby="dashboard-grids-title">
+          <div className="learning-section-head">
+            <h2 id="dashboard-grids-title">S&apos;entraîner en binôme</h2>
+            <Link className="text-link" href="/grilles">Toutes les grilles</Link>
+          </div>
+          <p className="learning-note">Un patient, un candidat, un évaluateur : la grille donne le chrono de 13 minutes et le score, comme le jour de l&apos;examen.</p>
+          <ul className="dash-grid-links">
+            {grids.map((grid) => (
+              <li key={grid.slug}><Link className="button secondary small" href={`/grilles/${grid.slug}`}>{grid.title}</Link></li>
+            ))}
+          </ul>
         </section>
       )}
 

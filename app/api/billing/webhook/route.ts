@@ -1,8 +1,8 @@
 import Stripe from "stripe";
-import { ApiError, apiJson, handleApiError } from "../../../lib/api-security";
-import { grantsPro } from "../../../lib/billing";
-import { getStripe } from "../../../lib/stripe";
-import { createAdminClient } from "../../../../lib/supabase/server";
+import { ApiError, apiJson, handleApiError } from "@/app/lib/api-security";
+import { grantsPro } from "@/app/lib/billing";
+import { getStripe } from "@/app/lib/stripe";
+import { createAdminClient } from "@/lib/supabase/server";
 import { UUID_PATTERN } from "@/lib/validation";
 
 type SubscriptionShape = {

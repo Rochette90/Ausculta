@@ -3,10 +3,10 @@
 import { ArrowRight, CheckCircle2, Clock3, LoaderCircle, RotateCcw, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { answerDailyQuestion, type AnswerQuestionResult } from "../../app/actions/quiz";
-import type { DailyQuiz, DailyQuizAttemptReview } from "../../lib/quiz/daily";
-import { cn } from "../../lib/utils";
-import { buttonVariants, Button } from "../ui/button";
+import { answerDailyQuestion, type AnswerQuestionResult } from "@/app/actions/quiz";
+import type { DailyQuiz, DailyQuizAttemptReview } from "@/lib/quiz/daily";
+import { cn } from "@/lib/utils";
+import { buttonVariants, Button } from "@/components/ui/button";
 import { QuizAnswerList, QuizDifficultyBadge } from "./QuizPrimitives";
 import { PROGRESS_EVENT_NAME } from "@/lib/brand";
 

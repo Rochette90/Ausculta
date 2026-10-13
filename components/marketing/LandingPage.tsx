@@ -112,7 +112,7 @@ export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: Mar
           <div>
             <ul className="link-list">
               <li><Link href="/methode">La méthode</Link><span>Les trois temps, les deux modes et la notation</span></li>
-              <li><Link href="/pricing">Les tarifs</Link><span>Gratuit aujourd’hui, et ce que prépare la suite</span></li>
+              {FEATURES.premium && <li><Link href="/pricing">Les tarifs</Link><span>Gratuit aujourd’hui, et ce que prépare la suite</span></li>}
               <li><Link href="/faq">Les questions fréquentes</Link><span>Patient simulé, voix, notation, compte</span></li>
               <li><Link href="/a-propos">Le projet</Link><span>Pourquoi {BRAND_NAME} existe</span></li>
               <li><Link href="/nouveautes">Les nouveautés</Link><span>Ce qui a changé récemment</span></li>

@@ -17,7 +17,7 @@ export type AdminDenial = {
   message: string;
 };
 
-export const ADMIN_ROLE = "admin";
+const ADMIN_ROLE = "admin";
 
 /** Renvoie le refus à appliquer, ou `null` si l'accès est autorisé. */
 export function adminAccessDenial(context: AdminContext): AdminDenial | null {

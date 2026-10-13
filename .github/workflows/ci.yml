@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, refonte-design]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: typecheck · lint · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Valeurs factices : le build n'appelle pas Supabase, mais le bundle
+      # client inline ces variables.
+      NEXT_PUBLIC_APP_URL: https://ci.invalid
+      NEXT_PUBLIC_SUPABASE_URL: https://ci.supabase.invalid
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-anon-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build:standalone
+      - name: Smoke test du serveur standalone
+        run: |
+          PORT=3100 node .next/standalone/server.js &
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://127.0.0.1:3100/; then echo "OK"; exit 0; fi
+            sleep 1
+          done
+          echo "Le serveur ne répond pas"; exit 1

@@ -27,7 +27,7 @@ const DEFAULT_MODELS: Record<PatientAiProvider, string> = {
 const DEFAULT_ORDER: readonly PatientAiProvider[] = ["anthropic", "openrouter", "groq"];
 
 /** Une réponse de patient tient en une ou deux phrases : ces bornes ne sont qu'une sécurité. */
-export const PATIENT_REPLY_MAX_TOKENS = 300;
+const PATIENT_REPLY_MAX_TOKENS = 300;
 export const PATIENT_REPLY_MAX_CHARACTERS = 1_200;
 
 type PatientAiEnv = Readonly<Record<string, string | undefined>>;

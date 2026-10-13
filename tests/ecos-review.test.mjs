@@ -5,11 +5,11 @@ import { communicationReport, messageQuestions } from "../lib/ecos/communication
 import { EXAM_CRITERION_ID, gradeEcosStation } from "../lib/ecos/grading.ts";
 import { unexplainedJargon } from "../lib/ecos/jargon.ts";
 import { buildPatientPrompt } from "../lib/ecos/engine.ts";
-import { missedItems, parseReview, quoteFound, REVIEW_BUDGET_MS, REVIEW_MAX_FINDINGS, REVIEW_PREFIX, requestReview, reviewLine, reviewRequest, reviewTranscript, storedReview, studentEvidence, withoutReview } from "../lib/ecos/review.ts";
+import { analysisEvidence, missedItems, parseReview, quoteFound, REVIEW_BUDGET_MS, REVIEW_MAX_FINDINGS, REVIEW_PREFIX, requestReview, reviewLine, reviewRequest, reviewTranscript, storedReview, studentEvidence, withoutReview } from "../lib/ecos/review.ts";
 import { groupId } from "../lib/ecos/scoring.ts";
 import { storedTranscript } from "../lib/ecos/grading.ts";
 import { ECOS_SCENARIOS, getEcosScenario } from "../lib/ecos/stations/index.ts";
-import { PLAN_PREFIX, PROCEDURE_PREFIX } from "../lib/ecos/text.ts";
+import { ANALYSIS_PREFIX, PLAN_PREFIX, PROCEDURE_PREFIX } from "../lib/ecos/text.ts";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const student = (...lines) => lines.map((content) => ({ role: "student", content }));
@@ -244,4 +244,31 @@ test("la fin de station relit la grille, enregistre la relecture et renvoie le b
   // Pendant la station, aucune grille ni score : tout arrive au bilan.
   assert.doesNotMatch(station, /objectives-panel|calculateEcosCriteria|setGrid/);
   assert.match(station, /const criteria = result\?\.criteria \?\? \[\];/);
+});
+
+test("l'analyse écrite des examens ne prouve que la ligne d'analyse, et elle seule la prouve", () => {
+  const ankle = getEcosScenario("fracture-cheville-weber-b");
+  const xray = ankle.examination.find((procedure) => procedure.id === "radio-cheville");
+  const messages = [
+    ...student("Comment votre pied est-il parti au moment de la chute ?", `${PROCEDURE_PREFIX}${xray.label}`, `${ANALYSIS_PREFIX}Le trait passe au niveau des ligaments entre tibia et péroné`),
+  ];
+  const evidence = studentEvidence(ankle, messages);
+  const analysis = analysisEvidence(messages);
+  assert.ok(!quoteFound("au niveau des ligaments entre tibia", evidence));
+  assert.ok(quoteFound("au niveau des ligaments entre tibia", analysis));
+  const level = item(ankle, "analysis", 2);
+  const mechanism = item(ankle, "mechanism", 1);
+  const allowed = new Set([level, mechanism]);
+  const text = JSON.stringify({ valides: [
+    { id: level, citation: "Comment votre pied est-il parti" },
+    { id: mechanism, citation: "au niveau des ligaments entre tibia" },
+  ] });
+  assert.deepEqual(parseReview(text, allowed, evidence, analysis), []);
+  const right = JSON.stringify({ valides: [
+    { id: level, citation: "au niveau des ligaments entre tibia" },
+    { id: mechanism, citation: "Comment votre pied est-il parti" },
+  ] });
+  assert.equal(parseReview(right, allowed, evidence, analysis).length, 2);
+  // La relecture lit l'analyse comme une ligne à part.
+  assert.match(reviewTranscript(ankle, messages), /Étudiant \(analyse écrite des examens\) : Le trait passe/);
 });

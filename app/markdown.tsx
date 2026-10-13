@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
 import { AlertOctagon, AlertTriangle, BookMarked, CheckCircle2, Info, Lightbulb, PenLine, Quote, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import pathologyCatalog from "../content/pathologies/index.json";
+import pathologyCatalog from "@/content/pathologies/index.json";
 import { SOFT_BREAK, type Block, type CalloutTone, type ListItem } from "./markdown-parser";
 
 export { parseMarkdown, parseFrontmatter, type Block } from "./markdown-parser";

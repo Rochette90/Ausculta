@@ -1,10 +1,10 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { AdminQuestionForm } from "../../../../../components/admin/AdminQuestionForm";
-import { AdminSectionNav } from "../../../../../components/admin/AdminSectionNav";
-import { getAdminQuestionFormOptions } from "../../../../../lib/admin/questions";
+import { AdminQuestionForm } from "@/components/admin/AdminQuestionForm";
+import { AdminSectionNav } from "@/components/admin/AdminSectionNav";
+import { getAdminQuestionFormOptions } from "@/lib/admin/questions";
 import { pageTitle } from "@/lib/brand";
-import { requireAdminUser } from "../../../../../lib/auth/admin";
+import { requireAdminUser } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Nouvelle question") };

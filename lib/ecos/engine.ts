@@ -134,7 +134,7 @@ const COMPLAINT_KEYWORDS = ["qu est ce qui vous amene", "ce qui vous amene", "vo
  * Rules grouped by tier. Within a tier, the rule whose matching keywords are
  * the most specific (longest) wins; ties go to the rule listed first.
  */
-export function scenarioRuleTiers(scenario: EcosScenario): EcosRule[][] {
+function scenarioRuleTiers(scenario: EcosScenario): EcosRule[][] {
   return [
     [
       // Announcing the clinical exam must not reveal all findings at once: the
@@ -162,7 +162,7 @@ function matchScore(normalizedText: string, keywords: readonly string[]) {
 /** « Je réalise… », « J’ausculte… », « On fait… » : the student performs an action. */
 const ACTION_PATTERN = /^ (?:je|j|on|nous) (?:vais |va |allons )?(?:realis|fais|fait|demand|relev|mesur|prel|examin|auscult|recherch|palp|test|verifi|prends|regard|command|prescri|evalu|effectu|contr)/;
 
-export function bestRule(tiers: readonly EcosRule[][], segment: string): EcosRule | null {
+function bestRule(tiers: readonly EcosRule[][], segment: string): EcosRule | null {
   const text = normalizeEcosText(segment);
   // An examination described by the student is answered by the examiner, even
   // when it names a symptom (« je recherche une raideur de nuque »).
@@ -228,7 +228,7 @@ function answerQuestions(scenario: EcosScenario, message: string, turn: number):
   return meaningful.filter((rule) => !rule.examiner).slice(0, 3).map((rule) => rule.reply).join(" ");
 }
 
-export function patientLabel(scenario: EcosScenario) {
+function patientLabel(scenario: EcosScenario) {
   return `${scenario.patient.name}, ${scenario.patient.age} ans`;
 }
 

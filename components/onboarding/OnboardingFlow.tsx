@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SpecialtyIcon } from "../content/SpecialtyIcon";
-import { BrandLogo } from "../brand/BrandLogo";
+import { SpecialtyIcon } from "@/components/content/SpecialtyIcon";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { BRAND_NAME } from "@/lib/brand";
 import { isLearningPriorityAvailable, ONBOARDING_ASKS_SPECIALTIES } from "@/lib/features";
 

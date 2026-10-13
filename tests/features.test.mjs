@@ -12,11 +12,14 @@ import {
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
 const ROUTES = {
+  theorie: ["/theorie", "/theorie/anamnese-classique"],
+  grilles: ["/grilles", "/grilles/cardio-pulmonaire"],
   fiches: ["/specialties", "/fiches", "/catalogue", "/qualite"],
   quiz: ["/quiz", "/quiz/cardiologie"],
   anatomy: ["/anatomie", "/anatomie/thorax"],
   sessions: ["/sessions", "/sessions/douleur-thoracique"],
   tutorials: ["/tutoriels", "/tutoriels/ecg"],
+  premium: ["/pricing"],
 };
 
 test("le produit est centré sur les stations ECOS", () => {
@@ -71,7 +74,7 @@ test("la navigation, le proxy et le tableau de bord consomment les interrupteurs
   for (const [name, source] of Object.entries({ navigation, header, footer })) {
     assert.match(source, /!\w+\.feature \|\| FEATURES\[\w+\.feature\]/, `${name} doit filtrer ses liens`);
   }
-  for (const feature of ["fiches", "anatomy", "quiz", "sessions"]) {
+  for (const feature of ["theorie", "grilles", "fiches", "anatomy", "quiz", "sessions"]) {
     assert.match(navigation, new RegExp(`feature: "${feature}"`));
   }
   for (const flag of ["FEATURES.anatomy", "FEATURES.sessions", "FEATURES.quiz", "FEATURES.fiches"]) {
@@ -99,6 +102,8 @@ test("un module masqué est fermé à tous les niveaux, pas seulement dans la na
   const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
   // Pages : un layout par module répond « introuvable » si le proxy est contourné.
   const layouts = {
+    "../app/(app)/theorie/layout.tsx": "theorie",
+    "../app/(app)/grilles/layout.tsx": "grilles",
     "../app/(app)/quiz/layout.tsx": "quiz",
     "../app/(app)/anatomie/layout.tsx": "anatomy",
     "../app/(app)/sessions/layout.tsx": "sessions",
@@ -107,6 +112,7 @@ test("un module masqué est fermé à tous les niveaux, pas seulement dans la na
     "../app/(marketing)/catalogue/layout.tsx": "fiches",
     "../app/(marketing)/qualite/layout.tsx": "fiches",
     "../app/(marketing)/tutoriels/layout.tsx": "tutorials",
+    "../app/(marketing)/pricing/layout.tsx": "premium",
   };
   for (const [path, feature] of Object.entries(layouts)) {
     assert.match(await read(path), new RegExp(`if \\(!FEATURES\\.${feature}\\) notFound\\(\\);`), path);
@@ -114,6 +120,7 @@ test("un module masqué est fermé à tous les niveaux, pas seulement dans la na
   // API et actions serveur.
   assert.match(await read("../app/api/anatomy/[slug]/route.ts"), /if \(!FEATURES\.anatomy\) throw new ApiError\(404/);
   assert.match(await read("../app/api/progress/route.ts"), /if \(!FEATURES\.tutorials\) throw new ApiError\(404/);
+  assert.match(await read("../app/api/billing/checkout/route.ts"), /if \(!FEATURES\.premium\) throw new ApiError\(404/);
   assert.match(await read("../app/actions/quiz.ts"), /if \(!FEATURES\.quiz\) return failure/);
   assert.match(await read("../app/actions/study-sessions.ts"), /if \(!FEATURES\.sessions\) return/);
   // Fiches : seules celles d'un débriefing restent accessibles.

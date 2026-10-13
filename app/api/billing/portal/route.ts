@@ -1,7 +1,7 @@
-import { ApiError, apiJson, assertSameOrigin, handleApiError, requireAuthenticatedUser } from "../../../lib/api-security";
-import { enforceRateLimit } from "../../../lib/rate-limit";
-import { appOrigin, getStripe } from "../../../lib/stripe";
-import { createAdminClient } from "../../../../lib/supabase/server";
+import { ApiError, apiJson, assertSameOrigin, handleApiError, requireAuthenticatedUser } from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { appOrigin, getStripe } from "@/app/lib/stripe";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {

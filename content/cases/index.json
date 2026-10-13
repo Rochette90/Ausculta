@@ -202,5 +202,195 @@
       "Prise en charge"
     ],
     "interactive": true
+  },
+  {
+    "slug": "humeur-depressive-idees-suicidaires",
+    "title": "Épisode dépressif avec idées suicidaires",
+    "candidateTitle": "Fatigue et perte d’envie depuis plusieurs semaines",
+    "diagnosis": "Épisode dépressif majeur sévère avec idées suicidaires",
+    "specialty": "Psychiatrie",
+    "difficulty": "Difficile",
+    "setting": "cabinet",
+    "patient": "Mme Dubois, 41 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "convulsion-febrile",
+    "title": "Convulsion fébrile",
+    "candidateTitle": "Crise convulsive chez un enfant de 2 ans",
+    "diagnosis": "Convulsion fébrile simple",
+    "specialty": "Pédiatrie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Léo, 2 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "erysipele-jambe",
+    "title": "Érysipèle",
+    "candidateTitle": "Jambe rouge et douloureuse avec fièvre",
+    "diagnosis": "Érysipèle de la jambe gauche",
+    "specialty": "Dermatologie",
+    "difficulty": "Facile",
+    "setting": "cabinet",
+    "patient": "Mme Huber, 58 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "cholecystite-aigue",
+    "title": "Cholécystite aiguë",
+    "candidateTitle": "Douleur de l’hypocondre droit depuis la nuit",
+    "diagnosis": "Cholécystite aiguë lithiasique",
+    "specialty": "Gastro-entérologie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mme Moret, 47 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "colique-nephretique",
+    "title": "Colique néphrétique",
+    "candidateTitle": "Douleur lombaire gauche brutale",
+    "diagnosis": "Colique néphrétique gauche non compliquée",
+    "specialty": "Néphrologie",
+    "difficulty": "Facile",
+    "setting": "urgences",
+    "patient": "M. Duc, 38 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "hemorragie-sous-arachnoidienne",
+    "title": "Hémorragie sous-arachnoïdienne",
+    "candidateTitle": "Céphalée brutale et intense",
+    "diagnosis": "Hémorragie sous-arachnoïdienne par rupture d’anévrisme",
+    "specialty": "Neurologie",
+    "difficulty": "Difficile",
+    "setting": "urgences",
+    "patient": "Mme Berset, 52 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "pyelonephrite-aigue",
+    "title": "Pyélonéphrite aiguë",
+    "candidateTitle": "Fièvre et douleur lombaire droite",
+    "diagnosis": "Pyélonéphrite aiguë droite simple",
+    "specialty": "Infectiologie",
+    "difficulty": "Facile",
+    "setting": "cabinet",
+    "patient": "Mme Rochat, 29 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "insuffisance-cardiaque-decompensee",
+    "title": "Insuffisance cardiaque décompensée",
+    "candidateTitle": "Essoufflement croissant et jambes gonflées",
+    "diagnosis": "Insuffisance cardiaque chronique décompensée",
+    "specialty": "Cardiologie",
+    "difficulty": "Intermédiaire",
+    "setting": "cabinet",
+    "patient": "M. Schmid, 74 ans",
+    "duration": "13 min",
+    "tags": [
+      "Anamnèse",
+      "Raisonnement",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "rupture-ligament-croise-anterieur",
+    "title": "Rupture du ligament croisé antérieur",
+    "candidateTitle": "Genou instable après une torsion au football",
+    "diagnosis": "Rupture du ligament croisé antérieur",
+    "specialty": "Orthopédie",
+    "difficulty": "Intermédiaire",
+    "setting": "cabinet",
+    "patient": "M. Reymond, 23 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "fracture-col-femoral",
+    "title": "Fracture du col fémoral",
+    "candidateTitle": "Chute à domicile chez une patiente âgée",
+    "diagnosis": "Fracture du col fémoral déplacée",
+    "specialty": "Orthopédie",
+    "difficulty": "Intermédiaire",
+    "setting": "urgences",
+    "patient": "Mme Pittet, 84 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
+  },
+  {
+    "slug": "fracture-cheville-weber-b",
+    "title": "Fracture de la malléole latérale (Weber B)",
+    "candidateTitle": "Traumatisme de la cheville en ratant une marche",
+    "diagnosis": "Fracture de la malléole latérale Weber B",
+    "specialty": "Orthopédie",
+    "difficulty": "Facile",
+    "setting": "urgences",
+    "patient": "M. Lopes, 34 ans",
+    "duration": "13 min",
+    "tags": [
+      "ECOS 5ᵉ année",
+      "Anamnèse",
+      "Analyse des examens",
+      "Prise en charge"
+    ],
+    "interactive": true
   }
 ]

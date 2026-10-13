@@ -4,10 +4,10 @@ import {
   assertSameOrigin,
   handleApiError,
   requireAuthenticatedUser,
-} from "../../../lib/api-security";
-import { enforceRateLimit } from "../../../lib/rate-limit";
-import { createAdminClient } from "../../../../lib/supabase/server";
-import { isOwnAvatarPath } from "../../../../lib/profile/avatar-path";
+} from "@/app/lib/api-security";
+import { enforceRateLimit } from "@/app/lib/rate-limit";
+import { createAdminClient } from "@/lib/supabase/server";
+import { isOwnAvatarPath } from "@/lib/profile/avatar-path";
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 const MIME_EXTENSIONS = {

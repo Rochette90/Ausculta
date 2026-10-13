@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SpecialtyQuizSession } from "../../../../components/quiz/SpecialtyQuizSession";
-import { requireUser } from "../../../../lib/auth/require-user";
-import { getSpecialtyQuiz } from "../../../../lib/quiz/specialty";
+import { SpecialtyQuizSession } from "@/components/quiz/SpecialtyQuizSession";
+import { requireUser } from "@/lib/auth/require-user";
+import { getSpecialtyQuiz } from "@/lib/quiz/specialty";
 import { pageTitle } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";

@@ -9,7 +9,7 @@ Plateforme Next.js d’entraînement médical avec authentification Supabase, pr
 - Supabase Auth, PostgreSQL, Storage, Realtime et RLS
 - Stripe Checkout, Customer Portal et webhooks
 - Modèle de langage optionnel pour le patient simulé (Anthropic, OpenRouter ou Groq), avec moteur local de secours
-- déploiement Vercel, région Frankfurt
+- hébergement Node.js chez Infomaniak (Suisse), Supabase conservé pour l’auth, la base et le Storage
 
 ```text
 app/
@@ -50,9 +50,40 @@ Créer un produit/prix récurrent puis renseigner `STRIPE_PRO_PRICE_ID`. Le webh
 
 Copier ensuite le secret de signature dans `STRIPE_WEBHOOK_SECRET`.
 
-## Déploiement Vercel
+## Déploiement chez Infomaniak
 
-Importer le projet, ajouter toutes les variables de `.env.example`, puis déployer. Dans Supabase, ajouter l’URL Vercel finale à `Site URL` et `Redirect URLs` avec le chemin `/auth/callback`.
+Supabase reste le backend (auth, PostgreSQL, Storage). Seul le serveur Next.js est hébergé chez Infomaniak. Deux variantes, toutes deux derrière un reverse proxy qui transmet `x-forwarded-proto` ; `NEXT_PUBLIC_APP_URL` doit être l’origine publique en `https`, elle sert de repli à la vérification d’origine des API.
+
+### Variante A — hébergement Node.js géré (sans serveur à administrer)
+
+Dans le Manager Infomaniak, créer un site Node.js (méthode personnalisée) puis, dans les réglages avancés :
+
+| Réglage | Valeur |
+|---|---|
+| Dossier d’exécution | `./` |
+| Version Node.js | 22 LTS (voir `.node-version`) |
+| Commande de build | `npm ci && npm run build` |
+| Commande de lancement | `npm start` |
+| Port | celui affiché par le Manager (`next start` lit `PORT`) |
+
+Les variables de `.env.example` vont dans un fichier `.env.production.local` déposé à la racine via SFTP (non versionné, chargé par `next start`). Mise à jour : redéployer le code (git pull ou archive), relancer le build depuis le Manager, puis redémarrer l’application.
+
+### Variante B — serveur (VPS Cloud / Public Cloud) avec Docker
+
+`Dockerfile` (build standalone, image non-root), `compose.yaml` (application + Caddy avec TLS automatique) et `deploy/Caddyfile`.
+
+```bash
+cp .env.example .env.production   # remplir, ajouter APP_DOMAIN=<domaine>
+docker compose --env-file .env.production up -d --build
+```
+
+### Après le premier déploiement
+
+1. Supabase : `Site URL` = origine publique, Redirect URLs : `https://<domaine>/auth/callback`.
+2. Stripe : webhook vers `https://<domaine>/api/billing/webhook`.
+3. Vérifier avec un compte non admin que les stations se lancent et qu’un `POST` API depuis le site passe (pas de 403 `invalid_origin`).
+
+En local, `npm run build:standalone && npm run start:standalone` reproduit l’image Docker. L’intégration continue (`.github/workflows/ci.yml`) exécute typecheck, lint, tests, build standalone et un test de démarrage.
 
 ## Vérification
 
@@ -70,7 +101,9 @@ Pour activer l’historique d’anatomie, appliquer `supabase/migrations/2026092
 
 ## Stations ECOS
 
-Les 12 stations de `/cas` se déroulent en trois temps — anamnèse avec un patient simulé (moteur local, modèle de langage optionnel), examen clinique où chaque geste choisi débloque son résultat, puis synthèse (diagnostic parmi quatre propositions et prise en charge) — et sont notées sur 22 points avec un débriefing sourcé révélé après la correction serveur. L’entraînement est sans chronomètre ; le mode examen dure 13 minutes pour toute la station. Les adresses utilisent un code neutre (`/cas/station-04`) pour ne pas donner le diagnostic. Pour les activer et appliquer les correctifs de sécurité, appliquer `20260928110000_security_and_streak_fixes.sql` puis `20260928120000_publish_ecos_stations.sql`, en déployant le code en même temps. Détails, ajout d’une station et vérifications : [Stations ECOS et correctifs](docs/ecos-stations-et-correctifs.md).
+Les 20 stations de `/cas` se déroulent en trois temps — anamnèse avec un patient simulé (moteur local, modèle de langage optionnel), examen clinique où chaque geste choisi débloque son résultat, puis synthèse (diagnostic parmi quatre propositions et prise en charge) — et sont notées sur 22 points avec un débriefing sourcé révélé après la correction serveur. L’entraînement est sans chronomètre ; le mode examen dure 13 minutes pour toute la station. Les adresses utilisent un code neutre (`/cas/station-04`) pour ne pas donner le diagnostic. Pour les activer et appliquer les correctifs de sécurité, appliquer `20260928110000_security_and_streak_fixes.sql` puis `20260928120000_publish_ecos_stations.sql`, en déployant le code en même temps. Détails, ajout d’une station et vérifications : [Stations ECOS et correctifs](docs/ecos-stations-et-correctifs.md).
+
+Les stations 13 à 20 sont publiées par `20261012160000_ecos_stations_13_20.sql`. La théorie (`/theorie`) et les grilles d’entraînement en binôme (`/grilles`) sont stockées en base et modifiables depuis l’administration : appliquer `20261012150000_theory_and_grids.sql`. Les avis de fin de station, les statistiques (`/admin/stations`) et le journal d’erreurs demandent `20261012170000_ecos_feedback_and_errors.sql`.
 
 ### Patient joué par un modèle
 

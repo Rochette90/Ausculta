@@ -28,6 +28,29 @@ export const BRAND_LOGO_HEIGHT = 52;
 export const BRAND_PLAN_LABEL = "Premium";
 export const BRAND_PRO_PLAN = `${BRAND_NAME} ${BRAND_PLAN_LABEL}`;
 
+/**
+ * Identité juridique affichée sur les pages légales (mentions, CGU,
+ * confidentialité). Les valeurs entre crochets sont des espaces réservés à
+ * compléter avant le lancement : tant qu'elles le restent, les pages signalent
+ * visiblement l'information manquante.
+ */
+export const BRAND_LEGAL = {
+  /** Personne ou société responsable du service. */
+  operator: "[Nom du responsable ou raison sociale]",
+  /** Adresse postale complète. */
+  address: "[Adresse postale, NPA Localité, Suisse]",
+  /** Hébergeur de l'application (nom et pays). */
+  host: "[Hébergeur de l'application et pays]",
+  /** Adresse de contact pour les questions de protection des données. */
+  privacyEmail: BRAND_EMAIL_FROM,
+  /** Date de dernière mise à jour des textes légaux (ISO). */
+  updatedOn: "2026-10-12",
+} as const;
+
+export function isLegalPlaceholder(value: string) {
+  return value.startsWith("[") && value.endsWith("]");
+}
+
 /** Suffixe commun des balises <title>. */
 export function pageTitle(title: string) {
   return `${title} — ${BRAND_NAME}`;
@@ -45,6 +68,8 @@ const TECHNICAL_NAMESPACE = "ausculta";
 
 export const THEME_STORAGE_KEY = `${TECHNICAL_NAMESPACE}-theme`;
 export const PROGRESS_EVENT_NAME = `${TECHNICAL_NAMESPACE}:progress`;
+/** Préfixe des grilles d'entraînement sauvegardées dans le navigateur. */
+export const GRID_STORAGE_PREFIX = `${TECHNICAL_NAMESPACE}-grid`;
 export const PATHNAME_HEADER = `x-${TECHNICAL_NAMESPACE}-pathname`;
 export const ONBOARDING_METADATA_KEY = `${TECHNICAL_NAMESPACE}_onboarding`;
 

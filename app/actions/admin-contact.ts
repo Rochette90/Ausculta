@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { UUID_PATTERN } from "@/lib/validation";
-import { AdminAccessError, assertAdminUser } from "../../lib/auth/admin";
-import { resolveAdminContactMessage } from "../../lib/admin/queries";
+import { AdminAccessError, assertAdminUser } from "@/lib/auth/admin";
+import { resolveAdminContactMessage } from "@/lib/admin/queries";
 import { BRAND_NAME } from "@/lib/brand";
 
 export async function resolveContactMessage(id: string): Promise<{ success: boolean; error?: string }> {

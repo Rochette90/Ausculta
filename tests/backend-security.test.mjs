@@ -530,3 +530,36 @@ test("ECOS scoring is shared by the client and server", () => {
   assert.equal(result.maxScore, 20);
   assert.equal(result.score, 2);
 });
+
+test("theory fiches and practice grids are read-only for students and edited through versioned admin RPCs", async () => {
+  const [sql, action, theoryQueries, gridQueries] = await Promise.all([
+    read("../supabase/migrations/20261012150000_theory_and_grids.sql"),
+    read("../app/actions/admin-training.ts"),
+    read("../lib/theory/queries.ts"),
+    read("../lib/grids/queries.ts"),
+  ]);
+  for (const table of ["theory_fiches", "practice_grids"]) {
+    assert.match(sql, new RegExp(`alter table public\\.${table} enable row level security`, "i"));
+    assert.match(sql, new RegExp(`on public\\.${table}\\s+for select to authenticated using \\(is_published = true\\)`, "i"));
+    assert.match(sql, new RegExp(`revoke all on [^;]*public\\.${table}[^;]* from anon, authenticated;`, "i"));
+    assert.match(sql, new RegExp(`grant select on [^;]*public\\.${table}[^;]* to authenticated;`, "i"));
+  }
+  for (const fn of ["admin_save_theory_fiche", "admin_save_practice_grid"]) {
+    const body = sql.slice(sql.indexOf(`function public.${fn}(`));
+    assert.match(body, /security definer\s+set search_path = ''/i);
+    assert.match(body, /where id = p_admin_user_id and role = 'admin'/i);
+    assert.match(body, /version = p_expected_version/i);
+    assert.match(sql, new RegExp(`revoke all on function public\\.${fn}\\([^)]*\\)\\s+from public, anon, authenticated`, "i"));
+    assert.match(sql, new RegExp(`grant execute on function public\\.${fn}\\([^)]*\\)\\s+to service_role`, "i"));
+    assert.match(action, new RegExp(`admin\\.rpc\\("${fn}"`));
+  }
+  assert.match(action, /await assertAdminUser\(\)/);
+  assert.match(action, /enforceRateLimit\(/);
+  assert.match(action, /validateGridContent\(/);
+  // Les étudiants ne lisent que le publié, même si la RLS était contournée côté service.
+  for (const queries of [theoryQueries, gridQueries]) {
+    assert.match(queries, /import "server-only"/);
+    assert.match(queries, /\.eq\("is_published", true\)/);
+  }
+  assert.match(gridQueries, /validateGridContent\(/);
+});

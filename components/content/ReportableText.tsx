@@ -2,9 +2,9 @@
 
 import { CheckCircle2, Flag, LoaderCircle, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { createPathologyReport } from "../../app/actions/reports";
-import type { PathologySectionKey } from "../../types/content";
-import { Button } from "../ui/button";
+import { createPathologyReport } from "@/app/actions/reports";
+import type { PathologySectionKey } from "@/types/content";
+import { Button } from "@/components/ui/button";
 
 type SelectedPassage = {
   start: number;

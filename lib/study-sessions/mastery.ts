@@ -9,7 +9,7 @@ export const STUDY_SESSION_VERBS = ["Découvrir", "Renforcer", "Consolider"] as 
 export type StudySessionVerb = (typeof STUDY_SESSION_VERBS)[number];
 
 /** Ramène une valeur quelconque dans l'intervalle [0, 100], arrondie à l'entier. */
-export function clampMastery(masteryPercentage: number): number {
+function clampMastery(masteryPercentage: number): number {
   if (!Number.isFinite(masteryPercentage)) return 0;
   return Math.min(100, Math.max(0, Math.round(masteryPercentage)));
 }

@@ -3,7 +3,7 @@
 import { ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { AdminQuestionListItem } from "../../lib/admin/questions";
+import type { AdminQuestionListItem } from "@/lib/admin/questions";
 
 const reviewLabels = { draft: "Brouillon", in_review: "À relire", approved: "Approuvée", rejected: "Rejetée" };
 
