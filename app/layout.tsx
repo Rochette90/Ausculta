@@ -7,7 +7,7 @@ import "./styles/marketing.css";
 import "./styles/station.css";
 import "./styles/fiche.css";
 import "./styles/grids.css";
-import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_NAME, BRAND_TAGLINE, BRAND_TITLE } from "@/lib/brand";
 
 // Deux voix typographiques : le sans-serif pour l'interface et l'étudiant,
 // le serif pour la parole du patient et les phrases de récit. Polices
@@ -25,11 +25,11 @@ function metadataOrigin() {
 
 export const metadata: Metadata = {
   metadataBase: metadataOrigin(),
-  title: `${BRAND_NAME} — Maîtrisez vos ECOS`,
+  title: `${BRAND_TITLE} — Maîtrisez vos ECOS`,
   description: "Plateforme suisse d’entraînement aux ECOS avec patients simulés interactifs.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
-    title: `${BRAND_NAME} — Maîtrisez vos ECOS`,
+    title: `${BRAND_TITLE} — Maîtrisez vos ECOS`,
     description: "Entraînez votre raisonnement clinique avec des patients simulés interactifs.",
     images: [{ url: "/og-home.png", width: 1536, height: 1024, alt: `${BRAND_NAME} — ${BRAND_TAGLINE}` }],
     locale: "fr_CH",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${BRAND_NAME} — Maîtrisez vos ECOS`,
+    title: `${BRAND_TITLE} — Maîtrisez vos ECOS`,
     description: "Entraînez votre raisonnement clinique avec des patients simulés interactifs.",
     images: ["/og-home.png"],
   },

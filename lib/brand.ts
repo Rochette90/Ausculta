@@ -10,6 +10,14 @@ export const BRAND_NAME_UPPER = "AUSCULTA";
 export const BRAND_DOMAIN = "ausculta.ch";
 export const BRAND_EMAIL_FROM = `contact@${BRAND_DOMAIN}`;
 
+/**
+ * Étape de lancement, affichée à côté du logo et dans le titre des onglets.
+ * Au lancement public : `null`, et la mention disparaît partout.
+ */
+export const BRAND_STAGE: string | null = "Bêta";
+/** Nom affiché dans les titres : « Ausculta Bêta » pendant la phase de test. */
+export const BRAND_TITLE = BRAND_STAGE ? `${BRAND_NAME} ${BRAND_STAGE}` : BRAND_NAME;
+
 /** Signature de marque : le geste d'écoute avant l'instrument. */
 export const BRAND_TAGLINE = "Écouter. Comprendre. Soigner.";
 
@@ -53,7 +61,7 @@ export function isLegalPlaceholder(value: string) {
 
 /** Suffixe commun des balises <title>. */
 export function pageTitle(title: string) {
-  return `${title} — ${BRAND_NAME}`;
+  return `${title} — ${BRAND_TITLE}`;
 }
 
 /**

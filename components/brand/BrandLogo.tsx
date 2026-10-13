@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { BRAND_LOGO_DARK_SRC, BRAND_LOGO_HEIGHT, BRAND_LOGO_SRC, BRAND_LOGO_WIDTH, BRAND_NAME } from "@/lib/brand";
+import { BRAND_LOGO_DARK_SRC, BRAND_LOGO_HEIGHT, BRAND_LOGO_SRC, BRAND_LOGO_WIDTH, BRAND_NAME, BRAND_STAGE } from "@/lib/brand";
 
 /**
  * Mot-symbole officiel. Deux fichiers : le tracé sombre pour le thème clair, le
@@ -33,6 +33,7 @@ export function BrandLogo({
         src={BRAND_LOGO_DARK_SRC}
         width={BRAND_LOGO_WIDTH}
       />
+      {BRAND_STAGE && <span className="brand-stage">{BRAND_STAGE}</span>}
     </span>
   );
 }

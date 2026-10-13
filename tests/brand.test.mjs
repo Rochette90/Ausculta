@@ -8,6 +8,8 @@ import {
   BRAND_NAME_UPPER,
   BRAND_PLAN_LABEL,
   BRAND_PRO_PLAN,
+  BRAND_STAGE,
+  BRAND_TITLE,
   LEGACY_ONBOARDING_METADATA_KEY,
   ONBOARDING_METADATA_KEY,
   PATHNAME_HEADER,
@@ -37,7 +39,9 @@ test("la configuration de marque expose une identité cohérente", () => {
   assert.equal(BRAND_PRO_PLAN, `${BRAND_NAME} ${BRAND_PLAN_LABEL}`);
   // « Pro » est réservé à un futur produit pour les soignants.
   assert.notEqual(BRAND_PLAN_LABEL, "Pro");
-  assert.equal(pageTitle("Tableau de bord"), `Tableau de bord — ${BRAND_NAME}`);
+  assert.equal(pageTitle("Tableau de bord"), `Tableau de bord — ${BRAND_TITLE}`);
+  // Pendant la phase de test, la mention suit le nom ; au lancement, BRAND_STAGE vaut null.
+  assert.equal(BRAND_TITLE, BRAND_STAGE ? `${BRAND_NAME} ${BRAND_STAGE}` : BRAND_NAME);
 });
 
 test("le nom de marque n'apparaît en dur nulle part ailleurs que dans la configuration", async () => {
