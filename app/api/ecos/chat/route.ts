@@ -1,4 +1,5 @@
 import { buildPatientPrompt, EXAMINER_PREFIX, localPatientReply } from "@/lib/ecos/engine";
+import { buildAnnouncementPrompt, localAnnouncementReply, MAX_ANNOUNCEMENT_MESSAGES } from "@/lib/ecos/announcement";
 import { encodeChatEvent, type ChatStreamEvent } from "@/lib/ecos/chat-stream";
 import { patientAiChain, patientAiTimeoutMs, type TranscriptMessage } from "@/lib/ecos/patient-ai";
 import { streamPatientReply } from "@/lib/ecos/patient-reply";
@@ -6,7 +7,8 @@ import { ecosQuotasForUser } from "@/lib/ecos/plan";
 import { DAY_SECONDS, sessionIsFull } from "@/lib/ecos/quotas";
 import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
-import { usesReservedPrefix } from "@/lib/ecos/text";
+import { withPatientVariant } from "@/lib/ecos/variants";
+import { ANNOUNCE_PREFIX, usesReservedPrefix } from "@/lib/ecos/text";
 import { sessionDeadline } from "@/lib/ecos/timing";
 import { SPEECH_SYNTHESIS_MAX_CHARACTERS, speechConfig, synthesizeSpeech, VoiceProviderError } from "@/lib/ecos/voice";
 import { UUID_PATTERN } from "@/lib/validation";
@@ -64,6 +66,8 @@ export async function POST(request: Request) {
     const message = typeof body.message === "string" ? body.message.trim() : "";
     const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
     const wantsVoice = body.voice === true;
+    // Annonce au patient : seule conversation encore ouverte une fois la synthèse commencée.
+    const announcement = body.stage === "announcement";
     if (!message || message.length > 800) {
       throw new ApiError(400, "invalid_message", "Message invalide");
     }
@@ -108,23 +112,34 @@ export async function POST(request: Request) {
     const { data: session, error: sessionError } = sessionResult;
     if (sessionError) throw sessionError;
     if (!session) throw new ApiError(404, "session_not_found", "Session introuvable");
-    const scenario = getEcosScenario(String(session.station_slug));
-    if (!scenario) throw new ApiError(409, "unsupported_station", "Scénario non disponible.");
+    const station = getEcosScenario(String(session.station_slug));
+    if (!station) throw new ApiError(409, "unsupported_station", "Scénario non disponible.");
+    // Tempérament du patient propre à cette séance : rejouer ne redonne pas le même entretien.
+    const scenario = withPatientVariant(station, sessionId);
     if (session.status !== "active") {
       throw new ApiError(409, "session_not_active", "Session déjà clôturée");
     }
     if (Date.now() > sessionDeadline(session.mode, session.started_at)) {
       throw new ApiError(409, "station_expired", "Le temps est écoulé. Termine la station pour enregistrer le bilan.");
     }
-    if (synthesisOpen) {
+    if (synthesisOpen && !announcement) {
       throw new ApiError(409, "synthesis_started", "La synthèse est commencée : l’entretien est terminé.");
     }
+    if (announcement && !synthesisOpen) {
+      throw new ApiError(409, "synthesis_not_started", "L’annonce au patient se fait à la synthèse.");
+    }
     if (historyResult.error) throw historyResult.error;
+    const announced = (historyResult.data ?? []).filter((row) => row.role === "student" && String(row.content).startsWith(ANNOUNCE_PREFIX)).length;
+    if (announcement && announced >= MAX_ANNOUNCEMENT_MESSAGES) {
+      throw new ApiError(409, "announcement_full", "Tu as fait ton annonce : termine la station pour voir ton bilan.");
+    }
     if (sessionIsFull(historyResult.data?.[0]?.sequence, quotas)) {
       throw new ApiError(409, "session_full", "Cette station a atteint sa longueur maximale. Passe à la synthèse pour la terminer.");
     }
+    // Le modèle lit l'annonce sans son préfixe ; la base la garde préfixée, hors notation.
+    const withoutAnnouncePrefix = (content: string) => content.startsWith(ANNOUNCE_PREFIX) ? content.slice(ANNOUNCE_PREFIX.length) : content;
     const history: TranscriptMessage[] = [
-      ...(historyResult.data ?? []).reverse().map(({ role, content }) => ({ role, content }) as TranscriptMessage),
+      ...(historyResult.data ?? []).reverse().map(({ role, content }) => ({ role, content: withoutAnnouncePrefix(String(content)) }) as TranscriptMessage),
       { role: "student", content: message },
     ];
     timing.mark("checks");
@@ -135,7 +150,7 @@ export async function POST(request: Request) {
       p_user_id: user.id,
       p_session_id: sessionId,
       p_role: "student",
-      p_content: message,
+      p_content: announcement ? `${ANNOUNCE_PREFIX}${message}` : message,
     })).then(({ error }) => { if (error) throw error; });
     studentSaved.catch(() => undefined);
 
@@ -157,7 +172,15 @@ export async function POST(request: Request) {
         let audioSent: Promise<void> = Promise.resolve();
         let segments = 0;
         let spokenCharacters = 0;
+        // Annonce : le patient ne pose qu'une question ; la suite de la réplique est coupée.
+        const announcedSegments: string[] = [];
+        let askedQuestion = false;
         const onSegment = (text: string) => {
+          if (announcement) {
+            if (askedQuestion) return;
+            announcedSegments.push(text);
+            if (text.includes("?")) askedQuestion = true;
+          }
           const index = segments;
           segments += 1;
           if (index === 0) timing.mark("first-segment");
@@ -190,18 +213,20 @@ export async function POST(request: Request) {
         try {
           const result = await streamPatientReply({
             chain,
-            systemPrompt: chain.length ? buildPatientPrompt(scenario) : "",
+            systemPrompt: chain.length ? (announcement ? buildAnnouncementPrompt(scenario) : buildPatientPrompt(scenario)) : "",
             history,
             timeoutMs: patientAiTimeoutMs(chain.length),
             firstTokenTimeoutMs: FIRST_TOKEN_TIMEOUT_MS,
             fallback: () => localPatientReply(scenario, message, turn),
+            // Annonce au patient : sans modèle, le patient réagit à l'explication.
+            ...(announcement ? { fallback: () => localAnnouncementReply(message, announced + 1) } : {}),
             onSegment,
             silent: isExaminerLine,
             speakers: speakerLabels(scenario),
             log: (reason) => console.error(`${BRAND_NAME} patient: ${reason}`),
           });
           timing.mark(`model(${result.source})`);
-          const reply = normalizeReply(result.reply);
+          const reply = normalizeReply(announcement && announcedSegments.length ? announcedSegments.join(" ") : result.reply);
           const saved = studentSaved.then(async () => {
             const { error } = await admin.rpc("append_ecos_message", {
               p_user_id: user.id,

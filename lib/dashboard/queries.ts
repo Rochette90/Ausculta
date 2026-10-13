@@ -14,6 +14,7 @@ import { getOnboardingMetadata } from "../onboarding/metadata";
 import { activeStreak } from "../progress/streak";
 import { BRAND_NAME } from "@/lib/brand";
 import { FEATURES } from "../features";
+import { levelFromXp } from "@/lib/progress/levels";
 
 type SpecialtyRow = {
   id: string;
@@ -101,7 +102,8 @@ export type DashboardData = {
   dailyQuiz: DailyQuiz | null;
   dailyQuizCompleted: boolean;
   stats: {
-    levelProgress: number;
+    /** Niveau progressif calculé depuis l'XP totale (`lib/progress/levels.ts`). */
+    level: { level: number; current: number; needed: number; percentage: number };
     completedPathologies: number;
     successfulQuestions: number;
     completedClinicalCases: number;
@@ -113,7 +115,8 @@ export type DashboardData = {
   recommendedPathology: PathologyRow | null;
   recentActivity: DashboardActivity[];
   weeklyActivity: DashboardWeekDay[];
-  todayGoal: { earnedXp: number; targetXp: number; percentage: number };
+  /** Objectif du jour : une vraie station terminée (XP > 0). */
+  todayGoal: { earnedXp: number; stations: number; targetStations: number; percentage: number };
   featuredStudySessionCompletedStepIds: string[];
 };
 
@@ -287,8 +290,9 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
       return [{
         id: `clinical-case-${row.resource_id ?? row.last_activity_at}`,
         label: (row.resource_id && stationCandidateTitle(row.resource_id)) || "Station ECOS",
-        detail: "Station terminée",
-        href: code ? `/cas/${code}` : "/cas",
+        // Les stations d'examen blanc ne se rejouent pas depuis `/cas` : on renvoie aux bilans.
+        detail: code?.startsWith("blanc-") ? "Station d’examen blanc terminée" : code ? `Station ${code.replace(/^station-/, "")} terminée` : "Station terminée",
+        href: code?.startsWith("blanc-") ? "/historique" : code ? `/cas/${code}` : "/cas",
         completedAt: row.last_activity_at,
         kind: "clinical_case",
       }];
@@ -321,7 +325,9 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
     isToday: date === today,
   }));
   const todayXp = xpByDate.get(today) ?? 0;
-  const dailyTargetXp = 30;
+  // Une station sans vrai entretien ne rapporte rien et ne compte pas pour l'objectif.
+  const stationsToday = ecosXpEvents.filter((event) => event.amount > 0 && zurichDate(new Date(event.created_at)) === today).length;
+  const targetStations = 1;
   const prioritizedPathologies = (profile.priority_specialty_ids ?? [])
     .flatMap((specialtyId) => pathologies.filter((pathology) => pathology.specialty_id === specialtyId));
   const recommendedPathology = [...prioritizedPathologies, ...pathologies]
@@ -333,7 +339,7 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
     dailyQuiz,
     dailyQuizCompleted,
     stats: {
-      levelProgress: profile.xp % 100,
+      level: levelFromXp(profile.xp),
       completedPathologies: completedPathologyIds.size,
       successfulQuestions: successfulQuestionIds.size,
       completedClinicalCases,
@@ -347,8 +353,9 @@ export const getDashboardData = cache(async (userId: string): Promise<DashboardD
     weeklyActivity,
     todayGoal: {
       earnedXp: todayXp,
-      targetXp: dailyTargetXp,
-      percentage: Math.min(100, Math.round((todayXp / dailyTargetXp) * 100)),
+      stations: stationsToday,
+      targetStations,
+      percentage: Math.min(100, Math.round((stationsToday / targetStations) * 100)),
     },
     featuredStudySessionCompletedStepIds: featuredSessionProgress.map((item) => item.stepId),
   };

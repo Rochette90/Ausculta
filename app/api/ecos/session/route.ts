@@ -11,7 +11,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 
 import { getPublishedClinicalCase } from "@/lib/ecos/cases";
 import { ecosQuotasForUser } from "@/lib/ecos/plan";
-import { resolveEcosStation } from "@/lib/ecos/stations";
+import { resolveEcosStation, resolveMockStation } from "@/lib/ecos/stations";
 import { parseEcosMode } from "@/lib/ecos/timing";
 
 export async function POST(request: Request) {
@@ -21,10 +21,11 @@ export async function POST(request: Request) {
     const body = await readJsonObject(request, 1_024);
     // Code public (`station-04`) ; l'ancien champ `stationSlug` reste accepté.
     const identifier = typeof body.station === "string" ? body.station : typeof body.stationSlug === "string" ? body.stationSlug : "";
-    const scenario = resolveEcosStation(identifier)?.scenario;
+    // Stations d'examen blanc : sans ligne en base, jouées en mode examen seulement.
+    const mock = resolveMockStation(identifier);
+    const scenario = mock ?? resolveEcosStation(identifier)?.scenario;
     if (!scenario) throw new ApiError(400, "unsupported_station", "Cette station n’est pas encore disponible.");
-    const clinicalCase = await getPublishedClinicalCase(scenario.slug);
-    if (!clinicalCase) throw new ApiError(404, "station_unavailable", "Station indisponible.");
+    if (!mock && !(await getPublishedClinicalCase(scenario.slug))) throw new ApiError(404, "station_unavailable", "Station indisponible.");
     const admin = createAdminClient();
     await enforceRateLimit(admin, user.id, "ecos-session", 10, 60);
     const { quotas } = await ecosQuotasForUser(admin, user.id);
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
 
     // Le mode fixe l'échéance côté serveur : 13 minutes en examen, sans
     // chronomètre en entraînement.
-    const mode = parseEcosMode(body.mode);
+    const mode = mock ? "exam" : parseEcosMode(body.mode);
     const { error: modeError } = await admin
       .from("ecos_sessions")
       .update({ mode })

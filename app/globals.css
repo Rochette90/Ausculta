@@ -470,8 +470,6 @@ select.field { padding-right: 12px; }
 .desktop-nav a.nav-active { border-bottom-color: var(--bar-2); color: var(--ink); font-weight: 650; }
 .profile-chip { display: flex; align-items: center; gap: 14px; }
 .profile-chip form { margin: 0; }
-.streak { color: var(--ink-secondary); font-size: 14px; font-weight: 600; white-space: nowrap; }
-.streak strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .signout-button { border: 0; background: transparent; color: var(--muted); font-size: 14px; font-weight: 550; text-decoration: underline; text-underline-offset: 4px; }
 .signout-button:hover { color: var(--ink); }
 .avatar {
@@ -502,7 +500,6 @@ select.field { padding-right: 12px; }
   .topbar { height: 60px; }
   .desktop-nav { display: none; }
   .profile-chip { gap: 10px; }
-  .profile-chip .streak { display: none; }
   .mobile-nav {
     position: fixed;
     z-index: 50;

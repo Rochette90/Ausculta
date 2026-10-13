@@ -18,17 +18,19 @@ export const dynamic = "force-dynamic";
 const PREMIUM_MONTHLY = "14.90";
 const PREMIUM_YEARLY = "119";
 
-const plural = (count: number, singular: string, pluralForm = `${singular}s`) => `${count} ${count > 1 ? pluralForm : singular}`;
+/** Nombre à la suisse (« 100'000 »), comme ailleurs dans l'application. */
+const count = (value: number) => value.toLocaleString("fr-CH");
+const plural = (value: number, singular: string, pluralForm = `${singular}s`) => `${count(value)} ${value > 1 ? pluralForm : singular}`;
 
 /** Lignes du comparatif : une étiquette et la valeur de chaque offre. */
 function comparison(free: EcosQuotas, pro: EcosQuotas) {
   return [
     { label: "Stations par jour", free: plural(free.dailySessions, "station"), pro: plural(pro.dailySessions, "station") },
-    { label: "Questions au patient par jour", free: String(free.dailyMessages), pro: String(pro.dailyMessages) },
+    { label: "Questions au patient par jour", free: count(free.dailyMessages), pro: count(pro.dailyMessages) },
     { label: "Voix réaliste du patient", free: `${plural(free.dailyVoiceReplies, "réplique")} par jour en aperçu, puis voix du navigateur`, pro: `${plural(pro.dailyVoiceReplies, "réplique")} par jour` },
     { label: "Modes entraînement et examen", free: "Oui", pro: "Oui" },
     { label: "Grille corrigée et débriefing", free: "Oui", pro: "Oui" },
-    { label: "Tableau de bord, XP et série", free: "Oui", pro: "Oui" },
+    { label: "Tableau de bord, XP et jalons", free: "Oui", pro: "Oui" },
     { label: "Fiches de révision et QCM, à leur arrivée", free: "—", pro: "Inclus" },
   ];
 }
@@ -60,15 +62,16 @@ export default async function PricingPage() {
               <p className="plan-desc">De quoi s’entraîner chaque jour et installer une routine, avec un aperçu de la voix réaliste.</p>
               <ul>
                 <li>{plural(free.dailySessions, "station")} par jour, en mode entraînement ou examen</li>
-                <li>{free.dailyMessages} questions au patient par jour</li>
+                <li>{count(free.dailyMessages)} questions au patient par jour</li>
                 <li>Voix réaliste du patient : {plural(free.dailyVoiceReplies, "réplique")} par jour, puis la voix du navigateur prend le relais</li>
                 <li>Grille corrigée et débriefing après chaque station</li>
-                <li>Tableau de bord, XP et série quotidienne, sur tous vos appareils</li>
+                <li>Tableau de bord, XP et jalons, sur tous vos appareils</li>
               </ul>
               <Link className={`button ${isPro ? "quiet" : "primary"} full`} href={startHref}>{user ? "Aller aux stations" : "Créer mon compte"}</Link>
             </article>
 
-            <article className={`plan${isPro ? " is-current" : ""}`}>
+            <article className={`plan is-featured${isPro ? " is-current" : ""}`}>
+              <p className="plan-ribbon">Pour préparer un examen</p>
               <h2>{BRAND_PRO_PLAN}</h2>
               <p className="plan-status">{isPro ? "Votre offre actuelle" : onSale ? "Résiliable à tout moment" : "Bientôt disponible"}</p>
               <p className="plan-price"><strong>CHF {PREMIUM_MONTHLY}</strong><span>par mois</span></p>
@@ -76,7 +79,7 @@ export default async function PricingPage() {
               <p className="plan-desc">Pour enchaîner les stations avant un examen, à la voix, sans surveiller un compteur.</p>
               <ul>
                 <li>{plural(pro.dailySessions, "station")} par jour</li>
-                <li>{pro.dailyMessages} questions au patient par jour</li>
+                <li>{count(pro.dailyMessages)} questions au patient par jour</li>
                 <li>Voix réaliste du patient : {plural(pro.dailyVoiceReplies, "réplique")} par jour</li>
                 <li>Fiches de révision et QCM, dès leur arrivée</li>
                 <li>Accès prioritaire aux nouvelles stations</li>

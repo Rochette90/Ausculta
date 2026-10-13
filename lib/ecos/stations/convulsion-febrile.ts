@@ -17,7 +17,7 @@ export const convulsionFebrile: EcosScenario = {
   persona: "C’est la mère de Léo qui répond, encore très secouée et parfois au bord des larmes. Elle décrit bien ce qu’elle a vu et se calme si on lui explique les choses simplement.",
   brief: [
     "Vous êtes médecin assistant·e aux urgences pédiatriques.",
-    "Léo, 2 ans, est amené par sa mère après une crise convulsive à la maison il y a une heure.",
+    "Léo, 2 ans, est amené aux urgences pédiatriques par sa mère après une crise convulsive à la maison il y a une heure.",
     "L’enfant ne parle pas encore assez : sa mère répond. Menez l’anamnèse, décrivez l’examen et les examens utiles, puis expliquez la prise en charge.",
   ],
   opening: "Bonjour docteur, mon fils a fait une crise tout à l’heure : il est devenu tout raide puis il tremblait de partout. J’ai cru qu’il allait mourir.",
@@ -60,9 +60,9 @@ export const convulsionFebrile: EcosScenario = {
   ],
   examination: [
     { id: "constantes", label: "Constantes vitales et temps de recoloration", category: "constantes", pertinent: true, topic: "constantes" },
-    { id: "neuro", label: "Examen neurologique", category: "examen", pertinent: true, topic: "examen neurologique" },
-    { id: "meninges-peau", label: "Signes méningés et inspection de la peau", category: "examen", pertinent: true, topic: "méninges et peau" },
-    { id: "orl", label: "Examen ORL", category: "examen", pertinent: true, topic: "examen ORL" },
+    { id: "neuro", label: "Examen neurologique", category: "examen", pertinent: true, topic: "examen neurologique", covers: ["examen-neurologique", "pupilles"] },
+    { id: "meninges-peau", label: "Signes méningés et inspection de la peau", category: "examen", pertinent: true, topic: "méninges et peau", covers: ["signes-meninges", "peau"] },
+    { id: "orl", label: "Examen ORL", category: "examen", pertinent: true, topic: "examen ORL", covers: ["examen-orl"] },
     { id: "glycemie", label: "Glycémie capillaire", category: "complementaire", pertinent: true, topic: "glycémie" },
     { id: "eeg", label: "Électroencéphalogramme", category: "complementaire", pertinent: false, result: "Non indiqué après une convulsion fébrile simple." },
     { id: "ct-cerebral", label: "CT cérébral", category: "complementaire", pertinent: false, result: "Non indiqué : examen neurologique normal, récupération complète." },

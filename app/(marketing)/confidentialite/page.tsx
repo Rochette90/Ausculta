@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       <h3>Entraînement</h3>
       <ul>
         <li>Stations lancées, messages échangés avec le patient simulé, réponses aux grilles, scores, points d’expérience, badges, série de jours actifs.</li>
-        <li>Textes dictés : si vous utilisez la dictée, la reconnaissance vocale est réalisée par votre navigateur ; seul le texte reconnu nous parvient.</li>
+        <li>Dictée : si vous utilisez la dictée pendant une station, l’enregistrement de votre voix est transmis à notre prestataire de transcription (ElevenLabs), qui nous renvoie le texte ; nous ne conservons pas l’enregistrement, seulement le texte de vos questions. Si la transcription n’est pas disponible, la reconnaissance vocale est réalisée par votre navigateur.</li>
       </ul>
       <h3>Technique</h3>
       <ul>
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Supabase</strong> (base de données, authentification, stockage des photos de profil).</li>
         <li><strong>Fournisseurs de modèles de langage</strong> (Anthropic, et en secours OpenRouter ou Groq) : reçoivent le scénario de la station et vos messages au patient simulé pour générer ses réponses et le débriefing. Aucune donnée de compte (nom, e-mail) ne leur est transmise.</li>
-        <li><strong>ElevenLabs</strong> (voix du patient, si activée) : reçoit uniquement le texte de la réplique à prononcer.</li>
+        <li><strong>ElevenLabs</strong> (voix du patient et transcription de la dictée) : reçoit le texte de la réplique à prononcer et, si vous dictez, l’enregistrement de votre voix pour le transcrire.</li>
         {FEATURES.premium && <li><strong>Stripe</strong> (paiement) : traite vos données de paiement ; nous ne stockons ni numéro de carte ni IBAN.</li>}
         <li><strong>Hébergeur</strong> : <LegalValue value={BRAND_LEGAL.host} />.</li>
       </ul>

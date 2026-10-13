@@ -1,6 +1,8 @@
 import type { EcosScenario, EcosStationView } from "../types.ts";
+import { patientLabel } from "../text.ts";
 import { hasAnalysisStep, stationMaxScore } from "../grading.ts";
 import { EXAM_DURATION_SECONDS } from "../timing.ts";
+import { examCatalogForScenario } from "../exam-orders.ts";
 import { acidocetoseDiabetique } from "./acidocetose-diabetique.ts";
 import { appendiciteAigue } from "./appendicite-aigue.ts";
 import { avcIschemiqueSylvienGauche } from "./avc-ischemique-sylvien-gauche.ts";
@@ -24,6 +26,7 @@ import { pneumonieCommunautaire } from "./pneumonie-communautaire.ts";
 import { pneumothoraxSpontane } from "./pneumothorax-spontane.ts";
 import { pyelonephriteAigue } from "./pyelonephrite-aigue.ts";
 import { ruptureLigamentCroiseAnterieur } from "./rupture-ligament-croise-anterieur.ts";
+import { MOCK_CODES, MOCK_STATIONS } from "./mock/index.ts";
 
 /**
  * Scripted ECOS stations. A station is playable only when it is listed here
@@ -97,8 +100,20 @@ export const STATION_FICHE_SLUGS: ReadonlySet<string> = new Set(
   ECOS_SCENARIOS.flatMap((scenario) => scenario.debrief.pathologySlugs),
 );
 
-const bySlug = new Map(ECOS_SCENARIOS.map((scenario) => [scenario.slug, scenario]));
+/** Stations réservées à l'examen blanc (`./mock/`) : hors catalogue et hors `/cas`. */
+export const MOCK_SCENARIOS: readonly EcosScenario[] = MOCK_STATIONS.map((station) => station.scenario);
+
+/** Toutes les stations jouables, entraînement et examen blanc (tests, administration). */
+export const ALL_ECOS_SCENARIOS: readonly EcosScenario[] = [...ECOS_SCENARIOS, ...MOCK_SCENARIOS];
+
+const bySlug = new Map(ALL_ECOS_SCENARIOS.map((scenario) => [scenario.slug, scenario]));
 const byCode = new Map(ECOS_SCENARIOS.map((scenario) => [PUBLIC_CODES[scenario.slug], scenario]));
+const mockByCode = new Map(MOCK_SCENARIOS.map((scenario) => [MOCK_CODES[scenario.slug], scenario]));
+const mockSlugs = new Set(MOCK_SCENARIOS.map((scenario) => scenario.slug));
+
+function publicCode(slug: string): string | undefined {
+  return Object.hasOwn(PUBLIC_CODES, slug) ? PUBLIC_CODES[slug] : Object.hasOwn(MOCK_CODES, slug) ? MOCK_CODES[slug] : undefined;
+}
 
 export function getEcosScenario(slug: string): EcosScenario | null {
   return bySlug.get(slug) ?? null;
@@ -109,7 +124,17 @@ export function hasEcosScenario(slug: string): boolean {
 }
 
 export function ecosPublicCode(slug: string): string | null {
-  return bySlug.has(slug) ? PUBLIC_CODES[slug] ?? null : null;
+  return bySlug.has(slug) ? publicCode(slug) ?? null : null;
+}
+
+/** Station réservée à l'examen blanc ? */
+export function isMockStation(slug: string): boolean {
+  return mockSlugs.has(slug);
+}
+
+/** Station d'examen blanc depuis son code public (`blanc-03`) ; jamais une station d'entraînement. */
+export function resolveMockStation(code: string): EcosScenario | null {
+  return mockByCode.get(code) ?? null;
 }
 
 /** Resolves a public code, or a legacy slug still present in old links. */
@@ -122,20 +147,30 @@ export function resolveEcosStation(identifier: string): { scenario: EcosScenario
 }
 
 /** Everything the browser needs before and during the station, nothing more. */
+/**
+ * Feuille de porte de la station, comme au vrai ECOS : qui, où, pour quel
+ * motif, en mots de patient. Elle sert de titre partout où l'étudiant choisit
+ * une station : ni diagnostic, ni spécialité.
+ */
+export function ecosDoorNote(scenario: EcosScenario): string {
+  return scenario.brief[1] ?? scenario.brief[0] ?? "";
+}
+
 export function ecosStationView(
   scenario: EcosScenario,
   details: { candidateTitle: string; specialty: string | null },
 ): EcosStationView {
   return {
-    code: PUBLIC_CODES[scenario.slug],
+    code: publicCode(scenario.slug) ?? "",
     candidateTitle: details.candidateTitle,
     specialty: details.specialty,
-    patientLabel: `${scenario.patient.name}, ${scenario.patient.age} ans`,
+    patientLabel: patientLabel(scenario.patient),
     setting: scenario.setting,
     brief: scenario.brief,
-    // Alphabetical: the source lists the expected gestures first.
-    procedures: scenario.examination
-      .map(({ id, label, category }) => ({ id, label, category }))
+    // Catalogue commun à toutes les stations (filtré par le sexe et l'âge du
+    // patient) : la liste ne dit plus quels examens la station attend.
+    procedures: examCatalogForScenario(scenario)
+      .map(({ id, label, category, group }) => ({ id, label, category, group }))
       .sort((left, right) => left.label.localeCompare(right.label, "fr")),
     analysis: hasAnalysisStep(scenario),
     maxScore: stationMaxScore(scenario),

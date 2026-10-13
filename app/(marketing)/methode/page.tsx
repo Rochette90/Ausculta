@@ -34,7 +34,7 @@ const details = [
     label: "Synthèse",
     title: "Une synthèse qui vous oblige à trancher",
     description: "Une fois l’entretien et l’examen terminés, vous concluez comme devant l’examinateur.",
-    points: ["Un diagnostic à retenir parmi quatre propositions", "Une prise en charge à rédiger avec vos mots", "L’entretien et l’examen sont fermés avant de conclure", `En mode examen, ${examMinutes} minutes pour toute la station`],
+    points: ["Votre diagnostic et vos différentiels, cherchés dans une liste sans aucune proposition", "Une prise en charge à rédiger avec vos mots", "L’entretien et l’examen sont fermés avant de conclure", `En mode examen, ${examMinutes} minutes pour toute la station`],
     note: "En mode examen, ni indice ni score ne s’affichent avant la fin.",
   },
   {

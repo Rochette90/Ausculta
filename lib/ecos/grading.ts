@@ -1,7 +1,11 @@
 import type { EcosCriterion, EcosCriterionDefinition, EcosMessage, EcosProcedure, EcosScenario } from "./types.ts";
 import { storedReview } from "./review.ts";
 import { ANALYSIS_CRITERION_ID, calculateEcosCriteria, ecosXp, maxEcosScore } from "./scoring.ts";
-import { DIAGNOSIS_PREFIX, normalizeEcosText, PROCEDURE_PREFIX } from "./text.ts";
+import { DIAGNOSIS_PREFIX } from "./text.ts";
+import { procedureResult, resolveExamOrders } from "./exam-orders.ts";
+import { isAcceptedDiagnosis } from "./differentials.ts";
+
+export { procedureResult };
 
 /**
  * Transcript enregistré relu depuis la base : seuls les messages bien formés
@@ -22,8 +26,12 @@ export const EXAM_CRITERION_ID = "exam";
 /** Each unhelpful gesture costs half a point on the exam line. */
 const UNHELPFUL_GESTURE_PENALTY = 0.5;
 
+function diagnosisPoints(scenario: EcosScenario): number {
+  return scenario.diagnosisPoints ?? DIAGNOSIS_POINTS;
+}
+
 export function stationMaxScore(scenario: EcosScenario): number {
-  return maxEcosScore(scenario.criteria) + DIAGNOSIS_POINTS;
+  return maxEcosScore(scenario.criteria) + diagnosisPoints(scenario);
 }
 
 /** La station a-t-elle une étape « Analyse » des examens complémentaires ? */
@@ -31,39 +39,6 @@ export function hasAnalysisStep(scenario: EcosScenario): boolean {
   return scenario.criteria.some((criterion) => criterion.id === ANALYSIS_CRITERION_ID);
 }
 
-export function findProcedure(scenario: EcosScenario, id: string): EcosProcedure | null {
-  return scenario.examination.find((procedure) => procedure.id === id) ?? null;
-}
-
-/** Result unlocked by a gesture: its own text, or the examiner rule it points to. */
-export function procedureResult(scenario: EcosScenario, procedure: EcosProcedure): string {
-  if (procedure.result) return procedure.result;
-  const rule = scenario.rules.find((candidate) => candidate.examiner && candidate.topic === procedure.topic);
-  if (!rule) throw new Error(`Missing result for ${scenario.slug}/${procedure.id}`);
-  return rule.reply;
-}
-
-/** Stable pseudo-random order, so a reload shows the same options. */
-function seededOrder(values: readonly string[], seed: string): string[] {
-  let state = 2166136261;
-  for (const char of seed) state = Math.imul(state ^ char.charCodeAt(0), 16777619) >>> 0;
-  const next = () => {
-    state = Math.imul(state ^ (state >>> 15), 2246822507) >>> 0;
-    state = Math.imul(state ^ (state >>> 13), 3266489909) >>> 0;
-    state = (state ^ (state >>> 16)) >>> 0;
-    return state / 4294967296;
-  };
-  const result = [...values];
-  for (let index = result.length - 1; index > 0; index -= 1) {
-    const target = Math.floor(next() * (index + 1));
-    [result[index], result[target]] = [result[target], result[index]];
-  }
-  return result;
-}
-
-export function diagnosisOptions(scenario: EcosScenario, seed: string): string[] {
-  return seededOrder([scenario.diagnosisChoice.correct, ...scenario.diagnosisChoice.distractors], seed);
-}
 
 function studentLines(messages: readonly EcosMessage[], prefix: string) {
   return messages
@@ -76,19 +51,13 @@ function chosenDiagnosis(messages: readonly EcosMessage[]): string | null {
   return studentLines(messages, DIAGNOSIS_PREFIX).at(-1) ?? null;
 }
 
-function performedProcedures(scenario: EcosScenario, messages: readonly EcosMessage[]): EcosProcedure[] {
-  const labels = new Set(studentLines(messages, PROCEDURE_PREFIX).map(normalizeEcosText));
-  return scenario.examination.filter((procedure) => labels.has(normalizeEcosText(procedure.label)));
-}
-
 /**
  * Exam line: share of the expected gestures that were chosen, minus half a
- * point per unhelpful gesture (choosing everything is not a strategy).
+ * point per unhelpful test or gesture (choosing everything is not a strategy).
  */
-function examCriterion(scenario: EcosScenario, definition: EcosCriterionDefinition, performed: readonly EcosProcedure[]): EcosCriterion {
+function examCriterion(scenario: EcosScenario, definition: EcosCriterionDefinition, performed: readonly EcosProcedure[], unhelpful: number): EcosCriterion {
   const expected = scenario.examination.filter((procedure) => procedure.pertinent).length;
   const done = performed.filter((procedure) => procedure.pertinent).length;
-  const unhelpful = performed.length - done;
   const raw = expected ? (definition.points * done) / expected - UNHELPFUL_GESTURE_PENALTY * unhelpful : 0;
   return {
     id: definition.id,
@@ -112,10 +81,11 @@ export function gradeEcosStation(scenario: EcosScenario, messages: readonly Ecos
     id: "diagnosis",
     label: "Pose le diagnostic",
     hint: "Hypothèse diagnostique principale, étayée par l’anamnèse et l’examen",
-    points: DIAGNOSIS_POINTS,
-    earned: chosen !== null && normalizeEcosText(chosen) === normalizeEcosText(correct) ? DIAGNOSIS_POINTS : 0,
+    points: diagnosisPoints(scenario),
+    // Saisi dans la liste commune : l'entité clinique suffit (`lib/ecos/stations/diagnoses.ts`).
+    earned: chosen !== null && isAcceptedDiagnosis(scenario, chosen) ? diagnosisPoints(scenario) : 0,
   };
-  const performed = performedProcedures(scenario, messages);
+  const { satisfied: performed, unhelpful } = resolveExamOrders(scenario, messages);
   const performedIds = new Set(performed.map((procedure) => procedure.id));
   // An expected test ordered in the exam phase (hémocultures, angio-CT…) also
   // counts on the management lines; unhelpful gestures never earn keyword points.
@@ -126,7 +96,7 @@ export function gradeEcosStation(scenario: EcosScenario, messages: readonly Ecos
   const analysedSomething = performed.some((procedure) => procedure.pertinent && procedure.category === "complementaire");
   const criteria = [
     ...scenario.criteria.map((definition, index) => {
-      if (definition.id === EXAM_CRITERION_ID) return examCriterion(scenario, definition, performed);
+      if (definition.id === EXAM_CRITERION_ID) return examCriterion(scenario, definition, performed, unhelpful.length);
       if (definition.id === ANALYSIS_CRITERION_ID && !analysedSomething) {
         return { id: definition.id, label: definition.label, hint: `${definition.hint}. Sans examen complémentaire utile demandé, il n’y a rien à analyser.`, points: definition.points, earned: 0 };
       }
@@ -145,7 +115,7 @@ export function gradeEcosStation(scenario: EcosScenario, messages: readonly Ecos
     review: { done: reviewed !== null, added: criteria.reduce((total, criterion) => total + (criterion.reviewed ?? 0), 0) },
     procedures: {
       missed: scenario.examination.filter((procedure) => procedure.pertinent && !performedIds.has(procedure.id)).map((procedure) => procedure.label),
-      unhelpful: performed.filter((procedure) => !procedure.pertinent).map((procedure) => procedure.label),
+      unhelpful,
     },
   };
 }

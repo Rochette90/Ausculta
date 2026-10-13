@@ -12,9 +12,9 @@ const line = (index: number) => ({ "--line": index }) as CSSProperties;
 // Les quatre temps d'une station, chacun relié à sa section de la méthode.
 const STEPS = [
   { name: "Anamnèse", say: "Vous l’écoutez.", text: "Le patient répond à vos questions, une par une. Il ne souffle jamais le diagnostic et nie ce qui n’appartient pas au cas.", href: "/methode#anamnese", link: "Comment se passe l’entretien" },
-  { name: "Examen clinique", say: "Vous l’examinez.", text: "Constantes, auscultation, ECG : chaque geste choisi débloque son résultat. Un geste peu utile coûte un demi-point.", href: "/methode#examen", link: "Les gestes et leurs résultats" },
-  { name: "Synthèse", say: "Vous tranchez.", text: "Un diagnostic parmi quatre propositions, puis votre prise en charge, rédigée avec vos mots.", href: "/methode#synthese", link: "Ce qu’on attend de la synthèse" },
-  { name: "Débriefing", say: "Vous voyez ce qui vous a échappé.", text: "Votre grille sur 22 points, les gestes oubliés, les drapeaux rouges, les diagnostics différentiels et les sources.", href: "/methode#debriefing", link: "Comment la grille est notée" },
+  { name: "Examen clinique", say: "Vous l’examinez.", text: "Une centaine de gestes et d’examens, les mêmes pour chaque station : rien ne vous oriente. Chaque choix débloque son résultat, et un examen inutile coûte un demi-point.", href: "/methode#examen", link: "Les gestes et leurs résultats" },
+  { name: "Synthèse", say: "Vous tranchez.", text: "Votre diagnostic et vos différentiels, sans aucune proposition, puis votre prise en charge, que vous expliquez au patient avant les questions de l’examinateur.", href: "/methode#synthese", link: "Ce qu’on attend de la synthèse" },
+  { name: "Débriefing", say: "Vous voyez ce qui vous a échappé.", text: "Votre grille sur 22 points, votre entretien annoté phrase par phrase, les drapeaux rouges, les diagnostics différentiels et les sources.", href: "/methode#debriefing", link: "Comment la grille est notée" },
 ] as const;
 
 export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: MarketingStats }) {
@@ -62,6 +62,8 @@ export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: Mar
           </div>
         </div>
       </section>
+
+      <ProductPreview />
 
       <section className="landing-steps" aria-labelledby="landing-steps-title">
         <div className="mk-wrap">
@@ -111,7 +113,7 @@ export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: Mar
           <span className="script-who">Avant de commencer</span>
           <div>
             <ul className="link-list">
-              <li><Link href="/methode">La méthode</Link><span>Les trois temps, les deux modes et la notation</span></li>
+              <li><Link href="/methode">La méthode</Link><span>Le déroulé d’une station, les deux modes et la notation</span></li>
               {FEATURES.premium && <li><Link href="/pricing">Les tarifs</Link><span>Gratuit aujourd’hui, et ce que prépare la suite</span></li>}
               <li><Link href="/faq">Les questions fréquentes</Link><span>Patient simulé, voix, notation, compte</span></li>
               <li><Link href="/a-propos">Le projet</Link><span>Pourquoi {BRAND_NAME} existe</span></li>
@@ -135,5 +137,60 @@ export function LandingPage({ signedIn, stats }: { signedIn: boolean; stats: Mar
         </div>
       </section>
     </main>
+  );
+}
+
+/**
+ * Aperçu du produit, dessiné en HTML (pas de capture d'écran) : une station
+ * à l'examen clinique et le haut d'un bilan, avec des données d'exemple.
+ */
+function ProductPreview() {
+  const cells = Array.from({ length: 22 }, (_, index) => index);
+  return (
+    <section className="landing-preview mk-wrap" aria-labelledby="landing-preview-title">
+      <div className="script-line">
+        <span className="script-spacer" />
+        <h2 id="landing-preview-title" className="landing-steps-title">Une vraie station, du premier mot au bilan.</h2>
+      </div>
+      <div className="preview-grid" aria-hidden="true">
+        <div className="preview-window">
+          <div className="preview-bar"><span>Station 17 · examen clinique</span><b>08:42</b></div>
+          <div className="preview-station">
+            <div className="preview-chat">
+              <p className="preview-who">Vous</p>
+              <p>Est-ce que la douleur descend vers l’aine ?</p>
+              <p className="preview-who is-patient">M. Duc</p>
+              <p className="preview-voice">Oui, jusque dans le testicule gauche.</p>
+              <p className="preview-who">Examinateur</p>
+              <p className="preview-result">Bandelette urinaire : sang +++, leucocytes et nitrites négatifs.</p>
+            </div>
+            <div className="preview-exam">
+              <p className="preview-label">Que faites-vous ?</p>
+              <div className="preview-search">ct low</div>
+              <div className="preview-chips"><span className="is-on">CT abdominal low-dose sans injection</span></div>
+              <ul>
+                <li>Constantes et mesures</li>
+                <li>Abdomen et urogénital</li>
+                <li>Biologie sanguine</li>
+                <li>Imagerie</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="preview-window preview-report">
+          <div className="preview-bar"><span>Bilan</span></div>
+          <div className="preview-score">
+            <p><strong>18</strong> sur 22 points</p>
+            <div className="preview-cells">{cells.map((index) => <i key={index} className={index < 18 ? "is-on" : ""} />)}</div>
+            <p className="preview-xp">+58 XP · record battu</p>
+          </div>
+          <div className="preview-takeaways">
+            <div className="good"><span>Bon diagnostic</span>Colique néphrétique gauche</div>
+            <div className="improve"><span>À travailler</span>Vérifier la compréhension du patient</div>
+          </div>
+          <div className="preview-tabs"><span className="is-on">Grille</span><span>Entretien annoté</span><span>Débriefing</span></div>
+        </div>
+      </div>
+    </section>
   );
 }

@@ -138,3 +138,42 @@ test("la conversation vocale s'arrête proprement et explique pourquoi", async (
   // Une question tapée au clavier n'est jamais effacée par une dictée muette.
   assert.match(station, /if \(showedInterim\) setInput\(""\);/);
 });
+
+test("la voix de l'étudiant est transcrite par le serveur, avec repli sur le navigateur", async () => {
+  const { transcriptionConfig, isAcceptedAudioType, transcriptText, elevenLabsTranscriptionRequest } = await import("../lib/ecos/transcription.ts");
+  const [route, station, page, privacy] = await Promise.all([
+    read("../app/api/ecos/transcribe/route.ts"),
+    read("../components/ecos/EcosStation.tsx"),
+    read("../app/(app)/cas/[slug]/page.tsx"),
+    read("../app/(marketing)/confidentialite/page.tsx"),
+  ]);
+  // Activée par défaut avec la clé ElevenLabs, désactivable, jamais sans clé.
+  assert.deepEqual(transcriptionConfig({ ELEVENLABS_API_KEY: "k" }), { apiKey: "k", modelId: "scribe_v2" });
+  assert.equal(transcriptionConfig({ ELEVENLABS_API_KEY: "k", ECOS_TRANSCRIPTION: "navigateur" }), null);
+  assert.equal(transcriptionConfig({}), null);
+  assert.ok(isAcceptedAudioType("audio/webm;codecs=opus"));
+  assert.ok(isAcceptedAudioType("audio/mp4"));
+  assert.ok(!isAcceptedAudioType("text/html"));
+  assert.equal(transcriptText({ text: "  Depuis quand\n avez-vous mal ? " }), "Depuis quand avez-vous mal ?");
+  assert.equal(transcriptText(null), "");
+  const { init } = elevenLabsTranscriptionRequest({ apiKey: "k", modelId: "scribe_v2" }, new Blob(["x"], { type: "audio/webm" }));
+  assert.equal(init.body.get("language_code"), "fr");
+  // Route : identité, origine, débit, session active, plafonds du jour, 503 pour le repli.
+  assert.match(route, /requireAuthenticatedUser\(\)/);
+  assert.match(route, /assertSameOrigin\(request\)/);
+  assert.match(route, /enforceRateLimit\(admin, user\.id, "ecos-transcribe"/);
+  assert.match(route, /session\.status !== "active"/);
+  assert.match(route, /withinGlobalLimit\(admin, "ecos-transcribe-day"/);
+  assert.match(route, /TRANSCRIPTION_MAX_BYTES/);
+  // Le navigateur ne reçoit qu'un booléen, et repasse à sa propre dictée sur 503.
+  assert.match(page, /serverTranscription=\{transcriptionConfig\(\) !== null\}/);
+  assert.match(station, /response\.status === 503\) return \{ unavailable: true \};/);
+  assert.match(station, /"unavailable" in outcome\) \{\s+serverTranscriptionRef\.current = false;/);
+  // Délai : transcription lancée dès une courte pause, jetée si l'étudiant reprend.
+  assert.match(station, /onPause: \(audio\) => \{[\s\S]+?requestTranscription\(audio, abort\.signal\)/);
+  assert.match(station, /onResume: dropEarly/);
+  // Les contrôles du serveur ne retardent pas l'appel au fournisseur, mais un refus l'annule.
+  assert.match(route, /catch\(\(error: unknown\) => \{ upstreamAbort\.abort\(\); throw error; \}\)/);
+  assert.match(station, /captureRef\.current\?\.release\(\)/);
+  assert.match(privacy, /enregistrement de votre voix/);
+});

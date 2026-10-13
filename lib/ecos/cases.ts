@@ -4,7 +4,7 @@ import { cache } from "react";
 import caseCatalog from "@/content/cases/index.json";
 import { SLUG_PATTERN } from "@/lib/validation";
 import { createAdminClient } from "@/lib/supabase/server";
-import { ecosPublicCode, hasEcosScenario } from "./stations/index.ts";
+import { ecosDoorNote, ecosPublicCode, getEcosScenario, hasEcosScenario } from "./stations/index.ts";
 import { EXAM_DURATION_SECONDS } from "./timing.ts";
 
 /**
@@ -17,7 +17,6 @@ export type ClinicalCaseSummary = {
   /** Public code (`station-04`), or null for a draft without patient script. */
   code: string | null;
   candidateTitle: string;
-  specialty: string | null;
   difficulty: "easy" | "medium" | "hard";
   published: boolean;
   patientLabel: string | null;
@@ -33,15 +32,18 @@ type CaseRow = {
   status: string;
   patient: { label?: string } | null;
   scenario: { setting?: string; tags?: string[]; candidate_title?: string } | null;
-  specialties: { name: string } | null;
 };
 
 const editorialTitles = new Map(caseCatalog.map((item) => [item.slug, item.candidateTitle]));
 const STATION_DURATION = `${Math.round(EXAM_DURATION_SECONDS / 60)} min`;
 
-/** Titre vu par le candidat pour une station, à partir de son nom interne. */
+/**
+ * Titre vu par le candidat pour une station, à partir de son nom interne :
+ * sa feuille de porte (le titre éditorial nommait parfois le diagnostic).
+ */
 export function stationCandidateTitle(slug: string): string | null {
-  return editorialTitles.get(slug) ?? null;
+  const scenario = getEcosScenario(slug);
+  return scenario ? ecosDoorNote(scenario) : editorialTitles.get(slug) ?? null;
 }
 
 function fallbackCandidateTitle(setting: string | undefined) {
@@ -51,12 +53,15 @@ function fallbackCandidateTitle(setting: string | undefined) {
 }
 
 function toSummary(row: CaseRow): ClinicalCaseSummary {
+  const scenario = getEcosScenario(row.slug);
   return {
     code: ecosPublicCode(row.slug),
-    candidateTitle: row.scenario?.candidate_title?.trim()
+    // Station jouable : sa feuille de porte (« Mme X, 45 ans, se présente aux
+    // urgences pour… »), qui ne nomme ni le diagnostic ni la spécialité.
+    candidateTitle: (scenario && ecosDoorNote(scenario))
+      || row.scenario?.candidate_title?.trim()
       || editorialTitles.get(row.slug)
       || fallbackCandidateTitle(row.scenario?.setting),
-    specialty: row.specialties?.name ?? null,
     difficulty: row.difficulty,
     // Publié en base ET doté d'un patient simulé scripté.
     published: row.status === "published" && hasEcosScenario(row.slug),
@@ -67,7 +72,8 @@ function toSummary(row: CaseRow): ClinicalCaseSummary {
   };
 }
 
-const CASE_COLUMNS = "slug, title, difficulty, status, patient, scenario, specialties(name)";
+// Pas de spécialité : envoyée au navigateur, elle orienterait vers le diagnostic.
+const CASE_COLUMNS = "slug, title, difficulty, status, patient, scenario";
 
 // Le catalogue affiche aussi les stations en préparation (status draft),
 // que la policy RLS masque volontairement : lecture via le client admin,
@@ -87,6 +93,25 @@ export async function getCompletedStationCodes(userId: string): Promise<Set<stri
     if (code) codes.add(code);
   }
   return codes;
+}
+
+/** Meilleur score (en %) de ce compte par code public de station, pour le catalogue. */
+export async function getStationBestScores(userId: string): Promise<Record<string, number>> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("ecos_sessions")
+    .select("station_slug, score, max_score")
+    .eq("user_id", userId)
+    .eq("status", "completed");
+  if (error) throw error;
+  const best: Record<string, number> = {};
+  for (const row of data ?? []) {
+    const code = ecosPublicCode(String(row.station_slug));
+    const max = Number(row.max_score ?? 0);
+    if (!code || !max) continue;
+    best[code] = Math.max(best[code] ?? 0, Math.round((Number(row.score ?? 0) / max) * 100));
+  }
+  return best;
 }
 
 export const getClinicalCaseCatalog = cache(async (): Promise<ClinicalCaseSummary[]> => {

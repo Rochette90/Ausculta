@@ -1,0 +1,181 @@
+import type { EcosScenario } from "../../types.ts";
+import type { StationDiagnoses } from "../diagnoses.ts";
+import { CHARACTER, communicationCriterion, DYSPNEA, FEVER, INTENSITY, LABS, LOCATION, NAUSEA, ONSET, planReaction, presentationCriterion, RADIATION, SYNCOPE, treatmentsCriterion, VITALS } from "../shared.ts";
+
+const POSITION = ["position", "allong", "couch", "penche", "en avant", "assis", "soulag", "ameliore", "aggrave", "augmente", "pire", "mieux"];
+const BREATHING = ["inspir", "respirer a fond", "respirez a fond", "respirer profond", "respirez profond", "respire profond", "grande respiration", "grandes respirations", "respirer fort", "effort", "escalier", "marche"];
+const PALPITATIONS = [...SYNCOPE, "palpit", "coeur qui bat", "coeur bat", "battements"];
+const RECENT_INFECTION = ["rhume", "grippe", "malade recemment", "recemment malade", "ete malade", "infection", "virus", "virose", "gorge", "enrhum", "ces derniers jours", "ces dernieres semaines", "derniers temps"];
+const CARDIAC_TERRAIN = ["antecedent", "maladie", "probleme de sante", "problemes de sante", "coeur", "hypertension", "diabet", "cholesterol", "operation", "opere"];
+const HABITS = ["fume", "fumez", "fumeur", "tabac", "cigarette", "drogue", "cocaine", "cannabis", "substance"];
+
+export const pericarditeAigue: EcosScenario = {
+  slug: "pericardite-aigue",
+  version: 1,
+  setting: "urgences",
+  patient: { name: "M. Mottier", age: 27, sex: "M" },
+  painful: true,
+  persona: "Jeune homme sportif, coopératif, un peu inquiet parce que « c’est le cœur », qui se tient assis penché en avant sur le brancard. Il répond simplement et précisément quand on lui pose une question claire.",
+  brief: [
+    "Vous êtes médecin assistant·e au service des urgences.",
+    "M. Mottier, 27 ans, se présente aux urgences pour une douleur dans la poitrine depuis hier soir.",
+    "Menez l’anamnèse, réalisez le status et les examens utiles, puis donnez votre hypothèse diagnostique et la suite.",
+  ],
+  opening: "Bonjour docteur. Depuis hier soir, j’ai mal au milieu de la poitrine, et c’est pire quand je suis couché.",
+  history: {
+    identity: "Julien Mottier, 27 ans.",
+    occupation: "Je suis employé de banque, je travaille dans un bureau à Lausanne.",
+    living: "J’habite avec ma copine, en appartement. Je fais du vélo et je cours deux ou trois fois par semaine.",
+    feeling: "Fatigué, j’ai mal dormi parce que couché ça faisait trop mal. Et j’ai un peu peur que ce soit le cœur.",
+    previousEpisodes: "Non, c’est la première fois que j’ai ce genre de douleur.",
+    course: "C’est apparu hier soir en quelques heures et c’est resté à peu près pareil depuis. L’ibuprofène a un peu soulagé.",
+    otherSymptoms: "Je me sens un peu fiévreux, sans plus.",
+    medications: "Rien de régulier. J’ai pris un comprimé d’ibuprofène 400 mg hier soir, ça a un peu aidé.",
+    allergies: "Pas d’allergie connue.",
+    personalHistory: "Aucune maladie, jamais opéré, jamais hospitalisé.",
+    familyHistory: "Mes parents vont bien. Personne n’a eu de problème de cœur jeune ni de mort subite dans la famille.",
+    tobacco: "Non, je n’ai jamais fumé.",
+    alcohol: "Quelques bières le week-end, pas plus.",
+    drugs: "Non, jamais de drogue, ni cocaïne ni rien.",
+    concerns: "Est-ce que c’est un infarctus ? Je suis jeune et sportif, je ne comprends pas.",
+  },
+  rules: [
+    { topic: "début", keywords: ONSET, reply: "Hier soir vers 20 heures, j’étais devant la télé. C’est venu en quelques heures, pas d’un coup." },
+    { topic: "localisation", keywords: [...LOCATION, "ou avez vous mal"], reply: "Ici, au milieu de la poitrine, derrière l’os, un peu plus vers la gauche." },
+    { topic: "type de douleur", keywords: CHARACTER, reply: "Ça pique, comme un coup de couteau. Ce n’est pas un poids ni un serrement." },
+    { topic: "intensité", keywords: INTENSITY, reply: "Six sur dix assis, sept ou huit quand je suis couché sur le dos." },
+    { topic: "irradiation", keywords: [...RADIATION, "epaule", "bras", "machoire", "dos$", "omoplate"], reply: "Ça part un peu vers le haut de l’épaule gauche, vers le cou. Pas dans le bras ni dans la mâchoire." },
+    { topic: "position", keywords: POSITION, reply: "Couché à plat, c’est bien pire. Assis et penché en avant, ça va nettement mieux : c’est pour ça que je me tiens comme ça." },
+    { topic: "respiration et effort", keywords: BREATHING, reply: "Quand je respire à fond, ça pique plus fort, et quand je tousse aussi. À l’effort, ça ne change pas vraiment : c’est là même au repos." },
+    { topic: "infection récente", keywords: RECENT_INFECTION, reply: "Oui, il y a une dizaine de jours j’ai eu un gros rhume avec mal de gorge et un peu de fièvre. C’était passé en quelques jours." },
+    { topic: "fièvre", keywords: FEVER, reply: "Je me sens un peu chaud. Ma copine m’a pris la température ce matin : 37,9 °C. Pas de grands frissons." },
+    { topic: "souffle", keywords: DYSPNEA, reply: "Je ne manque pas vraiment d’air, mais je respire moins profond parce que ça fait mal." },
+    { topic: "palpitations et malaise", keywords: PALPITATIONS, reply: "Non, pas de palpitations, pas de malaise, je ne suis pas tombé." },
+    { topic: "toux", keywords: ["toux", "tousse", "crach", "expector"], reply: "Une petite toux sèche avec le rhume, il n’en reste presque plus. Je ne crache rien." },
+    { topic: "facteurs de thrombose", keywords: ["voyage", "avion", "jambe", "mollet", "immobil", "platre", "alit"], reply: "Non, pas de voyage, je n’ai pas été immobilisé, et mes jambes vont bien." },
+    { topic: "digestif", keywords: [...NAUSEA, "manger", "repas", "aigreur", "brulure d estomac"], reply: "Non, pas de nausées. La douleur ne change pas avec les repas." },
+    { topic: "traumatisme", keywords: ["trauma", "choc", "coup$", "accident", "chute"], reply: "Non, je n’ai reçu aucun coup, pas d’accident." },
+    { topic: "constantes", examiner: true, keywords: VITALS, reply: "T 37,8 °C, FC 98/min régulière, TA 128/76 mmHg, FR 18/min, SpO₂ 98 % à l’air ambiant. Patient conscient, algique, assis penché en avant, bien coloré." },
+    { topic: "auscultation cardiaque", examiner: true, keywords: ["auscultation cardiaque", "ausculte le coeur", "ausculter le coeur", "bruits du coeur", "frottement"], reply: "Bruits du cœur réguliers, sans souffle. Patient penché en avant : frottement superficiel discret au bord gauche du sternum, qui n’est plus entendu lors d’un second passage quelques minutes plus tard." },
+    { topic: "auscultation pulmonaire", examiner: true, keywords: ["auscultation pulmonaire", "ausculte les poumons", "ausculter les poumons", "murmure", "percussion"], reply: "Murmure vésiculaire symétrique, sans râle ni sibilance. Percussion sonore et symétrique." },
+    { topic: "jugulaires", examiner: true, keywords: ["jugulaire", "pouls paradoxal", "reflux hepato", "tamponnade"], reply: "Pas de turgescence jugulaire, reflux hépato-jugulaire négatif, pas de pouls paradoxal, bruits du cœur non assourdis." },
+    { topic: "tension aux deux bras", examiner: true, keywords: ["deux bras", "bras droit et gauche", "asymetrie tensionnelle"], reply: "TA 128/76 mmHg à droite, 126/74 mmHg à gauche : pas d’asymétrie. Pouls radiaux et fémoraux symétriques." },
+    { topic: "ECG", examiner: true, keywords: ["ecg", "electrocardiogramme"], reply: "Rythme sinusal à 98/min. Sus-décalage du segment ST concave vers le haut, diffus (DI, DII, aVL, V2–V6), sans image en miroir ni onde Q. Sous-décalage du segment PR en DII et V5–V6, sus-décalage de PR en aVR." },
+    { topic: "bilan sanguin", examiner: true, keywords: [...LABS, "troponine"], reply: "Leucocytes 11,2 G/L, CRP 42 mg/L, troponine T hs 8 ng/L (normale), créatinine 82 µmol/L." },
+    planReaction("Donc ce n’est pas un infarctus ? Je peux rentrer chez moi ? Et je peux continuer le sport ?", ["anti inflammatoire", "ibuprofene", "aspirine", "colchicine", "repos", "sport"]),
+  ],
+  examination: [
+    { id: "constantes", label: "Constantes vitales", category: "constantes", pertinent: true, topic: "constantes" },
+    { id: "auscultation-cardiaque", label: "Auscultation cardiaque", category: "examen", pertinent: true, topic: "auscultation cardiaque" },
+    { id: "auscultation-pulmonaire", label: "Auscultation pulmonaire et percussion", category: "examen", pertinent: true, topic: "auscultation pulmonaire", covers: ["auscultation-pulmonaire", "percussion-thoracique"], key: ["auscultation-pulmonaire"] },
+    { id: "jugulaires", label: "Jugulaires et pouls paradoxal", category: "examen", pertinent: true, topic: "jugulaires", covers: ["jugulaires"] },
+    { id: "ta-deux-bras", label: "Tension artérielle aux deux bras", category: "examen", pertinent: true, topic: "tension aux deux bras" },
+    { id: "ecg", label: "ECG 12 dérivations", category: "complementaire", pertinent: true, topic: "ECG", image: { src: "/ecos/ecg/blanc-01.svg", alt: "ECG 12 dérivations, avec DII long" } },
+    { id: "bilan-sanguin", label: "Bilan sanguin (FSC, CRP, troponine)", category: "complementaire", pertinent: true, topic: "bilan sanguin", covers: ["fsc", "crp", "troponine", "creatinine"], key: ["fsc", "crp", "troponine"] },
+    { id: "ct-thoracique", label: "Angio-CT thoracique", category: "complementaire", pertinent: false, result: "Non indiqué : pas d’argument pour une embolie pulmonaire ni pour une dissection (douleur positionnelle, pas de facteur de risque, TA symétrique). Irradiation inutile chez un homme jeune.", covers: ["ct-thoracique"] },
+    { id: "palpation-abdominale", label: "Palpation abdominale", category: "examen", pertinent: false, result: "Abdomen souple et indolore ; n’apporte rien dans cette douleur rétrosternale positionnelle." },
+    { id: "examen-neurologique", label: "Examen neurologique", category: "examen", pertinent: false, result: "Normal ; non orienté par la plainte.", covers: ["examen-neurologique"] },
+  ],
+  catalogResults: {
+    "etat-general": "Patient conscient et orienté, algique, qui préfère rester assis penché en avant ; bien coloré, pas de signe de choc.",
+    "fsc": "Leucocytes 11,2 G/L, hémoglobine 152 g/L, plaquettes 268 G/L.",
+    "crp": "CRP 42 mg/L.",
+    "troponine": "Troponine T hs 8 ng/L, normale (contrôle à 1 h stable).",
+    "creatinine": "Créatinine 82 µmol/L, urée normale.",
+    "echocardiographie": "FEVG normale, pas de trouble de la cinétique segmentaire. Fin décollement péricardique de 4 mm, sans retentissement hémodynamique.",
+    "procalcitonine": "Procalcitonine 0,08 µg/L.",
+  },
+  acceptable: ["radio-thorax", "echocardiographie", "d-dimeres", "mollets", "pouls-peripheriques", "examen-orl", "wells"],
+  diagnosisChoice: { correct: "Péricardite aiguë (probablement virale)", distractors: ["Syndrome coronarien aigu avec sus-décalage ST", "Embolie pulmonaire", "Myocardite"] },
+  diagnosisPoints: 1,
+  criteria: [
+    presentationCriterion,
+    {
+      id: "pain",
+      label: "Caractérise la douleur",
+      hint: "Début, localisation, type de douleur, irradiation",
+      points: 4,
+      groups: [ONSET, LOCATION, CHARACTER, [...RADIATION, "epaule", "bras", "machoire"]],
+    },
+    {
+      id: "modifiers",
+      label: "Recherche les facteurs modifiants",
+      hint: "Influence de la position (pire couché, mieux penché en avant) et de la respiration ou de l’effort",
+      points: 2,
+      groups: [POSITION, BREATHING],
+    },
+    {
+      id: "associated",
+      label: "Recherche les signes associés et d’alarme",
+      hint: "Fièvre, essoufflement, palpitations ou malaise",
+      points: 3,
+      groups: [FEVER, DYSPNEA, PALPITATIONS],
+    },
+    {
+      id: "context",
+      label: "Recherche un épisode infectieux récent",
+      hint: "Rhume, mal de gorge ou état grippal dans les semaines précédentes",
+      points: 1,
+      groups: [RECENT_INFECTION],
+    },
+    {
+      id: "terrain",
+      label: "Évalue le terrain",
+      hint: "Antécédents et facteurs de risque cardiovasculaire, tabac et drogues (cocaïne)",
+      points: 2,
+      groups: [CARDIAC_TERRAIN, HABITS],
+    },
+    treatmentsCriterion,
+    {
+      id: "exam",
+      label: "Status ciblé",
+      hint: "Constantes, auscultation cardiaque (frottement) et pulmonaire, jugulaires et pouls paradoxal (tamponnade), TA aux deux bras, ECG et troponine",
+      points: 5,
+      groups: [["j examine le patient"]],
+    },
+    communicationCriterion,
+  ],
+  debrief: {
+    diagnosis: "Péricardite aiguë, probablement virale, sans critère de gravité",
+    summary: "Homme de 27 ans, sans facteur de risque, qui présente depuis la veille une douleur rétrosternale en coup de couteau, aggravée en décubitus et à l’inspiration, soulagée penché en avant, dix jours après une infection des voies respiratoires hautes. Fébricule, frottement péricardique inconstant, sus-décalage ST diffus concave avec sous-décalage PR, CRP élevée et troponine normale : péricardite aiguë sans atteinte myocardique ni tamponnade, traitable en ambulatoire.",
+    keyFindings: [
+      "Douleur thoracique aiguë positionnelle (pire couché, mieux penché en avant) et pleurétique, irradiant vers le trapèze gauche.",
+      "Infection virale des voies respiratoires dans les deux semaines précédentes, fébricule.",
+      "Frottement péricardique discret et inconstant : son absence n’exclut pas le diagnostic.",
+      "ECG : sus-décalage ST diffus concave sans miroir, sous-décalage PR ; troponine normale, CRP élevée.",
+    ],
+    redFlags: [
+      "Tamponnade : hypotension, turgescence jugulaire, pouls paradoxal, bruits du cœur assourdis.",
+      "Troponine élevée ou dysfonction ventriculaire : myopéricardite, à surveiller en milieu hospitalier.",
+      "Critères de mauvais pronostic imposant l’hospitalisation : fièvre > 38 °C, début subaigu, épanchement important, absence de réponse aux AINS après une semaine, immunosuppression, anticoagulation, traumatisme.",
+      "Ne jamais attribuer un sus-décalage ST à une péricardite sans avoir exclu un infarctus (miroir, territoire systématisé, troponine).",
+    ],
+    management: [
+      "Échocardiographie transthoracique (épanchement, fonction ventriculaire) et radiographie du thorax recommandées.",
+      "AINS à dose anti-inflammatoire (par exemple ibuprofène 600 mg 3×/j pendant 1 à 2 semaines, puis diminution) avec protection gastrique, associés à la colchicine 0,5 mg 1 à 2×/j selon le poids pendant 3 mois (réduit les récidives).",
+      "Traitement ambulatoire en l’absence de critère de gravité ; contrôle clinique et de la CRP à une semaine.",
+      "Pas de sport de compétition ni d’effort intense jusqu’à la guérison (au moins plusieurs semaines, 3 mois en cas de myopéricardite) ; reconsulter si essoufflement, malaise ou aggravation.",
+    ],
+    differentials: [
+      "Syndrome coronarien aigu (douleur constrictive à l’effort, ST systématisé avec miroir, troponine élevée).",
+      "Myocardite ou myopéricardite (troponine élevée, dysfonction ventriculaire, arythmies).",
+      "Embolie pulmonaire (douleur pleurétique, tachycardie, hypoxémie, facteurs de risque thromboemboliques).",
+      "Pneumothorax, dissection aortique, douleur pariétale.",
+    ],
+    sources: [
+      { label: "ESC 2015 — Guidelines for the diagnosis and management of pericardial diseases (Eur Heart J)", url: "https://doi.org/10.1093/eurheartj/ehv318" },
+      { label: "NICE CKS — Pericarditis", url: "https://cks.nice.org.uk/topics/pericarditis/" },
+    ],
+    pathologySlugs: ["pericardite-aigue", "myocardite", "infarctus-myocarde-sca"],
+  },
+};
+
+export const pericarditeAigueDiagnoses: StationDiagnoses = {
+  accepted: ["pericardite"],
+  differentials: [
+    { label: "Syndrome coronarien aigu", ids: ["sca-st", "sca-nst"] },
+    { label: "Myocardite (myopéricardite)", ids: ["myocardite"] },
+    { label: "Embolie pulmonaire", ids: ["embolie-pulmonaire"] },
+    { label: "Pneumothorax, dissection aortique ou douleur pariétale", ids: ["pneumothorax", "dissection-aortique", "douleur-parietale"] },
+  ],
+};

@@ -1,6 +1,7 @@
 import type { EcosHistory, EcosRule, EcosScenario } from "./types.ts";
 import { JARGON_EXAMPLES, type JargonTerm, unexplainedJargon } from "./jargon.ts";
-import { EXAM_LIST_REDIRECT, EXAM_TRANSITION_PHRASES, EXAMINER_PREFIX, hasAnyKeyword, hasKeyword, keywordWeight, normalizeEcosText } from "./text.ts";
+import { messageQuestions } from "./communication.ts";
+import { EXAM_LIST_REDIRECT, EXAM_TRANSITION_PHRASES, EXAMINER_PREFIX, hasAnyKeyword, hasKeyword, keywordWeight, normalizeEcosText, patientLabel } from "./text.ts";
 
 export { EXAMINER_PREFIX };
 
@@ -228,8 +229,24 @@ function answerQuestions(scenario: EcosScenario, message: string, turn: number):
   return meaningful.filter((rule) => !rule.examiner).slice(0, 3).map((rule) => rule.reply).join(" ");
 }
 
-function patientLabel(scenario: EcosScenario) {
-  return `${scenario.patient.name}, ${scenario.patient.age} ans`;
+/**
+ * Questions du message auxquelles la station n'a prévu aucun fait : le
+ * patient simulé y a improvisé (ou nié par défaut). Phase de test : elles
+ * signalent les trous du script à combler (`/admin/stations`).
+ */
+export function unscriptedQuestions(scenario: EcosScenario, message: string): string[] {
+  const tiers = scenarioRuleTiers(scenario);
+  const scripted = new Set([...tiers[0], ...tiers[1], ...tiers[2]].filter((rule) => !SOCIAL_TOPICS.has(rule.topic)));
+  const jargon = unexplainedJargon(message);
+  return splitIntoSegments(message).filter((segment) => {
+    if (!messageQuestions(segment).length || jargonRule(jargon, segment)) return false;
+    const rule = bestRule(tiers, segment);
+    return !rule || (!scripted.has(rule) && !rule.examiner);
+  }).map((segment) => segment.trim());
+}
+
+function scenarioPatientLabel(scenario: EcosScenario) {
+  return patientLabel(scenario.patient);
 }
 
 /** System prompt for the optional language model, built from the same facts. */
@@ -253,15 +270,19 @@ export function buildPatientPrompt(scenario: EcosScenario): string {
     ...scenario.rules.filter((rule) => !rule.examiner).map((rule) => `${rule.topic} : ${rule.reply}`),
   ];
   return [
-    `Tu joues exclusivement ${patientLabel(scenario)}, patient·e francophone (${scenario.setting === "urgences" ? "aux urgences" : "au cabinet médical"}), lors d'une station ECOS.`,
+    `Tu joues exclusivement ${scenarioPatientLabel(scenario)}, patient·e francophone (${scenario.setting === "urgences" ? "aux urgences" : "au cabinet médical"}), lors d'une station ECOS.`,
     `Ton état et ta façon d'être, à faire sentir uniquement par tes mots (jamais à décrire) : ${scenario.persona}`,
-    "Faits que tu connais (des réponses de référence : n'en donne que la partie qui répond à la question posée, avec tes mots de patient) :",
+    "Faits que tu connais (des réponses de référence : chacune regroupe souvent plusieurs éléments, n'en donne que la partie qui répond à la question posée, avec tes mots de patient) :",
     ...patientFacts.map((fact) => `- ${fact}`),
     "Comment répondre : l'étudiant est noté sur sa capacité à poser les bonnes questions, alors ne lui mâche pas le travail.",
     "- Réponds seulement à la question posée, rien de plus : une phrase courte, deux au maximum.",
     "- Ne donne jamais une information qu'on ne t'a pas demandée : pas d'autre symptôme, d'antécédent, de traitement, d'habitude de vie ni de détail sur la chronologie, même s'ils te semblent liés.",
     "- Question ouverte ou vague (« Racontez-moi », « Décrivez-moi la douleur », « Vous avez d'autres symptômes ? ») : donne un seul élément, celui qui te gêne le plus, sans faire de liste. Les détails ne viennent qu'avec des questions précises.",
     "- Question fermée : réponds oui ou non, avec au plus une courte précision.",
+    "- Ne cite jamais ce que tu n'as pas : aucune liste de maladies, de symptômes, de facteurs de risque ou d'examens absents (« pas de phlébite, pas d'opération… ») tant qu'on ne te pose pas la question précise. « Des antécédents ? » : seulement ce que tu as vraiment, ou « Rien de particulier. »",
+    "- Une question ne vise qu'une chose : « Depuis quand ? » appelle le moment du début, pas la façon dont ça a commencé ni ce que tu faisais ; « Où avez-vous mal ? » appelle l'endroit, pas l'intensité ni le type de douleur ; « Décrivez la douleur » appelle un seul trait (son type), pas l'endroit, l'irradiation ni l'intensité.",
+    "- Ce qui t'inquiète, tes contraintes (travail, famille) et tes émotions ne viennent que si on t'interroge dessus.",
+    "Longueur juste : quelques mots à une phrase. « Qu'est-ce qui vous amène ? » : ta plainte principale, telle que tu l'as dite en arrivant, sans détail. Tes faits restent la seule source : n'invente ni moment, ni chiffre, ni lieu.",
     "- Plusieurs questions dans le même message : une réponse brève à chacune, sans rien ajouter.",
     "- Ne répète pas ce que tu as déjà dit, sauf si on te le redemande. Ne parle de ce qui t'inquiète que si on te le demande ou quand on t'explique la suite.",
     "- Question sur un point absent de tes faits : réponds brièvement et banalement, sans inventer de symptôme ni d'antécédent.",

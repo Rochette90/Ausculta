@@ -1,4 +1,4 @@
-import { EXAMINER_PREFIX, PROCEDURE_PREFIX } from "@/lib/ecos/text";
+import { ANNOUNCE_PREFIX, EXAMINER_PREFIX, PROCEDURE_PREFIX } from "@/lib/ecos/text";
 import type { EcosMessage } from "@/lib/ecos/types";
 import type { EcosCommunicationReport, QuestionKind } from "@/lib/ecos/communication";
 import { BRAND_NAME } from "@/lib/brand";
@@ -10,6 +10,9 @@ export function messageView(message: EcosMessage) {
   }
   if (message.role === "student" && message.content.startsWith(PROCEDURE_PREFIX)) {
     return { label: "Geste", className: "message student procedure", text: message.content.slice(PROCEDURE_PREFIX.length) };
+  }
+  if (message.role === "student" && message.content.startsWith(ANNOUNCE_PREFIX)) {
+    return { label: "Annonce", className: "message student announce", text: message.content.slice(ANNOUNCE_PREFIX.length) };
   }
   const label = message.role === "patient" ? "Patient" : message.role === "student" ? "Vous" : BRAND_NAME;
   return { label, className: `message ${message.role}`, text: message.content };

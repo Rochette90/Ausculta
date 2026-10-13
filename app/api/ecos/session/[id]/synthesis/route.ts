@@ -8,7 +8,7 @@ import {
   requireAuthenticatedUser,
 } from "@/app/lib/api-security";
 import { enforceRateLimit } from "@/app/lib/rate-limit";
-import { diagnosisOptions, hasAnalysisStep } from "@/lib/ecos/grading";
+import { hasAnalysisStep } from "@/lib/ecos/grading";
 import { MAX_ANALYSIS_LENGTH, recordAnalysis, synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { SYNTHESIS_MARKER } from "@/lib/ecos/text";
@@ -26,9 +26,9 @@ async function readAnalysis(request: Request): Promise<string> {
 
 /**
  * Opens the final phase. The written analysis of the tests, if any, is
- * recorded first: it must be written before the options are known. The four diagnosis options are only sent now (never
- * with the station page) and without marking the answer; from this point the
- * server refuses further history questions and gestures.
+ * recorded first. No diagnosis is proposed: the student searches the common
+ * list (`lib/ecos/diagnosis-catalog.ts`). From this point the server refuses
+ * further history questions and gestures.
  */
 export async function POST(
   request: Request,
@@ -65,7 +65,8 @@ export async function POST(
       });
       if (markerError) throw markerError;
     }
-    return apiJson({ options: diagnosisOptions(scenario, id) });
+    // Plus de propositions : le diagnostic se cherche dans la liste commune (`lib/ecos/diagnosis-catalog.ts`).
+    return apiJson({ opened: true });
   } catch (error) {
     return handleApiError(error);
   }

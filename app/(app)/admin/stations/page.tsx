@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AdminEcosFeedbackList } from "@/components/admin/AdminEcosFeedbackList";
 import { AdminSectionNav } from "@/components/admin/AdminSectionNav";
-import { getAdminAppErrors, getAdminEcosFeedback, getAdminStationStats } from "@/lib/admin/ecos-insights";
+import { getAdminAppErrors, getAdminEcosFeedback, getAdminStationStats, getAdminUnscriptedQuestions } from "@/lib/admin/ecos-insights";
 import { requireAdminUser } from "@/lib/auth/admin";
 import { pageTitle } from "@/lib/brand";
 
@@ -18,7 +18,7 @@ export default async function Page({ searchParams }: PageProps) {
   const user = await requireAdminUser("/admin/stations");
   const requested = Number((await searchParams).jours);
   const days = PERIODS.find((value) => value === requested) ?? 30;
-  const [stats, feedback, errors] = await Promise.all([getAdminStationStats(user.id, days), getAdminEcosFeedback(), getAdminAppErrors()]);
+  const [stats, feedback, errors, unscripted] = await Promise.all([getAdminStationStats(user.id, days), getAdminEcosFeedback(), getAdminAppErrors(), getAdminUnscriptedQuestions(days)]);
   const totals = stats.reduce((sum, row) => ({ started: sum.started + row.started, completed: sum.completed + row.completed, abandoned: sum.abandoned + row.abandoned }), { started: 0, completed: 0, abandoned: 0 });
   const openFeedback = feedback.filter((item) => item.status === "open").length;
 
@@ -59,6 +59,23 @@ export default async function Page({ searchParams }: PageProps) {
           </table>
         </div>
         <p className="mt-2 text-xs text-slate-500">Une station encore ouverte trois heures après son lancement compte comme abandonnée. En rouge : plus de 40 % d’abandons.</p>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="m-0 !text-2xl">Questions sans réponse prévue</h2>
+        <p className="m-0 text-sm text-slate-500">Questions des testeurs ({days} jours) pour lesquelles la station n’a aucun fait dans son script : le patient a improvisé ou nié par défaut. À compléter dans la note de la station, puis dans son fichier.</p>
+        {unscripted.length === 0 ? <p className="mt-3 text-sm text-slate-500">Aucune question hors script sur la période.</p> : (
+          <div className="mt-4 grid gap-3">
+            {unscripted.map((item) => (
+              <details className="rounded-2xl border border-slate-200 bg-white px-4 py-3" key={item.slug}>
+                <summary className="cursor-pointer text-sm"><strong>{item.code}</strong> <span className="text-slate-600">{item.diagnosis}</span> <span className="ml-2 text-slate-500">· {item.total} question{item.total > 1 ? "s" : ""}</span></summary>
+                <ul className="mb-0 mt-3 grid list-none gap-1.5 p-0 text-sm">
+                  {item.questions.map((question) => <li className="flex justify-between gap-3" key={question.text}><span>{question.text} ?</span><span className="tabular-nums text-slate-500">×{question.count}</span></li>)}
+                </ul>
+              </details>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mt-10">

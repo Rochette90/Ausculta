@@ -3,6 +3,7 @@ import { EcosStation } from "@/components/ecos/EcosStation";
 import { requireUser } from "@/lib/auth/require-user";
 import { getPublishedClinicalCase } from "@/lib/ecos/cases";
 import { ecosStationView, resolveEcosStation } from "@/lib/ecos/stations";
+import { transcriptionConfig } from "@/lib/ecos/transcription";
 import { pageTitle } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
@@ -20,13 +21,14 @@ export default async function CasStationPage({ params }: { params: Promise<{ slu
   if (!clinicalCase) notFound();
   // Only the public part of the station reaches the browser: no patient facts,
   // no results, no diagnosis before the server has graded the transcript.
-  const view = ecosStationView(station.scenario, { candidateTitle: clinicalCase.candidateTitle, specialty: clinicalCase.specialty });
-  return <EcosStation station={view} />;
+  const view = ecosStationView(station.scenario, { candidateTitle: clinicalCase.candidateTitle, specialty: null });
+  // Seul le fait que la transcription serveur existe part au navigateur, jamais la clé.
+  return <EcosStation station={view} serverTranscription={transcriptionConfig() !== null} />;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: identifier } = await params;
   const station = resolveEcosStation(identifier);
   const clinicalCase = station ? await getPublishedClinicalCase(station.scenario.slug).catch(() => null) : null;
-  return { title: pageTitle(clinicalCase?.candidateTitle ?? "Cas clinique") };
+  return { title: pageTitle(station && clinicalCase ? `Station ${station.code.replace(/^station-/, "")}` : "Cas clinique") };
 }

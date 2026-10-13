@@ -1,7 +1,9 @@
 import "server-only";
 
 import type { EcosFeedbackCategory } from "../ecos/feedback";
-import { ECOS_SCENARIOS, ecosPublicCode } from "../ecos/stations";
+import { ALL_ECOS_SCENARIOS, ecosPublicCode, getEcosScenario } from "../ecos/stations";
+import { unscriptedQuestions } from "../ecos/engine";
+import { normalizeEcosText, usesReservedPrefix } from "../ecos/text";
 import { createAdminClient } from "../supabase/server";
 
 /** Phase de test : fréquentation des stations, avis des étudiants et erreurs récentes. */
@@ -43,7 +45,7 @@ export type AdminAppError = {
 };
 
 function station(slug: string) {
-  const scenario = ECOS_SCENARIOS.find((item) => item.slug === slug);
+  const scenario = ALL_ECOS_SCENARIOS.find((item) => item.slug === slug);
   return { code: ecosPublicCode(slug) ?? slug, diagnosis: scenario?.debrief.diagnosis ?? slug };
 }
 
@@ -55,7 +57,7 @@ export async function getAdminStationStats(adminUserId: string, days: number): P
   const { data, error } = await createAdminClient().rpc("admin_ecos_station_stats", { p_admin_user_id: adminUserId, p_since: since });
   if (error) throw error;
   const rows = new Map<string, Record<string, unknown>>(((data ?? []) as Record<string, unknown>[]).map((row) => [String(row.station_slug), row]));
-  const slugs = [...ECOS_SCENARIOS.map((item) => item.slug), ...[...rows.keys()].filter((slug) => !ECOS_SCENARIOS.some((item) => item.slug === slug))];
+  const slugs = [...ALL_ECOS_SCENARIOS.map((item) => item.slug), ...[...rows.keys()].filter((slug) => !ALL_ECOS_SCENARIOS.some((item) => item.slug === slug))];
   return slugs.map((slug) => {
     const row = rows.get(slug) ?? {};
     return {
@@ -127,4 +129,51 @@ export async function getAdminAppErrors(limit = 50): Promise<AdminAppError[]> {
     digest: (row.digest as string | null) ?? null,
     createdAt: row.created_at as string,
   }));
+}
+
+export type AdminUnscriptedQuestions = { slug: string; code: string; diagnosis: string; total: number; questions: Array<{ text: string; count: number }> };
+
+/**
+ * Questions posées par les testeurs auxquelles la station n'avait aucun fait
+ * prévu (le patient a improvisé ou nié par défaut), regroupées par station et
+ * par formulation : les trous du script à combler en priorité.
+ */
+export async function getAdminUnscriptedQuestions(days: number, perStation = 12): Promise<AdminUnscriptedQuestions[]> {
+  const admin = createAdminClient();
+  const since = new Date(Date.now() - days * 86_400_000).toISOString();
+  const { data: sessions, error } = await admin
+    .from("ecos_sessions")
+    .select("id, station_slug")
+    .gte("started_at", since)
+    .order("started_at", { ascending: false })
+    .limit(500);
+  if (error) throw error;
+  const slugBySession = new Map((sessions ?? []).map((row) => [row.id as string, String(row.station_slug)]));
+  if (!slugBySession.size) return [];
+  const { data: messages, error: messageError } = await admin
+    .from("ecos_messages")
+    .select("session_id, content")
+    .in("session_id", [...slugBySession.keys()])
+    .eq("role", "student")
+    .limit(8000);
+  if (messageError) throw messageError;
+  const byStation = new Map<string, Map<string, { text: string; count: number }>>();
+  for (const row of messages ?? []) {
+    const slug = slugBySession.get(row.session_id as string);
+    const scenario = slug ? getEcosScenario(slug) : null;
+    const content = String(row.content);
+    if (!scenario || usesReservedPrefix(content)) continue;
+    for (const question of unscriptedQuestions(scenario, content)) {
+      const key = normalizeEcosText(question);
+      const bucket = byStation.get(scenario.slug) ?? new Map();
+      const entry = bucket.get(key) ?? { text: question, count: 0 };
+      entry.count += 1;
+      bucket.set(key, entry);
+      byStation.set(scenario.slug, bucket);
+    }
+  }
+  return [...byStation].map(([slug, bucket]) => {
+    const questions = [...bucket.values()].sort((left, right) => right.count - left.count);
+    return { slug, ...station(slug), total: questions.reduce((sum, item) => sum + item.count, 0), questions: questions.slice(0, perStation) };
+  }).sort((left, right) => right.total - left.total);
 }

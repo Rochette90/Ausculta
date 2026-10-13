@@ -9,13 +9,13 @@ type ReasoningCase = { slug: string; title: string; region: string; moduleTitle:
 
 const DIFFICULTY = { easy: "Facile", medium: "Intermédiaire", hard: "Avancé" } as const;
 
-export function CaseCatalog({ cases, reasoning, completed = [] }: { cases: ClinicalCaseSummary[]; reasoning: ReasoningCase[]; completed?: string[] }) {
+export function CaseCatalog({ cases, reasoning, completed = [], best = {} }: { cases: ClinicalCaseSummary[]; reasoning: ReasoningCase[]; completed?: string[]; best?: Record<string, number> }) {
   const done = new Set(completed);
   const [mode, setMode] = useState("Tous");
   const [query, setQuery] = useState("");
   const [readyOnly, setReadyOnly] = useState(true);
   const match = (value: string) => normalizeSearch(value).includes(normalizeSearch(query));
-  const stations = mode === "Raisonnement" ? [] : cases.filter((item) => (!readyOnly || item.published) && match(`${item.candidateTitle} ${item.specialty ?? ""}`));
+  const stations = mode === "Raisonnement" ? [] : cases.filter((item) => (!readyOnly || item.published) && match(item.candidateTitle));
   const exercises = mode === "ECOS" ? [] : reasoning.filter((item) => match(`${item.title} ${item.region} ${item.moduleTitle}`));
   const count = stations.length + exercises.length;
   return (
@@ -24,7 +24,7 @@ export function CaseCatalog({ cases, reasoning, completed = [] }: { cases: Clini
         <label className="learning-search">
           <Search aria-hidden="true" size={18} />
           <span className="sr-only">Rechercher une station</span>
-          <input type="search" placeholder={reasoning.length > 0 ? "Un motif, une région, une spécialité…" : "Un motif, une spécialité…"} value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input type="search" placeholder={reasoning.length > 0 ? "Un motif, une région…" : "Un motif : douleur au ventre, fièvre…"} value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
         <label className="learning-check"><input type="checkbox" checked={readyOnly} onChange={(e) => setReadyOnly(e.target.checked)} /> Disponibles seulement</label>
       </div>
@@ -43,12 +43,11 @@ export function CaseCatalog({ cases, reasoning, completed = [] }: { cases: Clini
             <li className="station-row" key={item.code ?? `draft-${index}`}>
               <span className="station-row-code">{item.code ? item.code.replace(/^station-/, "") : "–"}</span>
               <div>
-                {item.patientLabel && <p className="station-row-patient voice">{item.patientLabel}</p>}
+                {/* Feuille de porte seule : la spécialité orienterait vers le diagnostic. */}
                 <h3>{item.candidateTitle}</h3>
                 <ul className="station-row-meta">
-                  <li>{item.specialty ?? "Transversal"}</li>
                   <li>{DIFFICULTY[item.difficulty]}</li>
-                  {item.code && done.has(item.code) && <li>Déjà réalisée</li>}
+                  {item.code && done.has(item.code) && <li>Déjà réalisée{best[item.code] !== undefined ? ` · record ${best[item.code]} %` : ""}</li>}
                 </ul>
               </div>
               <span className="station-row-time">{item.duration}</span>

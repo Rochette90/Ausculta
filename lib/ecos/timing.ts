@@ -22,3 +22,13 @@ export function sessionDeadline(mode: unknown, startedAt: string | number | Date
   const seconds = parseEcosMode(mode) === "exam" ? EXAM_DURATION_SECONDS : TRAINING_MAX_SECONDS;
   return start + (seconds + SUBMISSION_GRACE_SECONDS) * 1_000;
 }
+
+/** Mode examen : signal « il reste 2 minutes », comme le jour de l'ECOS. */
+export const EXAM_WARNING_SECONDS = 2 * 60;
+
+/** Signal à donner quand le chronomètre passe de `previous` à `current` secondes restantes. */
+export function examSignal(previous: number, current: number): "warning" | "end" | null {
+  if (previous > 0 && current === 0) return "end";
+  if (previous > EXAM_WARNING_SECONDS && current <= EXAM_WARNING_SECONDS && current > 0) return "warning";
+  return null;
+}

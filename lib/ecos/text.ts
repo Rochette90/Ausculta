@@ -6,6 +6,12 @@ export const DIAGNOSIS_PREFIX = "Diagnostic retenu : ";
 export const PLAN_PREFIX = "Prise en charge proposée : ";
 /** Lecture écrite des examens complémentaires (stations avec une étape d'analyse). */
 export const ANALYSIS_PREFIX = "Analyse des examens : ";
+/** Réponses aux relances de l'examinateur en fin de station (`lib/ecos/follow-ups.ts`) : hors notation. */
+export const FOLLOW_UP_PREFIX = "Réponse à l’examinateur (";
+/** Diagnostics différentiels choisis dans la liste en fin de station (`lib/ecos/differentials.ts`) : hors notation. */
+export const DIFFERENTIALS_PREFIX = "Diagnostics différentiels : ";
+/** Explication orale ou écrite au patient en fin de station (`lib/ecos/announcement.ts`) : hors notation. */
+export const ANNOUNCE_PREFIX = "Annonce au patient : ";
 /** System line recorded when the synthesis opens: history and exam are then closed. */
 export const SYNTHESIS_MARKER = "Synthèse ouverte : anamnèse et examen clinique terminés.";
 /** Examiner answer when a gesture is requested in the chat instead of the exam list. */
@@ -59,10 +65,15 @@ export function isExamTransition(message: string): boolean {
 
 export const EXAM_TRANSITION_PHRASES: readonly string[] = EXAM_TRANSITION_KEYWORDS;
 
-const RESERVED_STARTS = ["geste", "diagnostic retenu", "prise en charge proposee", "analyse des examens", "examinateur", "synthese ouverte"];
+const RESERVED_STARTS = ["geste", "diagnostic retenu", "prise en charge proposee", "analyse des examens", "examinateur", "synthese ouverte", "reponse a l examinateur", "annonce au patient", "diagnostics differentiels"];
 
 /** Chat messages may not imitate the lines recorded by the structured phases. */
 export function usesReservedPrefix(message: string): boolean {
   const text = normalizeEcosText(message).trimStart();
   return RESERVED_STARTS.some((start) => text.startsWith(start));
+}
+
+/** « Mme Rochat, 29 ans », ou l'âge en mois d'un nourrisson. */
+export function patientLabel(patient: { name: string; age: number; ageLabel?: string }): string {
+  return `${patient.name}, ${patient.ageLabel ?? `${patient.age} ans`}`;
 }

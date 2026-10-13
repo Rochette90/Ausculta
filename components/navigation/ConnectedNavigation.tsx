@@ -22,7 +22,7 @@ const allItems: Array<{ href: string; label: string; shortLabel: string; icon: t
 ];
 const items = allItems.filter((item) => !item.feature || FEATURES[item.feature]);
 
-export function ConnectedNavigation({ avatarUrl, initials, streak, isAdmin = false }: { avatarUrl?: string | null; initials: string; streak: number; isAdmin?: boolean }) {
+export function ConnectedNavigation({ avatarUrl, initials, isAdmin = false }: { avatarUrl?: string | null; initials: string; isAdmin?: boolean }) {
   const pathname = usePathname();
   const navigationItems = isAdmin
     ? [...items, { href: "/admin/pathologies", label: "Admin", shortLabel: "Admin", icon: ShieldCheck }]
@@ -42,7 +42,6 @@ export function ConnectedNavigation({ avatarUrl, initials, streak, isAdmin = fal
           {navigationItems.map((item) => <Link aria-current={isActive(item.href) ? "page" : undefined} className={isActive(item.href) ? "nav-active" : ""} href={item.href} key={item.href}>{item.label}</Link>)}
         </nav>
         <div className="profile-chip">
-          {streak > 0 && <span className="streak">Série : <strong>{streak} j</strong></span>}
           <ThemeToggle />
           <Link
             className="avatar"

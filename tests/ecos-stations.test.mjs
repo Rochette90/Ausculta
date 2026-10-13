@@ -5,7 +5,7 @@ import { buildPatientPrompt, complaintFromOpening, localPatientReply, splitIntoS
 import { calculateEcosCriteria, maxEcosScore, scoreEcosTranscript } from "../lib/ecos/scoring.ts";
 import { ECOS_SCENARIOS, ecosPublicCode, ecosStationView, getEcosScenario, resolveEcosStation } from "../lib/ecos/stations/index.ts";
 import { ANALYSIS_PREFIX, DIAGNOSIS_PREFIX, EXAM_LIST_REDIRECT, EXAMINER_PREFIX, hasKeyword, isExamTransition, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX, usesReservedPrefix } from "../lib/ecos/text.ts";
-import { diagnosisOptions, gradeEcosStation, hasAnalysisStep, procedureResult, stationMaxScore } from "../lib/ecos/grading.ts";
+import { gradeEcosStation, hasAnalysisStep, procedureResult, stationMaxScore } from "../lib/ecos/grading.ts";
 import { EXAM_DURATION_SECONDS, sessionDeadline, TRAINING_MAX_SECONDS } from "../lib/ecos/timing.ts";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
@@ -90,19 +90,29 @@ test("each station offers gestures that unlock results, with pertinent ones and 
   }
 });
 
-test("the final diagnosis is one of four options and is graded on the server only", () => {
+test("the final diagnosis is searched in the common list and graded on the server only", async () => {
+  const { DIAGNOSIS_BY_ID, diagnosisByLabel } = await import("../lib/ecos/diagnosis-catalog.ts");
+  const { STATION_DIAGNOSES } = await import("../lib/ecos/stations/diagnoses.ts");
   for (const scenario of ECOS_SCENARIOS) {
     const { correct, distractors } = scenario.diagnosisChoice;
-    assert.equal(distractors.length, 3, scenario.slug);
-    const options = diagnosisOptions(scenario, "8d6b0c52-5f3a-4a54-9f2c-3b0d7a1e9c11");
-    assert.deepEqual([...options].sort(), [correct, ...distractors].sort(), scenario.slug);
-    assert.deepEqual(options, diagnosisOptions(scenario, "8d6b0c52-5f3a-4a54-9f2c-3b0d7a1e9c11"));
-    for (const distractor of distractors) assert.ok(!normalizeEcosText(distractor).startsWith(normalizeEcosText(correct).trimEnd()), scenario.slug);
-    const right = gradeEcosStation(scenario, [{ role: "student", content: `${DIAGNOSIS_PREFIX}${correct}` }]);
-    const wrong = gradeEcosStation(scenario, [{ role: "student", content: `${DIAGNOSIS_PREFIX}${distractors[0]}` }]);
-    assert.equal(right.criteria.find((item) => item.id === "diagnosis").earned, 2);
-    assert.equal(wrong.criteria.find((item) => item.id === "diagnosis").earned, 0);
-    assert.deepEqual(wrong.synthesis, { chosen: distractors[0], correct });
+    const expected = STATION_DIAGNOSES[scenario.slug];
+    assert.ok(expected && expected.accepted.length >= 1, scenario.slug);
+    for (const id of [...expected.accepted, ...expected.differentials.flatMap((item) => item.ids)]) assert.ok(DIAGNOSIS_BY_ID.has(id), `${scenario.slug}: ${id}`);
+    // Ni le diagnostic attendu ni un différentiel ne valent comme réponse, et aucun différentiel n'est la réponse.
+    for (const item of expected.differentials) assert.ok(!item.ids.some((id) => expected.accepted.includes(id)), `${scenario.slug}: ${item.label}`);
+    const accepted = DIAGNOSIS_BY_ID.get(expected.accepted[0]).label;
+    const right = gradeEcosStation(scenario, [{ role: "student", content: `${DIAGNOSIS_PREFIX}${accepted}` }]);
+    const legacy = gradeEcosStation(scenario, [{ role: "student", content: `${DIAGNOSIS_PREFIX}${correct}` }]);
+    assert.equal(right.criteria.find((item) => item.id === "diagnosis").earned, 2, scenario.slug);
+    assert.equal(legacy.criteria.find((item) => item.id === "diagnosis").earned, 2, scenario.slug);
+    // Les anciens distracteurs, ou leur entité dans la liste, ne valent rien.
+    for (const distractor of distractors) {
+      const entry = diagnosisByLabel(distractor);
+      if (entry) assert.ok(!expected.accepted.includes(entry.id), `${scenario.slug}: ${distractor}`);
+      const wrong = gradeEcosStation(scenario, [{ role: "student", content: `${DIAGNOSIS_PREFIX}${distractor}` }]);
+      assert.equal(wrong.criteria.find((item) => item.id === "diagnosis").earned, 0, `${scenario.slug}: ${distractor}`);
+      assert.deepEqual(wrong.synthesis, { chosen: distractor, correct });
+    }
     // The diagnosis label never earns keyword points on other lines.
     assert.equal(right.score, 2, scenario.slug);
   }
@@ -222,7 +232,7 @@ test("the browser receives the station without facts, results or diagnosis", asy
     assert.ok(!payload.includes(scenario.diagnosisChoice.correct), scenario.slug);
     assert.ok(!payload.includes("pertinent"), scenario.slug);
     for (const procedure of scenario.examination) assert.ok(!payload.includes(procedureResult(scenario, procedure)), `${scenario.slug}/${procedure.id}`);
-    assert.deepEqual(Object.keys(view.procedures[0]).sort(), ["category", "id", "label"]);
+    assert.deepEqual(Object.keys(view.procedures[0]).sort(), ["category", "group", "id", "label"]);
     assert.equal(view.criteria, undefined);
     // Alphabetical order: the source order (expected gestures first) would give them away.
     const labels = view.procedures.map((item) => item.label);
@@ -263,12 +273,13 @@ test("ECOS APIs resolve the station on the server and reveal the debrief after g
   assert.match(session, /parseEcosMode\(body\.mode\)/);
   assert.match(chat, /sessionDeadline\(session\.mode, session\.started_at\)/);
   assert.match(procedure, /sessionDeadline\(session\.mode, session\.started_at\)/);
-  assert.match(procedure, /procedureResult\(scenario, procedure\)/);
+  assert.match(procedure, /examOrderResult\(scenario, procedureId\)/);
   assert.match(synthesis, /export async function POST/);
   assert.match(synthesis, /requireAuthenticatedUser\(\)/);
   assert.match(synthesis, /assertSameOrigin\(request\)/);
   assert.match(synthesis, /SYNTHESIS_MARKER/);
-  assert.match(synthesis, /diagnosisOptions\(scenario, id\)/);
+  // Plus de propositions : la synthèse s'ouvre, le diagnostic se cherche dans la liste commune.
+  assert.match(synthesis, /return apiJson\(\{ opened: true \}\);/);
   // Once the options are known, history and gestures are closed.
   for (const source of [chat, procedure]) assert.match(source, /synthesisStarted\(admin, /);
   assert.match(chat, /usesReservedPrefix\(message\)/);
@@ -276,10 +287,15 @@ test("ECOS APIs resolve the station on the server and reveal the debrief after g
   assert.match(complete, /ascending: false/);
   // La grille (mots-clés, indices) n'est jamais envoyée pendant la station : elle n'apparaît qu'au bilan.
   assert.doesNotMatch(session, /criteria/);
-  assert.match(complete, /diagnosisOptions\(scenario, id\)\.includes\(synthesis\.diagnosis\)/);
+  // Le diagnostic et les différentiels ne sont acceptés que s'ils sont dans la liste commune.
+  assert.match(complete, /if \(diagnosisId && !DIAGNOSIS_BY_ID\.has\(diagnosisId\)\) throw new ApiError\(400, "invalid_diagnosis"/);
+  assert.match(complete, /rawDifferentials\.length > MAX_DIFFERENTIALS/);
   assert.match(chat, /buildPatientPrompt\(scenario\)/);
-  assert.match(complete, /gradeEcosStation\(scenario, transcript\)/);
-  assert.match(complete, /debriefView\(scenario\.debrief\)/);
+  // Le bilan est construit par un module serveur partagé (fin de station et historique).
+  const report = await read("../lib/ecos/report.ts");
+  assert.match(report, /import "server-only";/);
+  assert.match(report, /gradeEcosStation\(scenario, transcript\)/);
+  assert.match(report, /debriefView\(scenario\.debrief\)/);
   const published = [...migration.matchAll(/'([a-z0-9-]+)'/g)].map((match) => match[1]).filter((slug) => !["published", "draft", "diagnosis"].includes(slug));
   assert.equal(published.length, 11);
   assert.ok(published.every((slug) => getEcosScenario(slug)));

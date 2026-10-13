@@ -1,6 +1,6 @@
 import type { EcosMessage } from "./types.ts";
 import { unexplainedJargon } from "./jargon.ts";
-import { ANALYSIS_PREFIX, DIAGNOSIS_PREFIX, hasAnyKeyword, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX } from "./text.ts";
+import { ANALYSIS_PREFIX, ANNOUNCE_PREFIX, DIAGNOSIS_PREFIX, DIFFERENTIALS_PREFIX, FOLLOW_UP_PREFIX, hasAnyKeyword, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX } from "./text.ts";
 
 /**
  * Bilan de communication de l'entretien, calculé sur les seuls messages que
@@ -61,17 +61,17 @@ const FILLERS = /^ (?:alors|donc|bon|bien|tres bien|d accord|ok|okay|et|puis|mai
 /** Le nom et l'âge ouvrent souvent l'entretien : ils ne disent rien de la première question clinique. */
 const IDENTITY = ["comment vous appel", "comment tu t appel", "votre nom", "quel age", "votre age", "date de naissance"];
 
-const EMPATHY = ["je comprends", "ca doit etre", "ca a du etre", "je vois que", "c est normal d", "c est comprehensible", "je suis desole", "desolee", "ne vous inquietez pas", "ne vous en faites pas", "on va s occuper", "nous allons nous occuper", "je vais m occuper", "on va vous aider", "nous allons vous aider", "je vais vous aider", "je suis la pour vous", "on est la pour vous", "je reste avec vous", "entre de bonnes mains", "prenez votre temps", "rassurez vous"];
+export const EMPATHY = ["je comprends", "ca doit etre", "ca a du etre", "je vois que", "c est normal d", "c est comprehensible", "je suis desole", "desolee", "ne vous inquietez pas", "ne vous en faites pas", "on va s occuper", "nous allons nous occuper", "je vais m occuper", "on va vous aider", "nous allons vous aider", "je vais vous aider", "je suis la pour vous", "on est la pour vous", "je reste avec vous", "entre de bonnes mains", "prenez votre temps", "rassurez vous"];
 const CONCERNS = ["qu est ce qui vous inquiet", "ce qui vous inquiet", "ca vous inquiet", "vous etes inquiet", "etes vous inquiet", "vous inquiete le plus", "vous preoccupe", "avez vous peur", "de quoi avez vous peur", "qu est ce qui vous fait peur", "ce qui vous fait peur", "vos craintes", "vous craignez", "qu en pensez vous", "a quoi pensez vous", "vous pensez que c est", "pensez vous que ce", "votre avis", "qu attendez vous", "vous attendez", "vos attentes", "esperez vous"];
 const SUMMARY = ["si je resume", "pour resumer", "je resume", "en resume", "si je comprends bien", "si j ai bien compris", "recapitul", "vous me dites que", "si je vous suis bien"];
-const UNDERSTANDING = ["avez vous des questions", "des questions", "est ce clair", "c est clair", "avez vous compris", "vous avez compris", "est ce que vous comprenez", "vous comprenez", "est ce que ca vous va", "ca vous va", "pouvez vous me redire", "pouvez vous reformuler", "qu avez vous retenu"];
+export const UNDERSTANDING = ["avez vous des questions", "des questions", "est ce clair", "c est clair", "avez vous compris", "vous avez compris", "est ce que vous comprenez", "vous comprenez", "est ce que ca vous va", "ca vous va", "pouvez vous me redire", "pouvez vous reformuler", "qu avez vous retenu"];
 
 /** Messages de l'étudiant au patient : ni geste, ni diagnostic, ni analyse ou prise en charge écrite. */
 function interviewLines(messages: readonly EcosMessage[]): string[] {
   return messages
     .filter((message) => message.role === "student")
     .map((message) => message.content)
-    .filter((content) => ![PROCEDURE_PREFIX, DIAGNOSIS_PREFIX, PLAN_PREFIX, ANALYSIS_PREFIX].some((prefix) => content.startsWith(prefix)));
+    .filter((content) => ![PROCEDURE_PREFIX, DIAGNOSIS_PREFIX, PLAN_PREFIX, ANALYSIS_PREFIX, FOLLOW_UP_PREFIX, ANNOUNCE_PREFIX, DIFFERENTIALS_PREFIX].some((prefix) => content.startsWith(prefix)));
 }
 
 const startsWithAny = (text: string, starts: readonly string[]) => starts.some((start) => {

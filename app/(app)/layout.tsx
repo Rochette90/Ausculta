@@ -33,5 +33,5 @@ export default async function ConnectedLayout({ children }: { children: React.Re
   const identity: string = profile?.full_name?.trim() || user.email?.split("@")[0] || "Étudiant";
   const initials = initialsFrom(identity);
   const avatarUrl = profileAvatarUrl(user.id, profile);
-  return <div className="app-shell"><ConnectedNavigation avatarUrl={avatarUrl} initials={initials} isAdmin={profile?.role === "admin"} streak={profile?.streak ?? 0} /><div id="learning-content" tabIndex={-1}>{children}</div></div>;
+  return <div className="app-shell"><ConnectedNavigation avatarUrl={avatarUrl} initials={initials} isAdmin={profile?.role === "admin"} /><div id="learning-content" tabIndex={-1}>{children}</div></div>;
 }

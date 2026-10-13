@@ -117,6 +117,60 @@
 .goal-head strong { font-variant-numeric: tabular-nums; }
 .goal-track { height: 8px; margin-top: 10px; overflow: hidden; border-radius: 99px; background: var(--line); }
 .goal-track span { display: block; height: 100%; border-radius: 99px; background: var(--bar-2); }
+/* Parcours ECOS de 3ᵉ année. */
+.ecos3-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+.ecos3-grid li { display: grid; gap: 6px; align-content: start; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.ecos3-grid h3 { margin: 0; font-size: 17px; }
+.ecos3-grid p { margin: 0; color: var(--muted); font-size: 14px; }
+.ecos3-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
+.ecos3-actions .button { display: inline-flex; align-items: center; gap: 6px; }
+/* Réflexes d'entretien suivis d'une station à l'autre. */
+.reflex-focus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 6px; padding: 0; list-style: none; }
+.reflex-focus li { display: grid; align-content: start; gap: 6px; padding: 16px 18px; border-top: 3px solid var(--amber); border-radius: var(--radius-md); background: var(--surface); }
+.reflex-focus li > div { display: flex; justify-content: space-between; gap: 10px; }
+.reflex-focus strong { color: var(--ink); font-size: 16px; }
+.reflex-focus span { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.reflex-focus p { margin: 0; color: var(--ink-secondary); font-size: 14px; line-height: 1.5; }
+@media (max-width: 860px) { .reflex-focus { grid-template-columns: minmax(0, 1fr); } }
+.reflex-details { margin-top: 10px; }
+.reflex-details .reflex-list { margin-top: 12px; }
+
+/* Section repliable : chevron dessiné. */
+.disclosure > summary { display: inline-flex; align-items: center; gap: 8px; padding: 6px 0; color: var(--ink); font-size: 15px; font-weight: 650; cursor: pointer; list-style: none; }
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary::after { content: ""; width: 7px; height: 7px; margin-bottom: 3px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .2s ease, margin .2s ease; }
+.disclosure[open] > summary::after { margin-bottom: -3px; transform: rotate(225deg); }
+.disclosure > summary:hover { color: var(--primary); }
+
+/* Tableau de bord : accueil et panneau « Aujourd'hui ». */
+.dash-hero-main { min-width: 0; }
+.dash-hero-main .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dash-hero-main .dash-stats > div:nth-child(3) { padding-left: 0; border-left: 0; }
+.dash-hero-main .dash-stats > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+.dash-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: clamp(24px, 4vw, 48px); align-items: start; }
+.dash-today { display: grid; gap: 14px; padding: clamp(18px, 2.5vw, 24px); border-radius: var(--radius-xl); background: var(--surface); animation: rise-in .45s ease both; }
+.dash-today h2 { margin: 0; font-size: 20px; }
+.dash-today-goal { display: grid; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.dash-today-goal > div:first-child { display: flex; justify-content: space-between; gap: 10px; }
+.dash-today-goal span { color: var(--muted); font-size: 14px; font-weight: 600; }
+.dash-today-goal strong { color: var(--ink); font-size: 15px; }
+.dash-today-goal.is-done strong { color: var(--primary); }
+.dash-today-goal .goal-track { margin-top: 0; }
+.dash-today-item { display: grid; gap: 6px; justify-items: start; }
+.dash-today-item + .dash-today-item { padding-top: 14px; border-top: 1px solid var(--line); }
+.dash-today-item > span { color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
+.dash-today-item p { margin: 0; color: var(--ink); font-size: 16px; font-weight: 650; line-height: 1.4; }
+.dash-today-item small { color: var(--ink-secondary); font-size: 14px; line-height: 1.45; }
+.dash-today-item .goal-track { width: 100%; margin-top: 2px; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 960px) { .dash-hero { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .dash-today { animation: none; } .disclosure > summary::after { transition: none; } }
+
+.reflex-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.reflex-list li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 160px) auto; align-items: center; gap: 12px; font-size: 15px; }
+.reflex-track { height: 8px; overflow: hidden; border-radius: 99px; background: var(--line); }
+.reflex-track span { display: block; height: 100%; border-radius: 99px; background: var(--bar-2); }
+.reflex-count { min-width: 3.5ch; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 
 /* --- Profil --------------------------------------------------------------- */
 
@@ -140,6 +194,8 @@
 .profile-badges li > span { grid-row: span 2; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--mint); }
 .profile-badges strong { font-size: 15px; }
 .profile-badges small { color: var(--muted); font-size: 14px; }
+.profile-milestones li > span { font-size: 12px; font-variant-numeric: tabular-nums; }
+.profile-milestones li.is-done > span { background: var(--primary); color: var(--paper); font-size: 15px; }
 .profile-actions { display: grid; justify-items: start; gap: 6px; margin-top: 12px; }
 .danger-link { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0; border: 0; background: none; color: var(--red); font-size: 15px; font-weight: 600; }
 .danger-link:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -274,3 +330,59 @@ html[data-theme="dark"] .danger-confirm .button.danger { color: #2a0b08; }
 .catalog-modes dt { color: var(--ink); font-size: 16px; font-weight: 650; }
 .catalog-modes dd { margin: 4px 0 0; color: var(--ink-secondary); font-size: 15px; line-height: 1.5; }
 @media (max-width: 720px) { .catalog-modes > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); } }
+
+/* Jalon atteint : bandeau de célébration du tableau de bord. */
+.milestone-celebration { display: flex; align-items: center; gap: 14px; margin: 0 0 20px; padding: 14px 18px; border: 1px solid color-mix(in srgb, var(--primary) 40%, var(--line)); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--primary) 10%, var(--surface)); animation: celebrate-in .6s cubic-bezier(.2, .8, .2, 1.2) both; }
+.milestone-celebration > div { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.milestone-celebration p { margin: 0; color: var(--primary); font-size: 13px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
+.milestone-celebration strong { color: var(--ink); font-size: 17px; }
+.milestone-celebration small { color: var(--ink-secondary); font-size: 14px; font-weight: 500; }
+.milestone-burst { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--paper); font-size: 20px; animation: burst 1.2s ease .3s both; }
+@keyframes celebrate-in { from { opacity: 0; transform: translateY(-10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes burst { 0% { transform: scale(.6) rotate(-30deg); } 50% { transform: scale(1.15) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
+
+/* Apparition douce des sections au défilement (navigateurs compatibles seulement). */
+@supports (animation-timeline: view()) {
+  .learning-section, .dash-columns { animation: rise-in linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .milestone-celebration, .milestone-burst { animation: none; }
+  .learning-section, .dash-columns { animation: none; }
+}
+
+/* Mes bilans : historique des stations terminées. */
+.history-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 24px; }
+.history-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.history-list a { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 16px; overflow: hidden; padding: 16px 18px 20px; border-radius: var(--radius-md); background: var(--surface); color: var(--ink); text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
+.history-list a:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.history-code { color: var(--muted); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.history-main { display: grid; gap: 4px; min-width: 0; }
+.history-main strong { font-size: 16px; line-height: 1.4; }
+.history-main small { color: var(--muted); font-size: 14px; }
+.history-score { display: grid; justify-items: end; gap: 2px; }
+.history-score b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.history-score b small { color: var(--muted); font-size: 14px; font-weight: 500; }
+.history-score em { font-size: 13px; font-style: normal; font-weight: 700; }
+.history-score em.is-up { color: var(--primary); }
+.history-score em.is-down { color: var(--red); }
+.history-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--line); }
+.history-bar span { display: block; height: 100%; background: var(--bar-2); }
+@media (max-width: 640px) { .history-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .history-list a { grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; } }
+@media (prefers-reduced-motion: reduce) { .history-list a { transition: none; } }
+.dash-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.dash-panel-head h2 { margin-bottom: 16px; }
+
+/* Examen blanc : présentation et bilan global. */
+.mock-intro { display: grid; gap: 22px; justify-items: start; margin-top: 8px; }
+.mock-types { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.mock-types li { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; }
+.mock-types span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 13px; }
+.mock-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 0; }
+.mock-facts div { padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface); }
+.mock-facts dt { color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+.mock-facts dd { margin: 4px 0 0; color: var(--ink); font-weight: 600; }
+.mock-note { margin: 0; color: var(--muted); font-size: 14px; }
+.mock-report-head { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(240px, .6fr); gap: clamp(24px, 4vw, 48px); align-items: center; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.mock-report-head h1 { margin: 6px 0 10px; }
+.mock-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+@media (max-width: 860px) { .mock-facts { grid-template-columns: minmax(0, 1fr); } .mock-report-head { grid-template-columns: minmax(0, 1fr); } }

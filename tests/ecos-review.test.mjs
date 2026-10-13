@@ -236,7 +236,8 @@ test("la fin de station relit la grille, enregistre la relecture et renvoie le b
   assert.match(route, /withoutReview\(/);
   assert.match(route, /requestReview\(\{/);
   assert.match(route, /p_transcript: stored/);
-  assert.match(route, /communication: communicationReport\(transcript\)/);
+  assert.match(route, /buildStationReport\(scenario, stored, id\)/);
+  assert.match(await readFile(new URL("../lib/ecos/report.ts", import.meta.url), "utf8"), /communication: communicationReport\(transcript\)/);
   const maxDuration = JSON.parse(vercel).functions["app/api/ecos/session/**/route.ts"].maxDuration;
   assert.ok(maxDuration * 1_000 > REVIEW_BUDGET_MS + 5_000);
   assert.match(station, /AbortSignal\.timeout\(30_000\)/);

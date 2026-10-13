@@ -6,6 +6,9 @@ import { FEATURES, isLearningPriorityAvailable } from "@/lib/features";
 import { Card } from "@/components/ui/card";
 import { SpecialtyIcon } from "@/components/content/SpecialtyIcon";
 import type { PracticeGridSummary } from "@/lib/grids/queries";
+import { reflexesToWork } from "@/lib/ecos/reflexes";
+import type { EcosProgress } from "@/lib/ecos/progress";
+import { MilestoneCelebration } from "./MilestoneCelebration";
 import { cn } from "@/lib/utils";
 import { featuredStudySession } from "@/lib/study-sessions/catalog";
 import { StudySessionSpotlight } from "@/components/study-sessions/StudySessionSpotlight";
@@ -57,7 +60,7 @@ function dashboardGreeting({
 
 const difficultyLabels = { easy: "Facile", medium: "Intermédiaire", hard: "Avancé" } as const;
 
-export function UserDashboard({ data, firstName, stations = [], grids = [] }: { data: DashboardData; firstName: string | null; stations?: ClinicalCaseSummary[]; grids?: PracticeGridSummary[] }) {
+export function UserDashboard({ data, firstName, stations = [], grids = [], progress = null, suggestion = null }: { data: DashboardData; firstName: string | null; stations?: ClinicalCaseSummary[]; grids?: PracticeGridSummary[]; progress?: EcosProgress | null; suggestion?: { code: string; typeLabel: string } | null }) {
   const { profile, stats, specialties, dailyQuiz, dailyQuizCompleted, recommendedPathology, recentActivity, weeklyActivity, todayGoal, featuredStudySessionCompletedStepIds } = data;
   const displayName = firstName
     ? `${firstName.charAt(0).toLocaleUpperCase("fr-CH")}${firstName.slice(1)}`
@@ -124,11 +127,20 @@ export function UserDashboard({ data, firstName, stations = [], grids = [] }: { 
     ? { href: sessionHref, label: "Reprendre ma séance" }
     : null;
 
-  const level = profile.level;
+  const level = stats.level;
   const stationCode = (code: string) => code.replace(/^station-/, "");
+
+  // Panneau « Aujourd'hui » : objectif, prochain patient, réflexe à travailler, prochain jalon.
+  const suggested = suggestion ? stations.find((station) => station.code === suggestion.code) ?? null : null;
+  const focusReflex = progress ? reflexesToWork(progress.reflexes.stats, 1)[0] ?? null : null;
+  const nextMilestone = progress?.milestones.filter((item) => !item.done).sort((left, right) => right.progress / right.target - left.progress / left.target)[0] ?? null;
+  const goalDone = todayGoal.stations >= todayGoal.targetStations;
 
   return (
     <main className="learning-page">
+      {progress && <MilestoneCelebration reached={progress.milestones.filter((item) => item.done).map(({ id, label, description }) => ({ id, label, description }))} />}
+      <div className={FEATURES.ecos ? "dash-hero" : undefined}>
+      <div className="dash-hero-main">
       <header className="dash-head">
         <p className="dash-date">{today.charAt(0).toLocaleUpperCase("fr-CH") + today.slice(1)}</p>
         <h1>Bonjour{displayName ? ` ${displayName}` : ""}.</h1>
@@ -139,13 +151,46 @@ export function UserDashboard({ data, firstName, stations = [], grids = [] }: { 
           {secondaryAction && <Link className="button secondary" href={secondaryAction.href}>{secondaryAction.label}</Link>}
         </div>
       </header>
-
       <dl className="dash-stats" aria-label="Statistiques personnelles">
         <div><dt>{FEATURES.fiches ? "Fiches terminées" : "Stations terminées"}</dt><dd>{FEATURES.fiches ? stats.completedPathologies : stats.completedClinicalCases}</dd></div>
-        <div><dt>Série</dt><dd>{profile.streak}<small>{profile.streak > 1 ? "jours" : "jour"}</small></dd></div>
-        <div><dt>{libraryEnabled ? "Progression globale" : "XP aujourd’hui"}</dt><dd>{libraryEnabled ? `${stats.overallProgress} %` : <>{todayGoal.earnedXp}<small>/ {todayGoal.targetXp}</small></>}</dd></div>
-        <div><dt>Niveau</dt><dd>{level}<small>{stats.levelProgress} / 100 XP</small></dd></div>
+        <div><dt>Jalons</dt><dd>{progress ? progress.milestones.filter((item) => item.done).length : 0}<small>/ {progress?.milestones.length ?? 0}</small></dd></div>
+        <div><dt>{libraryEnabled ? "Progression globale" : "XP aujourd’hui"}</dt><dd>{libraryEnabled ? `${stats.overallProgress} %` : <>{todayGoal.earnedXp}<small>XP</small></>}</dd></div>
+        <div><dt>Niveau</dt><dd>{level.level}<small>{level.current} / {level.needed} XP</small></dd></div>
       </dl>
+      </div>
+      {FEATURES.ecos && (
+        <aside className="dash-today" aria-labelledby="dash-today-title">
+          <h2 id="dash-today-title">Aujourd’hui</h2>
+          <div className={`dash-today-goal${goalDone ? " is-done" : ""}`}>
+            <div><span>Objectif du jour</span><strong>{goalDone ? "Atteint ✓" : "Une station complète"}</strong></div>
+            <div className="goal-track" aria-hidden="true"><span style={{ width: `${todayGoal.percentage}%` }} /></div>
+          </div>
+          {suggestion && suggested && (
+            <div className="dash-today-item">
+              <span>Prochain patient conseillé · {suggestion.typeLabel}</span>
+              <p>{suggested.candidateTitle}</p>
+              <Link className="button secondary small" href={`/cas/${suggestion.code}`}>Commencer</Link>
+            </div>
+          )}
+          {focusReflex && (
+            <div className="dash-today-item">
+              <span>Réflexe à travailler · {focusReflex.done}/{focusReflex.total}</span>
+              <p>{focusReflex.label}</p>
+              <small>{focusReflex.tip}</small>
+            </div>
+          )}
+          {nextMilestone && (
+            <div className="dash-today-item">
+              <span>Prochain jalon · {nextMilestone.progress}/{nextMilestone.target}</span>
+              <p>{nextMilestone.label}</p>
+              <div className="goal-track" aria-hidden="true"><span style={{ width: `${Math.round((nextMilestone.progress / nextMilestone.target) * 100)}%` }} /></div>
+              <small>{nextMilestone.description}</small>
+            </div>
+          )}
+        </aside>
+      )}
+      </div>
+
 
       {FEATURES.anatomy && <Link href="/anatomie" className="mb-6 mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[var(--surface)] p-6 text-[var(--ink)] no-underline">
         <div><p className="learning-eyebrow">Anatomie clinique</p><h2 className="m-0 text-xl">Relie les structures aux symptômes.</h2><p className="mb-0 mt-2 text-sm text-[var(--muted)]">6 modules, 18 repères, rappel actif et mini-cas.</p></div><span className="text-link">Explorer l’atlas</span>
@@ -226,10 +271,8 @@ export function UserDashboard({ data, firstName, stations = [], grids = [] }: { 
                 <li className="station-row" key={station.code}>
                   <span className="station-row-code">{station.code ? stationCode(station.code) : ""}</span>
                   <div>
-                    {station.patientLabel && <p className="station-row-patient voice">{station.patientLabel}</p>}
                     <h3>{station.candidateTitle}</h3>
                     <ul className="station-row-meta">
-                      <li>{station.specialty ?? "Transversal"}</li>
                       <li>{difficultyLabels[station.difficulty]}</li>
                     </ul>
                   </div>
@@ -243,6 +286,8 @@ export function UserDashboard({ data, firstName, stations = [], grids = [] }: { 
           )}
         </section>
       )}
+
+      {FEATURES.ecos && progress && <ReflexesSection reflexes={progress.reflexes} />}
 
       {FEATURES.grilles && grids.length > 0 && (
         <section className="learning-section" aria-labelledby="dashboard-grids-title">
@@ -261,7 +306,7 @@ export function UserDashboard({ data, firstName, stations = [], grids = [] }: { 
 
       <section className="dash-columns" aria-label="Ton activité">
         <div className="dash-panel">
-          <h2>Activité récente</h2>
+          <div className="dash-panel-head"><h2>Activité récente</h2>{FEATURES.ecos && <Link className="text-link" href="/historique">Tous mes bilans</Link>}</div>
           {recentActivity.length > 0
             ? <ul className="activity-list">{recentActivity.map((activity) => <li key={activity.id}><Link href={activity.href}><strong>{activity.label}</strong><small>{activity.detail}</small><time dateTime={activity.completedAt}>{formatActivityDate(activity.completedAt)}</time></Link></li>)}</ul>
             : <p className="learning-note">Ton activité apparaîtra ici après ta première station.</p>}
@@ -275,12 +320,59 @@ export function UserDashboard({ data, firstName, stations = [], grids = [] }: { 
               return <li className={day.isToday ? "is-today" : undefined} key={day.date}><span className="week-xp">{day.xp || ""}</span><span className="week-bar" style={{ height: `${height}%` }} /><span className="week-day"><span className="sr-only">{day.xp} XP, </span>{day.label}</span></li>;
             })}
           </ol>
-          <div className="goal">
-            <div className="goal-head"><span>Objectif du jour</span><strong>{todayGoal.earnedXp}/{todayGoal.targetXp} XP</strong></div>
-            <div className="goal-track"><span style={{ width: `${todayGoal.percentage}%` }} /></div>
-          </div>
+          {!FEATURES.ecos && (
+            <div className="goal">
+              <div className="goal-head"><span>Objectif du jour : une station complète</span><strong>{Math.min(todayGoal.stations, todayGoal.targetStations)}/{todayGoal.targetStations}</strong></div>
+              <div className="goal-track"><span style={{ width: `${todayGoal.percentage}%` }} /></div>
+            </div>
+          )}
         </div>
       </section>
     </main>
+  );
+}
+
+/** Réflexes d'entretien suivis d'une station à l'autre : les trois à travailler, le détail replié. */
+function ReflexesSection({ reflexes }: { reflexes: EcosProgress["reflexes"] }) {
+  const toWork = reflexesToWork(reflexes.stats);
+  const judged = reflexes.stats.filter((stat) => stat.total > 0);
+  return (
+    <section className="learning-section" aria-labelledby="dashboard-reflexes-title">
+      <div className="learning-section-head">
+        <h2 id="dashboard-reflexes-title">Tes réflexes d’entretien</h2>
+        {reflexes.stations >= 2 && <span className="learning-note">Sur tes {reflexes.stations} dernières stations</span>}
+      </div>
+      {reflexes.stations < 2 ? (
+        <p className="learning-note">Termine deux stations pour voir les réflexes que tu as acquis et ceux que tu oublies encore.</p>
+      ) : (
+        <>
+          {toWork.length > 0 ? (
+            <ol className="reflex-focus">
+              {toWork.map((stat) => (
+                <li key={stat.id}>
+                  <div><strong>{stat.label}</strong><span>{stat.done}/{stat.total}</span></div>
+                  <p>{stat.tip}</p>
+                </li>
+              ))}
+            </ol>
+          ) : <p className="learning-note">Tous tes réflexes sont acquis sur tes dernières stations. Continue ainsi.</p>}
+          <details className="disclosure reflex-details">
+            <summary>Voir les {judged.length} réflexes</summary>
+            <ul className="reflex-list">
+              {judged.map((stat) => {
+                const share = Math.round((stat.done / stat.total) * 100);
+                return (
+                  <li key={stat.id}>
+                    <span className="reflex-label">{stat.label}</span>
+                    <span className="reflex-track" aria-hidden="true"><span style={{ width: `${share}%` }} /></span>
+                    <span className="reflex-count">{stat.done}/{stat.total}<span className="sr-only"> stations</span></span>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        </>
+      )}
+    </section>
   );
 }

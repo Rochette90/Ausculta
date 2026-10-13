@@ -9,17 +9,11 @@ import { getProfileSummary } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { BRAND_PRO_PLAN, pageTitle } from "@/lib/brand";
 import { FEATURES, premiumOnSale } from "@/lib/features";
+import { getEcosProgress } from "@/lib/ecos/progress";
+import { levelFromXp } from "@/lib/progress/levels";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: pageTitle("Profil") };
-
-type BadgeDetails = { id: string; name: string; description: string | null; icon: string | null };
-// `badges` est une relation plusieurs-à-un : PostgREST renvoie un objet, pas un tableau.
-type BadgeRelation = {
-  awarded_at: string;
-  badges: BadgeDetails | BadgeDetails[] | null;
-};
-const badgeOf = (item: BadgeRelation) => (Array.isArray(item.badges) ? item.badges[0] : item.badges) ?? null;
 
 
 export default async function ProfilPage() {
@@ -28,7 +22,6 @@ export default async function ProfilPage() {
   const [
     profile,
     { data: subscription },
-    { data: badges },
     { data: learningGoal },
     { data: specialties },
   ] = await Promise.all([
@@ -40,11 +33,6 @@ export default async function ProfilPage() {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase
-      .from("user_badges")
-      .select("awarded_at, badges(id, name, description, icon)")
-      .eq("user_id", user.id)
-      .order("awarded_at", { ascending: false }),
     supabase
       .from("user_learning_goals")
       .select("daily_questions, weekly_questions, target_specialty_id")
@@ -59,12 +47,13 @@ export default async function ProfilPage() {
   const isPro = profile?.plan === "pro";
   const hasCustomer = Boolean(profile?.stripe_customer_id);
   const avatarUrl = profileAvatarUrl(user.id, profile);
-  const levelProgress = (profile?.xp ?? 0) % 100;
+  const level = levelFromXp(profile?.xp ?? 0);
+  // Jalons recalculés depuis les stations terminées ; leur échec ne bloque pas le profil.
+  const progress = FEATURES.ecos ? await getEcosProgress(user.id).catch(() => null) : null;
+  const reached = progress?.milestones.filter((item) => item.done).length ?? 0;
   const memberSince = profile?.created_at
     ? new Intl.DateTimeFormat("fr-CH", { month: "long", year: "numeric", timeZone: "Europe/Zurich" }).format(new Date(profile.created_at))
     : null;
-
-  const badgeList = ((badges as BadgeRelation[] | null) ?? []).map((item) => ({ item, badge: badgeOf(item) })).filter(({ badge }) => badge);
 
   return (
     <main className="learning-page">
@@ -86,9 +75,9 @@ export default async function ProfilPage() {
 
       <dl className="dash-stats" aria-label="Ta progression">
         <div><dt>XP total</dt><dd>{(profile?.xp ?? 0).toLocaleString("fr-CH")}</dd></div>
-        <div><dt>Niveau</dt><dd>{profile?.level ?? 1}<small>{levelProgress} / 100 XP</small></dd></div>
-        <div><dt>Série</dt><dd>{profile?.streak ?? 0}<small>{(profile?.streak ?? 0) > 1 ? "jours" : "jour"}</small></dd></div>
-        <div><dt>Badges</dt><dd>{badgeList.length}</dd></div>
+        <div><dt>Niveau</dt><dd>{level.level}<small>{level.current} / {level.needed} XP</small></dd></div>
+        <div><dt>Stations différentes</dt><dd>{progress ? Object.keys(progress.best).length : 0}</dd></div>
+        <div><dt>Jalons</dt><dd>{reached}<small>/ {progress?.milestones.length ?? 0}</small></dd></div>
       </dl>
 
       <div className="profile-columns">
@@ -103,20 +92,20 @@ export default async function ProfilPage() {
         />
 
         <aside className="profile-side">
-          <section aria-labelledby="badges-title">
-            <h2 id="badges-title">Badges</h2>
-            {badgeList.length ? (
-              <ul className="profile-badges">
-                {badgeList.slice(0, 4).map(({ item, badge }) => (
-                  <li key={badge?.id ?? item.awarded_at}>
-                    <span aria-hidden="true">{badge?.icon ?? "✦"}</span>
-                    <strong>{badge?.name}</strong>
-                    <small>{badge?.description}</small>
+          {progress && (
+            <section aria-labelledby="milestones-title">
+              <h2 id="milestones-title">Jalons</h2>
+              <ul className="profile-badges profile-milestones">
+                {progress.milestones.map((item) => (
+                  <li className={item.done ? "is-done" : ""} key={item.id}>
+                    <span aria-hidden="true">{item.done ? "✓" : `${item.progress}/${item.target}`}</span>
+                    <strong>{item.label}</strong>
+                    <small>{item.description}</small>
                   </li>
                 ))}
               </ul>
-            ) : <p>Termine ta première station pour débloquer un badge.</p>}
-          </section>
+            </section>
+          )}
 
           {/* Formule payante masquée : la section ne reste que pour un compte déjà client Stripe. */}
           {(FEATURES.premium || hasCustomer) && <section aria-labelledby="plan-title">

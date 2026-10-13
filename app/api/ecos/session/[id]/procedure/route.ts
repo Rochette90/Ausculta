@@ -8,7 +8,7 @@ import {
   requireAuthenticatedUser,
 } from "@/app/lib/api-security";
 import { enforceRateLimit } from "@/app/lib/rate-limit";
-import { findProcedure, procedureResult } from "@/lib/ecos/grading";
+import { examOrderResult } from "@/lib/ecos/exam-orders";
 import { synthesisStarted } from "@/lib/ecos/sessions";
 import { getEcosScenario } from "@/lib/ecos/stations";
 import { EXAMINER_PREFIX, PROCEDURE_PREFIX } from "@/lib/ecos/text";
@@ -54,9 +54,10 @@ export async function POST(
 
     const scenario = getEcosScenario(String(session.station_slug));
     if (!scenario) throw new ApiError(409, "unsupported_station", "Scénario non disponible.");
-    const procedure = findProcedure(scenario, procedureId);
-    if (!procedure) throw new ApiError(400, "invalid_procedure", "Geste invalide");
-    const result = procedureResult(scenario, procedure);
+    // Entrée du catalogue commun : le résultat propre au cas, sinon le résultat normal.
+    const order = examOrderResult(scenario, procedureId);
+    if (!order) throw new ApiError(400, "invalid_procedure", "Geste invalide");
+    const { item: procedure, result } = order;
     const studentLine = `${PROCEDURE_PREFIX}${procedure.label}`;
 
     // Un double clic ou une répétition réseau ne duplique pas le geste.
@@ -84,8 +85,8 @@ export async function POST(
 
     // L'image ne part qu'avec le résultat, une fois le geste choisi, et
     // seulement pour un fichier du site (jamais une URL externe).
-    const image = procedure.image && procedure.image.src.startsWith("/ecos/") && !procedure.image.src.startsWith("//")
-      ? procedure.image
+    const image = order.image && order.image.src.startsWith("/ecos/") && !order.image.src.startsWith("//")
+      ? order.image
       : null;
     return apiJson({ procedureId: procedure.id, label: procedure.label, result, image });
   } catch (error) {

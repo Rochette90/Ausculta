@@ -488,6 +488,7 @@ test("all mutable product APIs enforce authenticated server identity", async () 
     "../app/api/ecos/session/[id]/route.ts",
     "../app/api/ecos/chat/route.ts",
     "../app/api/ecos/speech/route.ts",
+    "../app/api/ecos/transcribe/route.ts",
     "../app/api/ecos/session/[id]/procedure/route.ts",
     "../app/api/billing/checkout/route.ts",
     "../app/api/billing/portal/route.ts",

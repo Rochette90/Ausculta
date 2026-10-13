@@ -1,7 +1,8 @@
 import type { EcosCriterionDefinition, EcosMessage, EcosProcedure, EcosScenario } from "./types.ts";
 import { patientAiErrorReason, type PatientAiConfig } from "./patient-ai.ts";
 import { ANALYSIS_CRITERION_ID, groupId, keywordGroupMatches } from "./scoring.ts";
-import { ANALYSIS_PREFIX, DIAGNOSIS_PREFIX, EXAMINER_PREFIX, normalizeEcosText, PLAN_PREFIX, PROCEDURE_PREFIX } from "./text.ts";
+import { resolveExamOrders } from "./exam-orders.ts";
+import { ANALYSIS_PREFIX, ANNOUNCE_PREFIX, DIAGNOSIS_PREFIX, DIFFERENTIALS_PREFIX, EXAMINER_PREFIX, FOLLOW_UP_PREFIX, normalizeEcosText, PLAN_PREFIX, patientLabel, PROCEDURE_PREFIX } from "./text.ts";
 
 /**
  * Relecture de la grille par le modèle. Les mots-clés ratent une question
@@ -43,10 +44,7 @@ function oneLine(text: string): string {
 
 /** Gestes attendus réellement choisis : seuls ceux-là comptent, comme pour les mots-clés. */
 function pertinentGestures(scenario: EcosScenario, messages: readonly EcosMessage[]): EcosProcedure[] {
-  const chosen = new Set(messages
-    .filter((message) => message.role === "student" && message.content.startsWith(PROCEDURE_PREFIX))
-    .map((message) => normalizeEcosText(message.content.slice(PROCEDURE_PREFIX.length))));
-  return scenario.examination.filter((procedure) => procedure.pertinent && chosen.has(normalizeEcosText(procedure.label)));
+  return resolveExamOrders(scenario, messages).satisfied.filter((procedure) => procedure.pertinent);
 }
 
 /**
@@ -55,7 +53,7 @@ function pertinentGestures(scenario: EcosScenario, messages: readonly EcosMessag
  */
 export function studentEvidence(scenario: EcosScenario, messages: readonly EcosMessage[]): string[] {
   const said = messages
-    .filter((message) => message.role === "student" && ![PROCEDURE_PREFIX, DIAGNOSIS_PREFIX, ANALYSIS_PREFIX].some((prefix) => message.content.startsWith(prefix)))
+    .filter((message) => message.role === "student" && ![PROCEDURE_PREFIX, DIAGNOSIS_PREFIX, ANALYSIS_PREFIX, FOLLOW_UP_PREFIX, ANNOUNCE_PREFIX, DIFFERENTIALS_PREFIX].some((prefix) => message.content.startsWith(prefix)))
     .map((message) => message.content.startsWith(PLAN_PREFIX) ? message.content.slice(PLAN_PREFIX.length) : message.content);
   const done = pertinentGestures(scenario, messages).map((procedure) => procedure.label);
   return [...said, ...done].map(normalizeEcosText).filter((line) => line.trim());
@@ -91,7 +89,8 @@ export function missedItems(scenario: EcosScenario, messages: readonly EcosMessa
 
 /** Entretien lisible par le modèle, borné aux derniers échanges si la station a été longue. */
 export function reviewTranscript(scenario: EcosScenario, messages: readonly EcosMessage[]): string {
-  const gestures = new Set(pertinentGestures(scenario, messages).map((procedure) => normalizeEcosText(procedure.label)));
+  // Examens demandés qui relèvent d'un geste attendu (libellé du catalogue ou, anciens transcripts, de la station).
+  const gestures = new Set(resolveExamOrders(scenario, messages).expected.map(normalizeEcosText));
   const lines = messages.flatMap((message) => {
     if (message.role === "system") return [];
     if (message.role === "patient") {
@@ -99,7 +98,7 @@ export function reviewTranscript(scenario: EcosScenario, messages: readonly Ecos
         ? [`Examinateur : ${oneLine(message.content.slice(EXAMINER_PREFIX.length))}`]
         : [`Patient : ${oneLine(message.content)}`];
     }
-    if (message.content.startsWith(DIAGNOSIS_PREFIX)) return [];
+    if ([DIAGNOSIS_PREFIX, FOLLOW_UP_PREFIX, ANNOUNCE_PREFIX, DIFFERENTIALS_PREFIX].some((prefix) => message.content.startsWith(prefix))) return [];
     if (message.content.startsWith(PROCEDURE_PREFIX)) {
       const label = message.content.slice(PROCEDURE_PREFIX.length);
       return gestures.has(normalizeEcosText(label)) ? [`Geste demandé par l’étudiant : ${oneLine(label)}`] : [];
@@ -127,7 +126,7 @@ const REVIEW_SYSTEM_PROMPT = [
 
 function reviewUserPrompt(scenario: EcosScenario, items: readonly ReviewItem[], transcript: string): string {
   return [
-    `Station : ${scenario.debrief.diagnosis}. Patient : ${scenario.patient.name}, ${scenario.patient.age} ans.`,
+    `Station : ${scenario.debrief.diagnosis}. Patient : ${patientLabel(scenario.patient)}.`,
     "",
     "Éléments à vérifier :",
     ...items.map((item) => `- ${item.id} : ${item.label} (${item.hint}). Repéré d'habitude par des mots comme : ${item.examples.map((example) => `« ${example} »`).join(", ")}.`),
@@ -288,6 +287,15 @@ export function storedReview(scenario: EcosScenario, messages: readonly EcosMess
   const allowed = new Set(reviewableCriteria(scenario, examCriterionId).flatMap((criterion) => criterion.groups.map((group) => groupId(criterion.id, group))));
   const findings = parseReview(line.content.slice(REVIEW_PREFIX.length), allowed, studentEvidence(scenario, messages), analysisEvidence(messages));
   return findings ? new Set(findings.map((finding) => finding.id)) : null;
+}
+
+/** Éléments accordés par la relecture enregistrée, avec leur citation (validée comme pour la note). */
+export function storedReviewFindings(scenario: EcosScenario, messages: readonly EcosMessage[], examCriterionId: string): Array<{ id: string; quote: string }> {
+  let line: EcosMessage | undefined;
+  for (const message of messages) if (message.role === "system" && message.content.startsWith(REVIEW_PREFIX)) line = message;
+  if (!line) return [];
+  const allowed = new Set(reviewableCriteria(scenario, examCriterionId).flatMap((criterion) => criterion.groups.map((group) => groupId(criterion.id, group))));
+  return parseReview(line.content.slice(REVIEW_PREFIX.length), allowed, studentEvidence(scenario, messages), analysisEvidence(messages)) ?? [];
 }
 
 /** Transcript sans relecture : celle que le navigateur ou la base pourraient contenir est ignorée. */

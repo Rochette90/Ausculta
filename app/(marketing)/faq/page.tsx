@@ -50,7 +50,7 @@ const allFaqGroups: Array<{ title: string; questions: FaqItem[] }> = [
   {
     title: FEATURES.premium ? "Compte, progression et tarifs" : "Compte et progression",
     questions: [
-      { question: "Ma progression est-elle sauvegardée ?", answer: "Oui. Lorsque vous êtes connecté, vos activités, XP, scores et série quotidienne sont associés à votre compte et restent disponibles sur vos différents appareils." },
+      { question: "Ma progression est-elle sauvegardée ?", answer: "Oui. Lorsque vous êtes connecté, vos activités, XP, scores et jalons sont associés à votre compte et restent disponibles sur vos différents appareils." },
       { question: `${BRAND_NAME} est-il gratuit ?`, answer: FEATURES.premium ? `Oui. L’offre Découverte est gratuite et donne accès à toutes les stations, avec un nombre de stations, de questions et de répliques vocales par jour. La formule ${BRAND_PLAN_LABEL} relève ces limites et donne la voix réaliste du patient en continu ; les chiffres sont sur la page Tarifs.` : "Oui, la plateforme est entièrement gratuite, stations comprises." },
       { question: "Que se passe-t-il si je change de formule plus tard ?", answer: "Votre compte et votre progression resteront enregistrés. Le changement de formule n’effacera pas l’historique de vos activités.", feature: "premium" },
       { question: "Comment signaler une erreur ?", answer: "Écrivez-nous depuis la page Contact en indiquant la station ou la fiche concernée et la correction proposée. Sur une fiche, vous pouvez aussi sélectionner le passage puis utiliser l’outil de signalement." },

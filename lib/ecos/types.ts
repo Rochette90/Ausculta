@@ -1,3 +1,5 @@
+import type { ImageCredit } from "./image-credits.ts";
+
 export type EcosMessageRole = "patient" | "student" | "system";
 
 export type EcosMessage = {
@@ -48,7 +50,15 @@ export type EcosProcedure = {
    * dans `public/ecos/`, chemin commençant par `/ecos/`. Elle n'atteint le
    * navigateur qu'après le choix du geste, comme le texte du résultat.
    */
-  image?: { src: string; alt: string };
+  image?: { src: string; alt: string; credit?: ImageCredit };
+  /**
+   * Entrées du catalogue commun (`lib/ecos/exam-catalog.ts`) que ce geste
+   * couvre ; par défaut, son propre `id`. Demander l'une d'elles rend le
+   * résultat de ce geste et ne coûte rien s'il est attendu.
+   */
+  covers?: string[];
+  /** Entrées qui suffisent à valider ce geste (par défaut, toutes celles de `covers`). */
+  key?: string[];
 };
 
 /** Final question of the station: the correct diagnosis and three distractors. */
@@ -114,7 +124,8 @@ export type EcosScenario = {
   slug: string;
   version: number;
   setting: EcosSetting;
-  patient: { name: string; age: number; sex: "F" | "M" };
+  /** `ageLabel` remplace « NN ans » à l'affichage (nourrisson : « 4 mois »). */
+  patient: { name: string; age: number; sex: "F" | "M"; ageLabel?: string };
   /** A relative answers for the patient (e.g. aphasia). */
   proxy?: boolean;
   /** Sex of the speaking voice when it is not the patient's (the relative who answers). */
@@ -131,7 +142,20 @@ export type EcosScenario = {
   rules: EcosRule[];
   /** Clinical-exam phase: gestures and tests the student can choose. */
   examination: EcosProcedure[];
+  /**
+   * Résultat propre au cas pour une entrée du catalogue : examen anormal que
+   * la station ne propose pas comme geste, ou détail d'un bilan groupé
+   * (« lipase » dans « Biologie : lipase, bilan hépatique… »).
+   */
+  catalogResults?: Readonly<Record<string, string>>;
+  /** Entrées du catalogue raisonnables ici : ni point ni pénalité. */
+  acceptable?: readonly string[];
   diagnosisChoice: EcosDiagnosisChoice;
+  /**
+   * Points du diagnostic principal (2 par défaut). Les stations d'examen blanc
+   * de 3ᵉ année en donnent 1 : la note porte surtout sur l'anamnèse et le status.
+   */
+  diagnosisPoints?: number;
   criteria: EcosCriterionDefinition[];
   debrief: EcosDebrief;
 };
@@ -146,7 +170,7 @@ export type EcosStationView = {
   setting: EcosSetting;
   brief: string[];
   /** Gestures offered in the exam phase: labels only, never results or relevance. */
-  procedures: Array<Pick<EcosProcedure, "id" | "label" | "category">>;
+  procedures: Array<Pick<EcosProcedure, "id" | "label" | "category"> & { group: string }>;
   /** Une étape « Analyse » suit l'examen clinique : l'étudiant interprète par écrit les examens demandés. */
   analysis: boolean;
   /** Grid total, exam and diagnosis lines included. */

@@ -65,6 +65,8 @@ const ROUTE_FEATURES: ReadonlyArray<{ prefix: string; feature: FeatureKey; fallb
   { prefix: "/sessions", feature: "sessions", fallback: APP_FALLBACK },
   { prefix: "/tutoriels", feature: "tutorials", fallback: PUBLIC_FALLBACK },
   { prefix: "/pricing", feature: "premium", fallback: PUBLIC_FALLBACK },
+  { prefix: "/historique", feature: "ecos", fallback: "/dashboard" },
+  { prefix: "/examen-blanc", feature: "ecos", fallback: "/dashboard" },
 ];
 
 /**

@@ -1,5 +1,5 @@
 import type { EcosCriterion, EcosCriterionDefinition, EcosMessage } from "./types.ts";
-import { ANALYSIS_PREFIX, DIAGNOSIS_PREFIX, hasAnyKeyword, normalizeEcosText, PROCEDURE_PREFIX } from "./text.ts";
+import { ANALYSIS_PREFIX, ANNOUNCE_PREFIX, DIAGNOSIS_PREFIX, DIFFERENTIALS_PREFIX, FOLLOW_UP_PREFIX, hasAnyKeyword, normalizeEcosText, PROCEDURE_PREFIX } from "./text.ts";
 
 /**
  * Ligne de la grille notée sur la seule analyse écrite des examens
@@ -24,7 +24,7 @@ function keywordText(messages: readonly EcosMessage[]): string {
   // (lib/ecos/grading.ts): their labels must not earn keyword points.
   return normalizeEcosText(
     messages
-      .filter((message) => message.role === "student" && ![DIAGNOSIS_PREFIX, PROCEDURE_PREFIX, ANALYSIS_PREFIX].some((prefix) => message.content.startsWith(prefix)))
+      .filter((message) => message.role === "student" && ![DIAGNOSIS_PREFIX, PROCEDURE_PREFIX, ANALYSIS_PREFIX, FOLLOW_UP_PREFIX, ANNOUNCE_PREFIX, DIFFERENTIALS_PREFIX].some((prefix) => message.content.startsWith(prefix)))
       .map((message) => message.content)
       .join(" | "),
   );
