@@ -563,3 +563,26 @@ test("theory fiches and practice grids are read-only for students and edited thr
   }
   assert.match(gridQueries, /validateGridContent\(/);
 });
+
+test("ECOS sessions and messages are never readable from the browser (station_slug names the diagnosis)", async () => {
+  const sql = await read("../supabase/migrations/20261013130000_ecos_sessions_server_only.sql");
+  assert.match(sql, /revoke select on public\.ecos_sessions, public\.ecos_messages from anon, authenticated;/i);
+  assert.match(sql, /drop policy if exists "ecos_sessions_select_own" on public\.ecos_sessions;/i);
+  assert.match(sql, /drop policy if exists "ecos_messages_select_own" on public\.ecos_messages;/i);
+  assert.doesNotMatch(sql, /grant select[^;]*ecos_(sessions|messages)/i);
+  // Seul le formulaire d'authentification utilise le client navigateur.
+  const { readdir } = await import("node:fs/promises");
+  const path = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const browserClientUsers = [];
+  async function walk(dir) {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) await walk(full);
+      else if (/\.tsx?$/.test(entry.name) && /@\/lib\/supabase\/client"/.test(await readFile(full, "utf8"))) browserClientUsers.push(path.relative(root, full));
+    }
+  }
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  for (const dir of ["app", "components", "lib"]) await walk(path.join(root, dir));
+  assert.deepEqual(browserClientUsers.sort(), ["components/auth/AuthForm.tsx"]);
+});
